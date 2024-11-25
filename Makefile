@@ -6,7 +6,7 @@
 #    By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/29 11:12:41 by hmunoz-g          #+#    #+#              #
-#    Updated: 2024/11/25 11:28:26 by hmunoz-g         ###   ########.fr        #
+#    Updated: 2024/11/25 11:44:43 by hmunoz-g         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ LIBFTDIR = libs/libft/
 PRINTFDIR = libs/libft/ft_printf/
 RM = rm -f
 
-SRCS = srcs/main/minishell.c
+SRCS = src/main/minishell.c
 
 OBJS = $(SRCS:.c=.o)
 
