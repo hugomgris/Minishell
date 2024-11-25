@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42barcelon      +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 13:20:24 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/10/15 13:20:25 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/25 16:09:16 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ char	*read_buf(int fd, char *stash)
 
 	rb = 1;
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buffer)
+	if (!buffer || BUFFER_SIZE < 1)
 		return (ft_free_gnl(&stash));
 	buffer[0] = '\0';
 	while (rb > 0 && !ft_strchr(buffer, '\n'))
@@ -83,18 +83,18 @@ char	*read_buf(int fd, char *stash)
 
 char	*get_next_line(int fd)
 {
-	static char	*stash[FOPEN_MAX];
+	static char	*stash = {0};
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	if ((stash[fd] && !ft_strchr(stash[fd], '\n')) || !stash[fd])
-		stash[fd] = read_buf(fd, stash[fd]);
-	if (!stash[fd])
+	if ((stash && !ft_strchr(stash, '\n')) || !stash)
+		stash = read_buf(fd, stash);
+	if (!stash)
 		return (NULL);
-	line = make_line(stash[fd]);
+	line = make_line(stash);
 	if (!line)
-		return (ft_free_gnl(&stash[fd]));
-	stash[fd] = new_stash(stash[fd]);
+		return (ft_free_gnl(&stash));
+	stash = new_stash(stash);
 	return (line);
 }

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:09:54 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/05 15:14:56 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/25 16:14:08 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ ssize_t	ft_write_uns(unsigned int n);
 
 void	ft_free(char **str);
 char	*get_next_line(int fd);
+char	*ft_free_gnl(char **str);
 int		ft_array_count(char **ptr);
 char	*ft_appendC(char *start, char c);
 #endif
