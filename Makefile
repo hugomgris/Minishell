@@ -6,7 +6,7 @@
 #    By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/29 11:12:41 by hmunoz-g          #+#    #+#              #
-#    Updated: 2024/11/25 11:44:43 by hmunoz-g         ###   ########.fr        #
+#    Updated: 2024/11/25 11:55:10 by hmunoz-g         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,24 @@ LIBFTDIR = libs/libft/
 PRINTFDIR = libs/libft/ft_printf/
 RM = rm -f
 
-SRCS = src/main/minishell.c
+SRCS = src/main/minishell.c \
+		src/main/loop.c \
+		src/builtins/cd.c \
+		src/builtins/echo.c \
+		src/builtins/env.c \
+		src/builtins/exit.c \
+		src/executor/executor.c \
+		src/executor/piping.c \
+		src/executor/redirection.c \
+		src/parser/parser.c \
+		src/parser/tokenizer.c \
+		src/parser/syntax_checker.c \
+		src/signals/signals.c \
+		src/env/env.c \
+		src/env/env_utils.c \
+		src/utils/string_utils.c \
+		src/utils/error_handler.c \
+		
 
 OBJS = $(SRCS:.c=.o)
 
