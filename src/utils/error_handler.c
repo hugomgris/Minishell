@@ -6,8 +6,15 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/25 11:56:17 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/25 17:27:02 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void	ms_error_handler(char *msg)
+{
+	if (msg)
+		ft_printf("%s\n", msg);
+	exit(1);
+}
