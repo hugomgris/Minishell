@@ -9,4 +9,5 @@ Pull request conv, i agreed: we can check the checklists of the project sections
 Optional to-do: test dependency implementations
 + .d files?
 + libft & printf dependencies on main Makefile (i.e., minishell compilation). ☑
++ simplify libs, ie. merge printf (w/ bonus) into libft
 + Not die
