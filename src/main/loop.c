@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/25 17:51:06 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/26 10:18:54 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	ms_main_loop(void)
 
 	while (1)
 	{
-		ft_printf("minishell> ");
+		ft_printf("minishell$ ");
 		input = get_next_line(0);
 		if (!input)
 			ms_exit_handler("exit");
