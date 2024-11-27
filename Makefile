@@ -14,7 +14,7 @@ NAME 		= minishell
 # -=-=-=-=-    PATH -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= #
 
 CC			= cc
-FLAGS		= -Werror -Wall -Wextra -pthread -lreadline -g
+FLAGS		= -Werror -Wall -Wextra -pthread -g
 
 # -=-=-=-=-    FILES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 LIBFTDIR	= libs/libft/
@@ -54,7 +54,7 @@ all: make_libft make_printf $(NAME)
 
 $(NAME): $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a $(OBJS)
 	@echo "$(GREEN)Compiling minishell!$(DEF_COLOR)"
-	$(CC) $(FLAGS) $(SRCS) $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a -o minishell
+	$(CC) $(FLAGS) -lreadline $(SRCS) $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a -o minishell
 	@echo "$(GREEN)Minishell compiled!$(DEF_COLOR)"
 	@echo "$(RED)May God have mercy on our souls.$(DEF_COLOR)"
 
