@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/26 12:33:36 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/26 16:53:45 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@
 void	ms_main_loop(void);
 char	*ms_check_empty_input(char *input);
 void	ms_exit_handler(const char *msg);
+
+//TOKENIZER
+void	ms_tokenizer(char *input);
 
 //ERROR HANDLER functions
 void	ms_error_handler(char *msg);

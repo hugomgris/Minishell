@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+         #
+#    By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/12 15:45:04 by hmunoz-g          #+#    #+#              #
-#    Updated: 2024/11/11 16:12:33 by hmunoz-g         ###   ########.fr        #
+#    Updated: 2024/11/26 17:12:52 by nponchon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ SRC = ft_itoa.c ft_strchr.c ft_strdup.c ft_strjoin.c ft_strmapi.c \
       ft_calloc.c ft_memchr.c ft_memcpy.c ft_memmove.c ft_memset.c \
       ft_putchar_fd.c ft_putendl_fd.c ft_putnbr_fd.c ft_putstr_fd.c \
       ft_striteri.c ft_strtrim.c ft_free.c get_next_line.c ft_array_count.c \
-      ft_append_c.c
+      ft_append_c.c cucufu.c ft_print_array.c
 
 OBJ = $(SRC:.c=.o)
 
