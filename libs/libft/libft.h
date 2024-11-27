@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:09:54 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/25 16:14:08 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/26 17:12:42 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,5 +102,6 @@ void	ft_free(char **str);
 char	*get_next_line(int fd);
 char	*ft_free_gnl(char **str);
 int		ft_array_count(char **ptr);
-char	*ft_appendC(char *start, char c);
+char	*ft_append_c(char *start, char c);
+void	ft_print_array(char **array);
 #endif
