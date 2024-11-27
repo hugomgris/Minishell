@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/26 12:27:04 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/27 18:48:50 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ char	*ms_check_empty_input(char *input)
 
 /*
 Main loop for Minishell.
-Prints prompt, waits for input.
+Uses readline() to get input and adds it to history.
 Handles graceful exits and empty input. 
 For now, it just prints back the input.
 */
@@ -53,12 +53,9 @@ void	ms_main_loop(void)
 {
 	char	*input;
 
-	while (1)
+	while (42)
 	{
-		ft_printf("minishell$ ");
-		input = get_next_line(0);
-		if (!input)
-			ms_exit_handler("exit");
+		input = readline("minishell$ ");
 		input = ms_check_empty_input(input);
 		if (!input)
 			continue ;
@@ -67,7 +64,8 @@ void	ms_main_loop(void)
 			free(input);
 			ms_exit_handler("exit");
 		}
-		ft_printf("%s\n", input);
+		add_history(input);
+		ms_tokenizer(input);
 		free(input);
 	}
 }
