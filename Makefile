@@ -14,7 +14,7 @@ NAME 		= minishell
 # -=-=-=-=-    PATH -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= #
 
 CC			= cc
-FLAGS		= -Werror -Wall -Wextra -pthread -g
+FLAGS		= -Werror -Wall -Wextra -pthread -g -fsanitize=address
 
 # -=-=-=-=-    FILES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 LIBFTDIR	= libs/libft/
