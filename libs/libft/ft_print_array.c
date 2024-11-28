@@ -1,30 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstclear_bonus.c                                :+:      :+:    :+:   */
+/*   ft_print_array.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42barcelon      +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/20 10:06:46 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/09/20 15:46:57 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/11/26 17:10:55 by nponchon          #+#    #+#             */
+/*   Updated: 2024/11/26 17:15:57 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+void	ft_print_array(char **array)
 {
-	t_list	*tmp;
+	int	i;
 
-	if (!lst || !*lst)
-		return ;
-	while (*lst)
-	{
-		tmp = (*lst)->next;
-		if (del)
-			del((*lst)->content);
-		free(*lst);
-		*lst = tmp;
-	}
-	*lst = NULL;
+	i = -1;
+	while (array[++i])
+		ft_printf("%s\n", array[i]);
 }

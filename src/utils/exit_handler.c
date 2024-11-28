@@ -1,28 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_handler.c                                    :+:      :+:    :+:   */
+/*   exit_handler.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 10:07:00 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/11/28 12:54:30 by hmunoz-g          #+#    #+#             */
+/*   Updated: 2024/11/28 12:54:41 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Universal error handler for Minishell.
-Prints error msg sent as argument, checks for critical errors (alloc errors).
-If critical error, calls Garbage Collector and exits.
+Small exit handler that prints an exit msg, cleans ms_env and exits.
+If needed later on, we can move this to it's own file in utils.
 */
-void	ms_error_handler(char *msg, int is_critical)
+void	ms_exit_handler(const char *msg, t_list *ms_env)
 {
-	ft_putendl_fd(msg, STDERR_FILENO);
-	if (is_critical)
-	{
-		//Call GC
-		exit (1);
-	}
+	if (msg)
+		ft_printf("%s\n", msg);
+	ft_lstclear(&ms_env, free); //Add GC
+	exit(0);
 }

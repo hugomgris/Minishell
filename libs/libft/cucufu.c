@@ -1,30 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstclear_bonus.c                                :+:      :+:    :+:   */
+/*   cucufu.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42barcelon      +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/20 10:06:46 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/09/20 15:46:57 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/11/26 12:46:25 by nponchon          #+#    #+#             */
+/*   Updated: 2024/11/26 12:47:20 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+void	cucufu(void)
 {
-	t_list	*tmp;
-
-	if (!lst || !*lst)
-		return ;
-	while (*lst)
-	{
-		tmp = (*lst)->next;
-		if (del)
-			del((*lst)->content);
-		free(*lst);
-		*lst = tmp;
-	}
-	*lst = NULL;
+	write(2, "cucufu\n", 7);
 }

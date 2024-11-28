@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/09/12 15:45:04 by hmunoz-g          #+#    #+#              #
-#    Updated: 2024/11/11 16:12:33 by hmunoz-g         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 # Colors
 DEF_COLOR = \033[0;39m
 YELLOW = \033[0;93m
@@ -23,7 +11,7 @@ CC = cc
 FLAGS = -Wall -Werror -Wextra
 RM = rm -f
 
-SRC = ft_itoa.c ft_strchr.c ft_strdup.c ft_strjoin.c ft_strmapi.c \
+SRC = ft_itoa.c ft_strchr.c ft_strdup.c ft_strjoin.c ft_strjoin_free.c ft_strmapi.c \
       ft_strnstr.c ft_strrchr.c ft_substr.c ft_split.c ft_atoi.c \
       ft_isalnum.c ft_isalpha.c ft_isascii.c ft_isdigit.c ft_isprint.c \
       ft_isspace.c ft_isvalidsign.c ft_memcmp.c ft_tolower.c ft_toupper.c \
@@ -31,7 +19,7 @@ SRC = ft_itoa.c ft_strchr.c ft_strdup.c ft_strjoin.c ft_strmapi.c \
       ft_calloc.c ft_memchr.c ft_memcpy.c ft_memmove.c ft_memset.c \
       ft_putchar_fd.c ft_putendl_fd.c ft_putnbr_fd.c ft_putstr_fd.c \
       ft_striteri.c ft_strtrim.c ft_free.c get_next_line.c ft_array_count.c \
-      ft_append_c.c
+      ft_append_c.c cucufu.c ft_print_array.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -45,7 +33,7 @@ BONUS_OBJ = $(BONUS:.c=.o)
 	$(CC) $(FLAGS) -I. -c $< -o $@
 	@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
 
-all: $(NAME)
+all: $(NAME) bonus
 
 bonus: $(NAME) $(BONUS_OBJ)
 	ar rcs $(NAME) $(BONUS_OBJ)

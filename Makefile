@@ -1,52 +1,54 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/10/29 11:12:41 by hmunoz-g          #+#    #+#              #
-#    Updated: 2024/11/25 11:55:10 by hmunoz-g         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+# -=-=-=-=-    COLOURS -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
-# Colors
-DEF_COLOR = \033[0;39m
-YELLOW = \033[0;93m
-CYAN = \033[0;96m
-GREEN = \033[0;92m
-BLUE = \033[0;94m
-RED = \033[0;91m
+DEF_COLOR	= \033[0;39m
+YELLOW 		= \033[0;93m
+CYAN 		= \033[0;96m
+GREEN 		= \033[0;92m
+BLUE 		= \033[0;94m
+RED 		= \033[0;91m
 
-NAME = minishell
-CC = cc
-FLAGS = -Werror -Wall -Wextra -g
-LIBFTDIR = libs/libft/
-PRINTFDIR = libs/libft/ft_printf/
-RM = rm -f
+# -=-=-=-=-    NAME -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= #
 
-SRCS = src/main/minishell.c \
-		src/main/loop.c \
-		src/builtins/cd.c \
-		src/builtins/echo.c \
-		src/builtins/env.c \
-		src/builtins/exit.c \
-		src/executor/executor.c \
-		src/executor/piping.c \
-		src/executor/redirection.c \
-		src/parser/parser.c \
-		src/parser/tokenizer.c \
-		src/parser/syntax_checker.c \
-		src/signals/signals.c \
-		src/env/env.c \
-		src/env/env_utils.c \
-		src/utils/string_utils.c \
-		src/utils/error_handler.c \
+NAME 		= minishell
+
+# -=-=-=-=-    PATH -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= #
+
+CC			= cc
+FLAGS		= -Werror -Wall -Wextra -pthread -g -fsanitize=address
+
+# -=-=-=-=-    FILES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+LIBFTDIR	= libs/libft/
+PRINTFDIR	= libs/libft/ft_printf/
+RM			= rm -f
+
+# -=-=-=-=-    FILES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+
+SRCS 		:= 	src/main/minishell.c 		\
+				src/main/loop.c 			\
+				src/main/prompt_utils.c		\
+				src/builtins/cd.c 			\
+				src/builtins/echo.c 		\
+				src/builtins/env.c 			\
+				src/builtins/exit.c 		\
+				src/executor/executor.c		\
+				src/executor/piping.c 		\
+				src/executor/redirection.c 	\
+				src/parser/parser.c 		\
+				src/parser/tokenizer.c 		\
+				src/parser/syntax_checker.c \
+				src/signals/signals.c 		\
+				src/env/env.c 				\
+				src/env/env_utils.c 		\
+				src/utils/string_utils.c 	\
+				src/utils/error_handler.c 	\
+				src/utils/exit_handler.c	\
 		
 
-OBJS = $(SRCS:.c=.o)
+OBJS 		= $(SRCS:.c=.o)
 
-all: $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a $(NAME)
+# -=-=-=-=-    TARGETS -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+
+all: make_libft make_printf $(NAME)
 
 %.o: %.c Makefile includes/minishell.h
 	$(CC) $(FLAGS) -Ilibft -Ilibft/ft_printf -c $< -o $@
@@ -54,15 +56,15 @@ all: $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a $(NAME)
 
 $(NAME): $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a $(OBJS)
 	@echo "$(GREEN)Compiling minishell!$(DEF_COLOR)"
-	$(CC) $(FLAGS) $(SRCS) $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a -o minishell
+	$(CC) $(FLAGS) -lreadline $(SRCS) $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a -o minishell
 	@echo "$(GREEN)Minishell compiled!$(DEF_COLOR)"
 	@echo "$(RED)May God have mercy on our souls.$(DEF_COLOR)"
 
-$(LIBFTDIR)libft.a:
+make_libft:
 	@echo "$(CYAN)Building libft.a!$(DEF_COLOR)"
 	@$(MAKE) -C $(LIBFTDIR)
 
-$(PRINTFDIR)libftprintf.a:
+make_printf:
 	@echo "$(CYAN)Building libftprintf.a!$(DEF_COLOR)"
 	@$(MAKE) -C $(PRINTFDIR)
 
@@ -80,4 +82,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re libft ft_printf
+.PHONY: all clean fclean re make_libft make_printf

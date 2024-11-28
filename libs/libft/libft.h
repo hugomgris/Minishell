@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/10 13:09:54 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/25 16:14:08 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/11/27 12:45:35 by hmunoz-g          #+#    #+#             */
+/*   Updated: 2024/11/28 09:48:12 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ char	*ft_itoa(int n);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *s);
 char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strjoin_free(char *s1, char *s2);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char	*ft_strnstr(const char *big, const char *little, size_t len);
 char	*ft_strrchr(const char *s, int c);
@@ -102,5 +103,8 @@ void	ft_free(char **str);
 char	*get_next_line(int fd);
 char	*ft_free_gnl(char **str);
 int		ft_array_count(char **ptr);
-char	*ft_appendC(char *start, char c);
+char	*ft_append_c(char *start, char c);
+void	ft_print_array(char **array);
+void	cucufu(void);
+
 #endif
