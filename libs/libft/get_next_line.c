@@ -72,7 +72,7 @@ char	*read_buf(int fd, char *stash)
 		if (rb > 0)
 		{
 			buffer[rb] = '\0';
-			stash = ft_strjoin(stash, buffer);
+			stash = ft_strjoin_free(stash, buffer);
 		}
 	}
 	free(buffer);

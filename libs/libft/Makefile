@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/09/12 15:45:04 by hmunoz-g          #+#    #+#              #
-#    Updated: 2024/11/26 17:12:52 by nponchon         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 # Colors
 DEF_COLOR = \033[0;39m
 YELLOW = \033[0;93m
@@ -23,7 +11,7 @@ CC = cc
 FLAGS = -Wall -Werror -Wextra
 RM = rm -f
 
-SRC = ft_itoa.c ft_strchr.c ft_strdup.c ft_strjoin.c ft_strmapi.c \
+SRC = ft_itoa.c ft_strchr.c ft_strdup.c ft_strjoin.c ft_strjoin_free.c ft_strmapi.c \
       ft_strnstr.c ft_strrchr.c ft_substr.c ft_split.c ft_atoi.c \
       ft_isalnum.c ft_isalpha.c ft_isascii.c ft_isdigit.c ft_isprint.c \
       ft_isspace.c ft_isvalidsign.c ft_memcmp.c ft_tolower.c ft_toupper.c \
@@ -45,7 +33,7 @@ BONUS_OBJ = $(BONUS:.c=.o)
 	$(CC) $(FLAGS) -I. -c $< -o $@
 	@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
 
-all: $(NAME)
+all: $(NAME) bonus
 
 bonus: $(NAME) $(BONUS_OBJ)
 	ar rcs $(NAME) $(BONUS_OBJ)
