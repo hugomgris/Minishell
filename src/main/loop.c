@@ -7,6 +7,7 @@
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
 /*   Updated: 2024/11/28 12:54:15 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/27 18:48:50 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +38,7 @@ char	*ms_check_empty_input(char *input)
 /*
 Main loop for Minishell.
 Calls for prompt build. 
-Prints prompt, waits for input.
+Uses readline() to get input and adds it to history.
 Handles graceful exits and empty input. 
 For now, it just prints back the input.
 */
