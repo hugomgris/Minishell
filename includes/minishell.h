@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/27 16:46:37 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/11/27 18:22:52 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include "../libs/libft/libft.h"
 # include "../libs/libft/ft_printf/includes/ft_printf.h"
 # include <signal.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 # define TRUE 1
 # define FALSE 0
