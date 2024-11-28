@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/26 12:37:18 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/28 14:23:48 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ It re-prints the prompt in a new line and flushes stdout.
 
 void	ms_sigint_handler(void)
 {
-	write(STDOUT_FILENO, "\nminishell$ ", 12);
+	ft_putendl_fd("\nminishell$ ", STDERR_FILENO);
 	fflush(stdout);
 }
 

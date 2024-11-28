@@ -25,6 +25,7 @@ RM			= rm -f
 
 SRCS 		:= 	src/main/minishell.c 		\
 				src/main/loop.c 			\
+				src/main/prompt_utils.c		\
 				src/builtins/cd.c 			\
 				src/builtins/echo.c 		\
 				src/builtins/env.c 			\
@@ -40,6 +41,7 @@ SRCS 		:= 	src/main/minishell.c 		\
 				src/env/env_utils.c 		\
 				src/utils/string_utils.c 	\
 				src/utils/error_handler.c 	\
+				src/utils/exit_handler.c	\
 		
 
 OBJS 		= $(SRCS:.c=.o)
