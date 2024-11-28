@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:09:54 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/26 17:12:42 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/11/27 14:58:22 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,4 +104,5 @@ char	*ft_free_gnl(char **str);
 int		ft_array_count(char **ptr);
 char	*ft_append_c(char *start, char c);
 void	ft_print_array(char **array);
+void	cucufu(void);
 #endif
