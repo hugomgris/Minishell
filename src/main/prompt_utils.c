@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 12:53:16 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 13:00:46 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/28 18:41:26 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ char	*ms_get_hostname(char *session_manager)
 			hostname = ft_substr(start, 0, end - start);
 		else
 			hostname = ft_strdup(start);
+		gc_add(hostname);
 		return (hostname);
 	}
 	else
@@ -68,10 +69,11 @@ char	*ms_get_prompt_user(t_list *ms_env)
 	if (!hostname)
 		hostname = "localhost";
 	prompt_user = ft_strjoin(username, "@");
-	prompt_user = ft_strjoin_free(prompt_user, hostname);
-	prompt_user = ft_strjoin_free(prompt_user, ":");
-	if (ft_strncmp(hostname, "localhost", 9))
-		free(hostname);
+	gc_add(prompt_user);
+	prompt_user = ft_strjoin(prompt_user, hostname);
+	gc_add(prompt_user);
+	prompt_user = ft_strjoin(prompt_user, ":");
+	gc_add(prompt_user);
 	return (prompt_user);
 }
 
@@ -86,9 +88,9 @@ char	*ms_get_cwd(t_list *ms_env)
 		cwd = malloc(PATH_MAX);
 		if (!cwd)
 			ms_error_handler("Error: Mem alloc failed for PWD", 1);
+		gc_add(cwd);
 		if (getcwd(cwd, PATH_MAX) == NULL)
 		{
-			free(cwd);
 			ms_error_handler("Error: Unable to retrieve CWD", 0);
 			cwd = "unknown_directory";
 		}
@@ -98,6 +100,7 @@ char	*ms_get_cwd(t_list *ms_env)
 		cwd = ft_strchr(cwd, '/') + 1;
 	cwd--;
 	cwd = ft_strjoin("~", cwd);
+	gc_add(cwd);
 	return (cwd);
 }
 
@@ -109,16 +112,16 @@ char	*ms_build_prompt(t_list *ms_env)
 	char	*tmp;
 
 	username = ms_get_prompt_user(ms_env);
+	gc_add(username);
 	cwd = ms_get_cwd(ms_env);
 	prompt = ft_strjoin("minishell> ", username);
+	gc_add(prompt);
 	if (!prompt)
 		ms_error_handler("Error: Mem alloc failed for prompt", 1);
 	tmp = ft_strjoin(prompt, " ");
-	free(prompt);
+	gc_add(tmp);
 	prompt = ft_strjoin(tmp, cwd);
-	free(tmp);
+	gc_add(prompt);
 	tmp = ft_strjoin(prompt, "$ ");
-	free(prompt);
-	free(username);
 	return (tmp);
 }

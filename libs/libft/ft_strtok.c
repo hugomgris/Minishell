@@ -1,30 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstclear_bonus.c                                :+:      :+:    :+:   */
+/*   ft_strtok.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/20 10:06:46 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 17:42:01 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/11/28 18:30:34 by hmunoz-g          #+#    #+#             */
+/*   Updated: 2024/11/28 18:38:07 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+char	*ft_strtok(char *str, const char *delim)
 {
-	t_list	*tmp;
+	static char	*last;
+	char		*start;
 
-	if (!lst || !*lst)
-		return ;
-	while (*lst)
+	last = NULL;
+	if (str)
+		last = str;
+	if (!last)
+		return (NULL);
+	while (*last && strchr(delim, *last))
+		last++;
+	if (!*last)
+		return (NULL);
+	start = last;
+	while (*last && !strchr(delim, *last))
+		last++;
+	if (*last)
 	{
-		tmp = (*lst)->next;
-		if (del)
-			del((*lst)->content);
-		free(*lst);
-		*lst = tmp;
+		*last = '\0';
+		last++;
 	}
-	*lst = NULL;
+	return (start);
 }

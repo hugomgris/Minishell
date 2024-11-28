@@ -23,25 +23,26 @@ RM			= rm -f
 
 # -=-=-=-=-    FILES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
-SRCS 		:= 	src/main/minishell.c 		\
-				src/main/loop.c 			\
-				src/main/prompt_utils.c		\
-				src/builtins/cd.c 			\
-				src/builtins/echo.c 		\
-				src/builtins/env.c 			\
-				src/builtins/exit.c 		\
-				src/executor/executor.c		\
-				src/executor/piping.c 		\
-				src/executor/redirection.c 	\
-				src/parser/parser.c 		\
-				src/parser/tokenizer.c 		\
-				src/parser/syntax_checker.c \
-				src/signals/signals.c 		\
-				src/env/env.c 				\
-				src/env/env_utils.c 		\
-				src/utils/string_utils.c 	\
-				src/utils/error_handler.c 	\
-				src/utils/exit_handler.c	\
+SRCS 		:= 	src/main/minishell.c 			\
+				src/main/loop.c 				\
+				src/main/prompt_utils.c			\
+				src/builtins/cd.c 				\
+				src/builtins/echo.c 			\
+				src/builtins/env.c 				\
+				src/builtins/exit.c 			\
+				src/executor/executor.c			\
+				src/executor/piping.c 			\
+				src/executor/redirection.c 		\
+				src/parser/parser.c 			\
+				src/parser/tokenizer.c 			\
+				src/parser/syntax_checker.c 	\
+				src/signals/signals.c 			\
+				src/env/env.c 					\
+				src/env/env_utils.c 			\
+				src/utils/string_utils.c 		\
+				src/utils/error_handler.c 		\
+				src/utils/exit_handler.c		\
+				src/utils/garbage_collector.c	\
 		
 
 OBJS 		= $(SRCS:.c=.o)
