@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
 /*   Updated: 2024/11/28 18:02:20 by hmunoz-g         ###   ########.fr       */
@@ -35,11 +35,16 @@ char	*ms_check_empty_input(char *input);
 char	*ms_username_from_psswd(void);
 
 //TOKENIZER & SYNTAX CHECK
-void	ms_tokenizer(char *input);
+void	ms_tokenizer(t_list *ms_env, char *str);
 void	ms_syntax_checker(char *str);
-void	ms_checkquotes(char *str, char c);
-void	ms_checkspecialchar(char *str);
-void	ms_checkpipes(char *str);
+int		ms_checkquotes(char *str, char c);
+int		ms_checkspecialchar(char *str);
+int		ms_checkpipes(char *str);
+int		ms_check_empty_pipe(char *str);
+char	*ms_expand_variable(t_list *ms_env, char *str);
+char	*ms_replace_expanded(char *str, char *key, char *var);
+char	*ms_replace_null_value(char *str, char *key);
+char	*ms_search_env(t_list *ms_env, char *str, int start);
 
 //ERROR HANDLER functions
 void	ms_error_handler(char *msg, int is_critical);
