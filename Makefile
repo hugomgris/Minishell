@@ -9,14 +9,15 @@ RED 		= \033[0;91m
 
 # -=-=-=-=-    NAME -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= #
 
-NAME 		= minishell
+NAME 		:= minishell
 
-# -=-=-=-=-    PATH -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= #
+# -=-=-=-=-    FLAG -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= #
 
 CC			= cc
 FLAGS		= -Werror -Wall -Wextra -pthread -g -fsanitize=address
 
-# -=-=-=-=-    FILES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+# -=-=-=-=-    PATH -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+
 LIBFTDIR	= libs/libft/
 PRINTFDIR	= libs/libft/ft_printf/
 RM			= rm -f
@@ -42,9 +43,9 @@ SRCS 		:= 	src/main/minishell.c 		\
 				src/utils/string_utils.c 	\
 				src/utils/error_handler.c 	\
 				src/utils/exit_handler.c	\
-		
+				src/parser/expand_variable.c
 
-OBJS 		= $(SRCS:.c=.o)
+OBJS 		:= $(SRCS:.c=.o)
 
 # -=-=-=-=-    TARGETS -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 

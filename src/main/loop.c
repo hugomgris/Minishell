@@ -3,11 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 12:54:15 by hmunoz-g         ###   ########.fr       */
-/*   Updated: 2024/11/27 18:48:50 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/11/28 18:37:25 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +65,7 @@ void	ms_main_loop(t_list *ms_env)
 			ms_exit_handler("exit", ms_env);
 		}
 		add_history(input);
-		ms_tokenizer(input);
+		ms_tokenizer(ms_env, input);
 		free(input);
 	}
 }

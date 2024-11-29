@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/27 18:22:52 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/11/29 00:28:14 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,16 @@ char	*ms_get_env_variable(t_list *ms_env, const char *var_name);
 char	*ms_check_empty_input(char *input);
 
 //TOKENIZER & SYNTAX CHECK
-void	ms_tokenizer(char *input);
+void	ms_tokenizer(t_list *ms_env, char *str);
 void	ms_syntax_checker(char *str);
-void	ms_checkquotes(char *str, char c);
-void	ms_checkspecialchar(char *str);
-void	ms_checkpipes(char *str);
+int		ms_checkquotes(char *str, char c);
+int		ms_checkspecialchar(char *str);
+int		ms_checkpipes(char *str);
+int		ms_check_empty_pipe(char *str);
+char	*ms_expand_variable(t_list *ms_env, char *str);
+char	*ms_replace_expanded(char *str, char *key, char *var);
+char	*ms_replace_null_value(char *str, char *key);
+char	*ms_search_env(t_list *ms_env, char *str, int start);
 
 //ERROR HANDLER functions
 void	ms_error_handler(char *msg, int is_critical);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prompt_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 12:53:16 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 13:00:46 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/28 15:49:47 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,5 +120,6 @@ char	*ms_build_prompt(t_list *ms_env)
 	tmp = ft_strjoin(prompt, "$ ");
 	free(prompt);
 	free(username);
+	free(cwd);
 	return (tmp);
 }

@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/27 18:00:39 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/11/28 17:02:24 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 	- Check for special characters ('\', '\n', ';' etc.)
 */
 
-void	ms_checkquotes(char *str, char c)
+int	ms_checkquotes(char *str, char c)
 {
 	int	i;
 	int	flag;
@@ -39,10 +39,14 @@ void	ms_checkquotes(char *str, char c)
 			flag = 1;
 	}
 	if (flag)
-		ft_putstr_fd("Wrong pipe: no command before \"|\"\n", 2);
+	{
+		ft_putstr_fd("Error: unclosed quote\n", 2);
+		return (0);
+	}
+	return (1);
 }
 
-void	ms_checkspecialchar(char *str)
+int	ms_checkspecialchar(char *str)
 {
 	int	i;
 
@@ -50,11 +54,36 @@ void	ms_checkspecialchar(char *str)
 	while (str[++i])
 	{
 		if (str[i] == 59 || str[i] == 92)
+		{
 			ft_putstr_fd("Invalid character: ';' '\\'\n", 2);
+			return (0);
+		}
 	}
+	return (1);
 }
 
-void	ms_checkpipes(char *str)
+int	ms_check_empty_pipe(char *str)
+{
+	str++;
+	while (ft_isspace(*str))
+	{
+		str++;
+	}
+	if (*str == '|')
+		return (1);
+	else if (*str == '\0')
+	{
+		ms_error_handler("Wrong pipe: no command after \"|\"", 0);
+		return (1);
+	}
+	else
+		return (0);
+}
+
+/*	Note: even though the input is trimmed, there can be tabs at the
+	head and/or tail of the string, hence the ft_isspace()	*/
+
+int	ms_checkpipes(char *str)
 {
 	int	i;
 
@@ -63,19 +92,34 @@ void	ms_checkpipes(char *str)
 		;
 	if (str[i] == '|')
 	{
-		ft_putstr_fd("Wrong pipe: no command before \"|\"\n", 2);
-		return ;
+		ms_error_handler("Wrong pipe: no command before \"|\"", 0);
+		return (0);
 	}
 	while (str[i++])
-		;
-	if (str[i - 2] == '|')
-		ft_putstr_fd("Wrong pipe: no command after \"|\"\n", 2);
+	{
+		if (str[i] == '|')
+		{
+			if (ms_check_empty_pipe(str + i))
+			{
+				ms_error_handler("Wrong pipe: empty pipe \"|\"", 0);
+				return (0);
+			}
+		}
+	}
+	return (1);
 }
+
+/*	Each check function returns in case of invalid syntax so as to avoid
+	printing multiple error msgs	*/
 
 void	ms_syntax_checker(char *str)
 {
-	ms_checkquotes(str, 39);
-	ms_checkquotes(str, 34);
-	ms_checkpipes(str);
-	ms_checkspecialchar(str);
+	if (!ms_checkquotes(str, 39))
+		return ;
+	if (!ms_checkquotes(str, 34))
+		return ;
+	if (!ms_checkpipes(str))
+		return ;
+	if (!ms_checkspecialchar(str))
+		return ;
 }
