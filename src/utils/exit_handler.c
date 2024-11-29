@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 12:54:30 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 12:54:41 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/28 16:49:33 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	ms_exit_handler(const char *msg, t_list *ms_env)
 {
 	if (msg)
 		ft_printf("%s\n", msg);
-	ft_lstclear(&ms_env, free); //Add GC
+	ft_lstclear(&ms_env, free);
+	gc_cleanup();
 	exit(0);
 }

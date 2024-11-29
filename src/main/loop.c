@@ -23,14 +23,12 @@ char	*ms_check_empty_input(char *input)
 	if (input == NULL)
 		return (NULL);
 	trimmed = ft_strtrim(input, " \n");
-	free(input);
 	if (!trimmed)
 		ms_error_handler("Memory allocation error", 1);
+	else
+		gc_add(trimmed);
 	if (trimmed[0] == '\0')
-	{
-		free(trimmed);
 		return (NULL);
-	}
 	return (trimmed);
 }
 
@@ -49,8 +47,9 @@ void	ms_main_loop(t_list *ms_env)
 	while (42)
 	{
 		prompt = ms_build_prompt(ms_env);
+		gc_add(prompt);
 		input = readline(prompt);
-		free(prompt);
+		gc_add(input);
 		if (input == NULL)
 		{
 			ms_exit_handler("exit", ms_env);
@@ -60,12 +59,9 @@ void	ms_main_loop(t_list *ms_env)
 		if (!input)
 			continue ;
 		if (ft_strlen(input) == 4 && !ft_strncmp(input, "exit", 4))
-		{
-			free(input);
 			ms_exit_handler("exit", ms_env);
-		}
 		add_history(input);
 		ms_tokenizer(ms_env, input);
-		free(input);
+		gc_add(input);
 	}
 }
