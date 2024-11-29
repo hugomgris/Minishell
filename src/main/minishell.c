@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 12:25:11 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/29 09:34:59 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	main(int argc, char **argv, char *env[])
 	(void)argc;
 	(void)argv;
 	ms_env = NULL;
-	ms_env = ms_copy_env(ms_env, env);
+	ms_env = ms_copy_env(env);
 	action.sa_handler = ms_signal_handler;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = SA_RESTART;

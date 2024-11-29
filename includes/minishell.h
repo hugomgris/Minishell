@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 18:02:20 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/29 12:21:30 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,23 @@ void	ms_sigint_handler(void);
 void	ms_sigquit_handler(void);
 
 //ENVIRONMENT COPY functions
-t_list	*ms_copy_env(t_list *ms_env, char	**env);
-void	ms_add_env_variable(t_list **ms_env, const char *env_var);
+t_list	*ms_copy_env(char	**env);
+void	ms_add_env_variable(const char *env_var);
 char	*ms_create_user_entry(void);
-char	*get_prompt_user(void);
+char	*ms_get_prompt_user(t_list *ms_env);
+t_list	**ms_env_instance(void);
+char	*ms_get_env_entry(t_list *ms_env, char *key);
+char	*ms_short_dir(char *dir);
+char	*ms_make_home(char *cwd);
 
 //GARBAGE COLLECTOR functions
 void	gc_cleanup(void);
 t_list	**gc_instance(void);
 void	gc_add(void	*ptr);
+
+//CD BUILTIN functions
+void	ms_cd_home(t_list *ms_env);
+void	ms_cd_back(t_list *ms_env);
+void	ms_cd_dir(t_list *ms_env);
 
 #endif

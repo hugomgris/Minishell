@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 18:39:21 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/29 14:39:56 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,24 @@ char	*ms_username_from_psswd(void)
 	return (username);
 }
 
+/*
+Helper function to prompt build. Gets user from USER= entry.
+If USER= doesn't exist, tryes to make it from /etc/passwd (root).
+*/
 char	*get_prompt_user(void)
 {
 	char	*username;
 
-	username = getenv("USER");
+	username = getenv("USER=");
 	if (!username)
 		username = ms_username_from_psswd();
 	return (username);
 }
 
+/*
+Helper function to prompt build. Creates the complete entry for user.
+	This means it gets the user via other helpers, adds "USER=".
+*/
 char	*ms_create_user_entry(void)
 {
 	char	*username;
@@ -77,25 +85,21 @@ char	*ms_create_user_entry(void)
 	return (user_entry);
 }
 
-void	ms_add_env_variable(t_list **ms_env, const char *env_var)
-{
-	t_list	*new_node;
-
-	new_node = ft_lstnew(ft_strdup(env_var));
-	if (!new_node)
-		ms_error_handler("Error: env copy failed during node creation", 0);
-	ft_lstadd_back(ms_env, new_node);
-}
-
-t_list	*ms_copy_env(t_list *ms_env, char **env)
+/*
+Makes a linked list copy of env variables.
+If env is unset, creates a "USER=" entry with helpers.
+*/
+t_list	*ms_copy_env(char **env)
 {
 	char	*user_entry;
 	int		i;
+	t_list	**ms_env;
 
+	ms_env = ms_env_instance();
 	if (!env || !*env)
 	{
 		user_entry = ms_create_user_entry();
-		ms_add_env_variable(&ms_env, user_entry);
+		ms_add_env_variable(user_entry);
 		free(user_entry);
 	}
 	else
@@ -103,9 +107,9 @@ t_list	*ms_copy_env(t_list *ms_env, char **env)
 		i = 0;
 		while (env[i])
 		{
-			ms_add_env_variable(&ms_env, env[i]);
+			ms_add_env_variable(env[i]);
 			i++;
 		}
 	}
-	return (ms_env);
+	return (*ms_env);
 }

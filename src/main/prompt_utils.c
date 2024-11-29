@@ -6,28 +6,15 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 12:53:16 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 18:41:26 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/29 14:32:24 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-char	*ms_get_env_variable(t_list *ms_env, const char *var_name)
-{
-	t_list	*current;
-	char	*value;
-
-	current = ms_env;
-	while (current)
-	{
-		value = current->content;
-		if (ft_strncmp(value, var_name, ft_strlen(var_name)) == 0)
-			return (value + ft_strlen(var_name));
-		current = current->next;
-	}
-	return (NULL);
-}
-
+/*
+Helper function to prompt build. Retrieves hostname if reachable.
+*/
 char	*ms_get_hostname(char *session_manager)
 {
 	char	*start;
@@ -50,6 +37,10 @@ char	*ms_get_hostname(char *session_manager)
 		return (NULL);
 }
 
+/*
+Helper function to prompt build. Retrieves username.
+If unset env, calls for other helpers to retrieve root user. 
+*/
 char	*ms_get_prompt_user(t_list *ms_env)
 {
 	char	*username;
@@ -72,15 +63,17 @@ char	*ms_get_prompt_user(t_list *ms_env)
 	gc_add(prompt_user);
 	prompt_user = ft_strjoin(prompt_user, hostname);
 	gc_add(prompt_user);
-	prompt_user = ft_strjoin(prompt_user, ":");
+	prompt_user = ft_strjoin(prompt_user, "\033[0;37m:");
 	gc_add(prompt_user);
 	return (prompt_user);
 }
 
+/*
+Helper function to prompt build. Gets the Current Working Director.
+*/
 char	*ms_get_cwd(t_list *ms_env)
 {
 	char	*cwd;
-	int		aux;
 
 	cwd = ms_get_env_variable(ms_env, "PWD=");
 	if (!cwd)
@@ -95,15 +88,16 @@ char	*ms_get_cwd(t_list *ms_env)
 			cwd = "unknown_directory";
 		}
 	}
-	aux = 3;
-	while (aux--)
-		cwd = ft_strchr(cwd, '/') + 1;
-	cwd--;
-	cwd = ft_strjoin("~", cwd);
+	ms_add_env_variable(ms_make_home(cwd));
+	cwd = ms_short_dir(cwd);
 	gc_add(cwd);
 	return (cwd);
 }
 
+/*
+Composite prompt builder.
+Creates the minishell prompt by calling different helpers. 
+*/
 char	*ms_build_prompt(t_list *ms_env)
 {
 	char	*username;
@@ -114,14 +108,16 @@ char	*ms_build_prompt(t_list *ms_env)
 	username = ms_get_prompt_user(ms_env);
 	gc_add(username);
 	cwd = ms_get_cwd(ms_env);
-	prompt = ft_strjoin("minishell> ", username);
+	prompt = ft_strjoin("\033[1;41mminishell>\033[0m\033[1;32m ", username);
 	gc_add(prompt);
 	if (!prompt)
 		ms_error_handler("Error: Mem alloc failed for prompt", 1);
 	tmp = ft_strjoin(prompt, " ");
 	gc_add(tmp);
-	prompt = ft_strjoin(tmp, cwd);
+	prompt = ft_strjoin(tmp, "\033[0m\033[1;34m");
 	gc_add(prompt);
-	tmp = ft_strjoin(prompt, "$ ");
+	tmp = ft_strjoin(prompt, cwd);
+	gc_add(tmp);
+	tmp = ft_strjoin(tmp, "\033[0m$ ");
 	return (tmp);
 }
