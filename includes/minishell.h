@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/27 18:22:52 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/11/28 18:02:20 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ char	*ms_get_prompt_user(t_list *ms_env);
 char	*ms_get_hostname(char *session_manager);
 char	*ms_get_env_variable(t_list *ms_env, const char *var_name);
 char	*ms_check_empty_input(char *input);
+char	*ms_username_from_psswd(void);
 
 //TOKENIZER & SYNTAX CHECK
 void	ms_tokenizer(char *input);
@@ -54,6 +55,10 @@ t_list	*ms_copy_env(t_list *ms_env, char	**env);
 void	ms_add_env_variable(t_list **ms_env, const char *env_var);
 char	*ms_create_user_entry(void);
 char	*get_prompt_user(void);
-char	*ms_username_from_psswd(void);
+
+//GARBAGE COLLECTOR functions
+void	gc_cleanup(void);
+t_list	**gc_instance(void);
+void	gc_add(void	*ptr);
 
 #endif

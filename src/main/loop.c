@@ -6,8 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 12:54:15 by hmunoz-g         ###   ########.fr       */
-/*   Updated: 2024/11/27 18:48:50 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/11/28 17:34:47 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +23,12 @@ char	*ms_check_empty_input(char *input)
 	if (input == NULL)
 		return (NULL);
 	trimmed = ft_strtrim(input, " \n");
-	free(input);
 	if (!trimmed)
 		ms_error_handler("Memory allocation error", 1);
+	else
+		gc_add(trimmed);
 	if (trimmed[0] == '\0')
-	{
-		free(trimmed);
 		return (NULL);
-	}
 	return (trimmed);
 }
 
@@ -50,8 +47,9 @@ void	ms_main_loop(t_list *ms_env)
 	while (42)
 	{
 		prompt = ms_build_prompt(ms_env);
+		gc_add(prompt);
 		input = readline(prompt);
-		free(prompt);
+		gc_add(input);
 		if (input == NULL)
 		{
 			ms_exit_handler("exit", ms_env);
@@ -61,12 +59,8 @@ void	ms_main_loop(t_list *ms_env)
 		if (!input)
 			continue ;
 		if (ft_strlen(input) == 4 && !ft_strncmp(input, "exit", 4))
-		{
-			free(input);
 			ms_exit_handler("exit", ms_env);
-		}
 		add_history(input);
 		ms_tokenizer(input);
-		free(input);
 	}
 }

@@ -6,25 +6,42 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/27 16:26:50 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/28 18:39:21 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Recover username in case of unset env.
+Fetches and reads /etc/psswd, tokenizes user (root), and returns it.
+*/
 char	*ms_username_from_psswd(void)
 {
+	int		fd;
+	char	*line;
 	char	*username;
-	char	*home;
-	char	*last_slash;
+	char	*token;
 
-	home = getenv("HOME");
-	if (!home)
-		return (NULL);
-	last_slash = ft_strrchr(home, '/');
-	if (!last_slash || last_slash == home)
-		return (NULL);
-	username = last_slash + 1;
+	line = NULL;
+	username = "unknown";
+	fd = open("/etc/passwd", O_RDONLY);
+	if (fd == -1)
+		return (username);
+	line = get_next_line(fd);
+	while (line)
+	{
+		token = ft_strtok(line, ":");
+		if (token)
+		{
+			username = ft_strdup(token);
+			break ;
+		}
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+	gc_add(line);
 	return (username);
 }
 
