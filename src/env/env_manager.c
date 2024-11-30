@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/30 16:12:16 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/30 17:07:04 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,12 @@ char	*ms_get_prompt_user(t_list **ms_env, t_list **gc)
 	char	*session_manager;
 
 	hostname = NULL;
-	username = ms_get_env_variable(ms_env, "USER=");
+	username = ms_get_env_variable(*ms_env, "USER=");
 	if (!username)
 		username = ms_username_from_psswd(gc);
 	if (!username)
 		username = "unknown";
-	session_manager = ms_get_env_variable(ms_env, "SESSION_MANAGER=");
+	session_manager = ms_get_env_variable(*ms_env, "SESSION_MANAGER=");
 	if (session_manager)
 		hostname = ms_get_hostname(session_manager, gc);
 	if (!hostname)
@@ -72,7 +72,6 @@ char	*ms_get_prompt_user(t_list **ms_env, t_list **gc)
 	return (prompt_user);
 }
 
-//!mirar si hace falta gc_add la linea 85.
 char	*ms_create_user_entry(t_list **ms_env, t_list **gc)
 {
 	char	*username;

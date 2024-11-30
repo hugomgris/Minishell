@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/30 16:45:23 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/30 17:07:26 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	ms_add_env_variable(t_list **ms_env, const char *env_var, t_list **gc);
 char	*ms_create_user_entry(t_list **ms_env, t_list **gc);
 char	*ms_get_prompt_user(t_list **ms_env, t_list **gc);
 char	*ms_username_from_psswd(t_list **gc);
-char	*ms_get_env_variable(t_list **ms_env, const char *var_name);
+char	*ms_get_env_variable(t_list *ms_env, const char *var_name);
 char	*ms_get_cwd(t_list **ms_env, t_list **gc);
 char	*ms_get_hostname(char *session_manager, t_list **gc);
 

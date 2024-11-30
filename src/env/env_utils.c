@@ -6,18 +6,18 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/30 15:41:51 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/30 17:07:24 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-char	*ms_get_env_variable(t_list **ms_env, const char *var_name)
+char	*ms_get_env_variable(t_list *ms_env, const char *var_name)
 {
 	t_list	*current;
 	char	*value;
 
-	current = *ms_env;
+	current = ms_env;
 	while (current)
 	{
 		value = current->content;
@@ -55,7 +55,7 @@ char	*ms_get_cwd(t_list **ms_env, t_list **gc)
 	char	*cwd;
 	int		aux;
 
-	cwd = ms_get_env_variable(ms_env, "PWD=");
+	cwd = ms_get_env_variable(*ms_env, "PWD=");
 	if (!cwd)
 	{
 		cwd = malloc(PATH_MAX);
