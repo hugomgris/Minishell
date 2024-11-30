@@ -38,7 +38,7 @@ SRCS 		:= 	src/main/minishell.c 			\
 				src/parser/tokenizer.c 			\
 				src/parser/syntax_checker.c 	\
 				src/signals/signals.c 			\
-				src/env/env.c 					\
+				src/env/env_manager.c 			\
 				src/env/env_utils.c 			\
 				src/utils/string_utils.c 		\
 				src/utils/error_handler.c 		\

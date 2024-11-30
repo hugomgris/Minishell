@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 12:45:35 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/28 18:32:18 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/11/30 10:00:53 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ char	*ft_free_gnl(char **str);
 int		ft_array_count(char **ptr);
 char	*ft_append_c(char *start, char c);
 void	ft_print_array(char **array);
-void	cucufu(void);
+void	cucufu(int index);
 char	*ft_strtok(char *str, const char *delim);
 
 #endif
