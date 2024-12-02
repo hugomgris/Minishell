@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/30 15:47:02 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/02 18:32:56 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	ms_checkspecialchar(char *str)
 	return (1);
 }
 
-int	ms_check_empty_pipe(char *str, t_list **ms_env, t_list **gc)
+int	ms_check_empty_pipe(t_ms *ms, char *str)
 {
 	str++;
 	while (ft_isspace(*str))
@@ -73,7 +73,7 @@ int	ms_check_empty_pipe(char *str, t_list **ms_env, t_list **gc)
 		return (1);
 	else if (*str == '\0')
 	{
-		ms_error_handler(ms_env, gc, "Wrong pipe: no command after \"|\"", 0);
+		ms_error_handler(ms, "Wrong pipe: no command after \"|\"", 0);
 		return (1);
 	}
 	else
@@ -83,7 +83,7 @@ int	ms_check_empty_pipe(char *str, t_list **ms_env, t_list **gc)
 /*	Note: even though the input is trimmed, there can be tabs at the
 	head and/or tail of the string, hence the ft_isspace()	*/
 
-int	ms_checkpipes(char *str, t_list **ms_env, t_list **gc)
+int	ms_checkpipes(t_ms *ms, char *str)
 {
 	int	i;
 
@@ -92,16 +92,16 @@ int	ms_checkpipes(char *str, t_list **ms_env, t_list **gc)
 		;
 	if (str[i] == '|')
 	{
-		ms_error_handler(ms_env, gc, "Wrong pipe: no command before \"|\"", 0);
+		ms_error_handler(ms, "Wrong pipe: no command before \"|\"", 0);
 		return (0);
 	}
 	while (str[i++])
 	{
 		if (str[i] == '|')
 		{
-			if (ms_check_empty_pipe(str + i, ms_env, gc))
+			if (ms_check_empty_pipe(ms, str + i))
 			{
-				ms_error_handler(ms_env, gc, "Wrong pipe: empty pipe \"|\"", 0);
+				ms_error_handler(ms, "Wrong pipe: empty pipe \"|\"", 0);
 				return (0);
 			}
 		}
@@ -112,13 +112,13 @@ int	ms_checkpipes(char *str, t_list **ms_env, t_list **gc)
 /*	Each check function returns in case of invalid syntax so as to avoid
 	printing multiple error msgs	*/
 
-void	ms_syntax_checker(char *str, t_list **ms_env, t_list **gc)
+void	ms_syntax_checker(t_ms *ms, char *str)
 {
 	if (!ms_checkquotes(str, 39))
 		return ;
 	if (!ms_checkquotes(str, 34))
 		return ;
-	if (!ms_checkpipes(str, ms_env, gc))
+	if (!ms_checkpipes(ms, str))
 		return ;
 	if (!ms_checkspecialchar(str))
 		return ;
