@@ -80,13 +80,14 @@ int	ms_key_checker(char *key, const char *var)
 	return (0);
 }
 
-char	*ms_search_env(t_list **ms_env, char *str, int start)
+char	*ms_search_env(t_list **ms_env, char *str, int start, t_list **gc)
 {
 	char	*key;
 	char	*tmp;
 	t_list	*aux;
 
 	tmp = ft_strdup(str);
+	gc_add(tmp, gc);
 	aux = *ms_env;
 	if (ms_env == NULL)
 		return (0);
@@ -104,15 +105,21 @@ char	*ms_search_env(t_list **ms_env, char *str, int start)
 	return (str);
 }
 
-char	*ms_expand_variable(t_list **ms_env, char *str)
+char	*ms_expand_variable(t_list **ms_env, char *str, t_list **gc)
 {
 	int		i;
 
 	i = -1;
 	while (str[++i])
 	{
-		if (str[i] == '$' && ft_isalnum(str[i + 1]))
-			str = ms_search_env(ms_env, str, i);
+		if (str[i] == '$' && (str[i + 1] == '\0' || ft_isalnum(str[i + 1])))
+		{
+			str = ms_search_env(ms_env, str, i, gc);
+			gc_add(str, gc);
+		}
+		if (str[i] == '\0')
+			break ;
 	}
+	ft_printf("expanded vars=%s\n", str);
 	return (str);
 }
