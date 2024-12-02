@@ -15,5 +15,5 @@
 void	ms_tokenizer(t_list **ms_env, char *str, t_list **gc)
 {
 	ms_syntax_checker(str, ms_env, gc);
-	str = ms_expand_variable(ms_env, str);
+	str = ms_expand_variable(ms_env, str, gc);
 }
