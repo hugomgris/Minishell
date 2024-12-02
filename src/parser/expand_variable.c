@@ -80,29 +80,31 @@ int	ms_key_checker(char *key, const char *var)
 	return (0);
 }
 
-char	*ms_search_env(t_list *ms_env, char *str, int start)
+char	*ms_search_env(t_list **ms_env, char *str, int start)
 {
 	char	*key;
 	char	*tmp;
+	t_list	*aux;
 
 	tmp = ft_strdup(str);
+	aux = *ms_env;
 	if (ms_env == NULL)
 		return (0);
-	key = strtok(tmp + start + 1, " ");
-	while (ms_env != NULL)
+	key = ft_strtok(tmp + start + 1, " ");
+	while (aux != NULL)
 	{
-		if (ms_key_checker(key, ms_env->content))
+		if (ms_key_checker(key, aux->content))
 		{
-			str = ms_replace_expanded(str, key, ms_env->content);
+			str = ms_replace_expanded(str, key, aux->content);
 			return (str);
 		}
-		ms_env = ms_env->next;
+		aux = aux->next;
 	}
 	str = ms_replace_null_value(str, key);
 	return (str);
 }
 
-char	*ms_expand_variable(t_list *ms_env, char *str)
+char	*ms_expand_variable(t_list **ms_env, char *str)
 {
 	int		i;
 
