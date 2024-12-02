@@ -34,6 +34,7 @@ int		ms_checkquotes(char *str, char c);
 int		ms_checkspecialchar(char *str);
 int		ms_checkpipes(char *str, t_list **ms_env, t_list **gc);
 int		ms_check_empty_pipe(char *str, t_list **ms_env, t_list **gc);
+int     ms_checkredirections(char *str);
 char	*ms_expand_variable(t_list **ms_env, char *str, t_list **gc);
 char	*ms_replace_expanded(char *str, char *key, char *var);
 char	*ms_replace_null_value(char *str, char *key);

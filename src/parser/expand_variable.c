@@ -120,6 +120,5 @@ char	*ms_expand_variable(t_list **ms_env, char *str, t_list **gc)
 		if (str[i] == '\0')
 			break ;
 	}
-	ft_printf("expanded vars=%s\n", str);
 	return (str);
 }
