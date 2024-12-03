@@ -17,7 +17,6 @@ char	*ft_strtok(char *str, const char *delim)
 	static char	*last;
 	char		*start;
 
-	last = NULL;
 	if (str)
 		last = str;
 	if (!last)

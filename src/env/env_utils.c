@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/30 17:07:24 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/02 20:43:59 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,24 +47,28 @@ char	*ms_get_hostname(char *session_manager, t_list **gc)
 		return (hostname);
 	}
 	else
-		return (NULL);
+	{
+		hostname = ft_strdup("localhost");
+		gc_add(hostname, gc);
+		return (hostname);
+	}
 }
 
-char	*ms_get_cwd(t_list **ms_env, t_list **gc)
+char	*ms_get_cwd(t_ms *ms)
 {
 	char	*cwd;
 	int		aux;
 
-	cwd = ms_get_env_variable(*ms_env, "PWD=");
+	cwd = ms_get_env_variable(ms->ms_env, "PWD=");
 	if (!cwd)
 	{
 		cwd = malloc(PATH_MAX);
 		if (!cwd)
-			ms_error_handler(ms_env, gc, "Error: Mem alloc failed for PWD", 1);
-		gc_add(cwd, gc);
+			ms_error_handler(ms, "Error: Mem alloc failed for PWD", 1);
+		gc_add(cwd, &ms->gc);
 		if (getcwd(cwd, PATH_MAX) == NULL)
 		{
-			ms_error_handler(ms_env, gc, "Error: Unable to retrieve CWD", 0);
+			ms_error_handler(ms, "Error: Unable to retrieve CWD", 0);
 			cwd = "unknown_directory";
 		}
 	}
@@ -73,6 +77,6 @@ char	*ms_get_cwd(t_list **ms_env, t_list **gc)
 		cwd = ft_strchr(cwd, '/') + 1;
 	cwd--;
 	cwd = ft_strjoin("~", cwd);
-	gc_add(cwd, gc);
+	gc_add(cwd, &ms->gc);
 	return (cwd);
 }
