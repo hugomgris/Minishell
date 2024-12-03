@@ -41,9 +41,9 @@ int	ms_checkquotes(char *str, char c)
 	if (flag)
 	{
 		ft_putstr_fd("Error: unclosed quote\n", 2);
-		return (0);
+		return (FALSE);
 	}
-	return (1);
+	return (TRUE);
 }
 
 int	ms_checkspecialchar(char *str)
@@ -56,10 +56,10 @@ int	ms_checkspecialchar(char *str)
 		if (str[i] == 59 || str[i] == 92)
 		{
 			ft_putstr_fd("Invalid character: ';' '\\'\n", 2);
-			return (0);
+			return (FALSE);
 		}
 	}
-	return (1);
+	return (TRUE);
 }
 
 int	ms_check_empty_pipe(t_ms *ms, char *str)
@@ -70,14 +70,14 @@ int	ms_check_empty_pipe(t_ms *ms, char *str)
 		str++;
 	}
 	if (*str == '|')
-		return (1);
+		return (TRUE);
 	else if (*str == '\0')
 	{
 		ms_error_handler(ms, "Wrong pipe: no command after \"|\"", 0);
-		return (1);
+		return (TRUE);
 	}
 	else
-		return (0);
+		return (FALSE);
 }
 
 /*	Note: even though the input is trimmed, there can be tabs at the
@@ -93,7 +93,7 @@ int	ms_checkpipes(t_ms *ms, char *str)
 	if (str[i] == '|')
 	{
 		ms_error_handler(ms, "Wrong pipe: no command before \"|\"", 0);
-		return (0);
+		return (FALSE);
 	}
 	while (str[i++])
 	{
@@ -102,11 +102,11 @@ int	ms_checkpipes(t_ms *ms, char *str)
 			if (ms_check_empty_pipe(ms, str + i))
 			{
 				ms_error_handler(ms, "Wrong pipe: empty pipe \"|\"", 0);
-				return (0);
+				return (FALSE);
 			}
 		}
 	}
-	return (1);
+	return (TRUE);
 }
 
 /*	Each check function returns in case of invalid syntax so as to avoid
@@ -121,5 +121,7 @@ void	ms_syntax_checker(t_ms *ms, char *str)
 	if (!ms_checkpipes(ms, str))
 		return ;
 	if (!ms_checkspecialchar(str))
+		return ;
+	if (!ms_checkredirections(str))
 		return ;
 }

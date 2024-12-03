@@ -42,9 +42,10 @@ int		ms_checkspecialchar(char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
 char	*ms_expand_variable(t_list **ms_env, char *str);
+int   ms_checkredirections(char *str);
 char	*ms_replace_expanded(char *str, char *key, char *var);
 char	*ms_replace_null_value(char *str, char *key);
-char	*ms_search_env(t_list **ms_env, char *str, int start);
+char	*ms_search_env(t_list **ms_env, char *str, int start, t_list **gc);
 
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);
