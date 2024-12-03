@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/02 20:44:00 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/03 18:46:51 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,76 +16,13 @@
 Recover username in case of unset env.
 Fetches and reads /etc/psswd, tokenizes user (root), and returns it.
 */
-char	*ms_username_from_psswd(t_list **gc)
-{
-	int		fd;
-	char	*line;
-	char	*username;
-	char	*token;
-
-	line = NULL;
-	username = "unknown";
-	fd = open("/etc/passwd", O_RDONLY);
-	if (fd == -1)
-		return (username);
-	line = get_next_line(fd);
-	while (line)
-	{
-		token = ft_strtok(line, ":");
-		if (token)
-		{
-			username = ft_strdup(token);
-			gc_add(username, gc);
-			break ;
-		}
-		line = get_next_line(fd);
-	}
-	close(fd);
-	gc_add(line, gc);
-	return (username);
-}
-
-char	*ms_get_prompt_user(t_ms *ms)
-{
-	static int	call_count = 0;
-	char		*username;
-	char		*hostname;
-	char		*prompt_user;
-	char		*session_manager;
-
-	printf("Getting prompt user... (Call %d)\n", ++call_count);
-	hostname = NULL;
-	username = ms_get_env_variable(ms->ms_env, "USER=");
-	if (!username)
-		username = ms_username_from_psswd(&ms->gc);
-	if (!username)
-		username = "unknown";
-	printf("Username: %s\n", username);
-	session_manager = ms_get_env_variable(ms->ms_env, "SESSION_MANAGER=");
-	if (session_manager)
-		hostname = ms_get_hostname(session_manager, &ms->gc);
-	if (!hostname)
-		hostname = "localhost";
-	printf("Hostname: %s\n", hostname);
-	if (hostname && !ft_strncmp(hostname, "localhost", ft_strlen("localhost")))
-		hostname = "localhost";
-	printf("Final Hostname: %s\n", hostname);
-	prompt_user = ft_strjoin(username, "@");
-	gc_add(prompt_user, &ms->gc);
-	prompt_user = ft_strjoin(prompt_user, hostname);
-	gc_add(prompt_user, &ms->gc);
-	prompt_user = ft_strjoin(prompt_user, "\033[0;37m:");
-	gc_add(prompt_user, &ms->gc);
-	printf("Prompt User: %s\n", prompt_user);
-	return (prompt_user);
-}
 
 char	*ms_create_user_entry(t_ms *ms)
 {
 	char	*username;
 	char	*user_entry;
 
-	username = ms_get_prompt_user(ms);
+	username = ms_get_username(ms);
 	if (!username)
 	{
 		username = ft_strdup("unknown");
@@ -103,26 +40,34 @@ char	*ms_create_user_entry(t_ms *ms)
 	return (user_entry);
 }
 
-void	ms_add_env_variable(t_ms *ms, const char *env_var)
+char	*ms_create_pwd_entry(t_ms *ms, char *cwd)
 {
-	t_list	*new_node;
-
-	new_node = ft_lstnew(ft_strdup(env_var));
-	if (!new_node)
-		ms_error_handler(ms, "Error: env copy failed", 0);
-	ft_lstadd_back(&ms->ms_env, new_node);
+	cwd = malloc(PATH_MAX);
+	if (!cwd)
+		ms_error_handler(ms, "Error: Mem alloc failed for PWD", 1);
+	gc_add(cwd, &ms->gc);
+	if (getcwd(cwd, PATH_MAX) == NULL)
+	{
+		ms_error_handler(ms, "Error: Unable to retrieve CWD", 0);
+		cwd = "unknown_directory";
+	}
+	ms_set_env_variable(ms, "PWD", cwd);
+	ms_set_env_variable(ms, "OLDPWD", cwd);
+	return (cwd);
 }
 
 t_list	*ms_copy_env(t_ms *ms, char **env)
 {
 	char	*user_entry;
+	char	*cwd;
 	int		i;
 
 	if (!env || !*env)
 	{
 		user_entry = ms_create_user_entry(ms);
 		ms_add_env_variable(ms, user_entry);
-		gc_add(user_entry, &ms->gc);
+		cwd = NULL;
+		cwd = ms_create_pwd_entry(ms, cwd);
 	}
 	else
 	{
