@@ -37,23 +37,26 @@ SRCS 		:= 	src/main/minishell.c 			\
 				src/parser/parser.c 			\
 				src/parser/tokenizer.c 			\
 				src/parser/syntax_checker.c 	\
+				src/parser/expand_variable.c	\
+				src/parser/redirection_checker.c\
 				src/signals/signals.c 			\
 				src/env/env_manager.c 			\
 				src/env/env_utils.c 			\
 				src/utils/string_utils.c 		\
 				src/utils/error_handler.c 		\
 				src/utils/exit_handler.c		\
-				src/utils/garbage_collector.c	\
-				src/parser/expand_variable.c
+				src/utils/garbage_collector.c	
 
 OBJS 		:= $(SRCS:.c=.o)
+
+DEPS		:= $(SRCS:.c=.d)
 
 # -=-=-=-=-    TARGETS -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
 all: make_libft make_printf $(NAME)
 
-%.o: %.c Makefile includes/minishell.h
-	$(CC) $(FLAGS) -Ilibft -Ilibft/ft_printf -c $< -o $@
+%.o: %.c Makefile
+	$(CC) $(FLAGS) -MT $@ -MMD -MP -Ilibft -Ilibft/ft_printf -c $< -o $@
 	@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
 
 $(NAME): $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a $(OBJS)
@@ -73,14 +76,14 @@ make_printf:
 clean:
 	@$(MAKE) clean -C $(LIBFTDIR)
 	@$(MAKE) clean -C $(PRINTFDIR)
-	@$(RM) $(OBJS)
-	@echo "$(RED)Cleaned object files$(DEF_COLOR)"
+	@$(RM) $(OBJS) $(DEPS) 
+	@echo "$(RED)Cleaned object files and dependencies$(DEF_COLOR)"
 
 fclean: clean
-	@$(MAKE) fclean -C $(LIBFTDIR)
-	@$(MAKE) fclean -C $(PRINTFDIR)
-	@$(RM) minishell
+	@$(RM) minishell $(PRINTFDIR)libftprintf.a $(LIBFTDIR)libft.a
 	@echo "$(RED)Cleaned all binaries$(DEF_COLOR)"
+
+-include $(DEPS)
 
 re: fclean all
 
