@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 12:53:16 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/02 20:32:42 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/03 18:46:06 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@ char	*ms_build_prompt(t_ms *ms)
 	char	*cwd;
 	char	*prompt;
 	char	*tmp;
+	char	cwdt[1024];
 
-	printf("Building prompt...\n");
 	username = ms_get_prompt_user(ms);
-	gc_add(username, &ms->gc);
 	cwd = ms_get_cwd(ms);
+	getcwd(cwdt, sizeof(cwdt));
 	prompt = ft_strjoin("\033[0;41mminishell>\033[0m\033[1;32m ", username);
 	gc_add(prompt, &ms->gc);
 	if (!prompt)
