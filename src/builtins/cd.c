@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/03 20:19:44 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/03 20:23:28 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,8 @@ void	ms_cd(t_ms *ms, char *path)
 		ms_cd_home(ms);
 	else if (path[0] == '/' && path[1])
 		ms_cd_absolute(ms, path);
-	else if (path[0] && !path[1])
-		ms_cd_root(ms); //! this is not yet implemented!! AND ITS NOT NEEDED BY I DON'T CARE YOU CAN'T STOP ME HAHAHAHA
+	/*else if (path[0] && !path[1])
+		ms_cd_root(ms); //! this is not yet implemented!! AND ITS NOT NEEDED BY I DON'T CARE YOU CAN'T STOP ME HAHAHAHA*/
 	else if (path[0] == '-')
 		ms_cd_back(ms);
 	else
