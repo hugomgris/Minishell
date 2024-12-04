@@ -28,7 +28,8 @@ SRCS 		:= 	src/main/minishell.c 			\
 				src/main/loop.c 				\
 				src/main/prompt_utils.c			\
 				src/builtins/cd.c 				\
-				src/builtins/cd_utils.c			\
+				src/builtins/cd_utils1.c		\
+				src/builtins/cd_utils2.c		\
 				src/builtins/echo.c 			\
 				src/builtins/env.c 				\
 				src/builtins/exit.c 			\

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/03 18:50:53 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/04 13:44:54 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,19 +95,25 @@ char	*ms_get_hostname(char *session_manager, t_ms *ms)
 char	*ms_get_cwd(t_ms *ms)
 {
 	char	*cwd;
-	int		aux;
+	char	*home;
+	char	*new_cwd;
+	size_t	home_len;
 
 	cwd = ms_get_env_variable(ms, "PWD=");
-	aux = 3;
-	while (aux--)
-		cwd = ft_strchr(cwd, '/') + 1;
-	cwd--;
-	if (!cwd)
+	if (cwd[0] == '/' && !cwd[1])
+		return ("/");
+	home = ms_get_env_variable(ms, "HOME=");
+	if (!home)
+		return (cwd);
+	home_len = ft_strlen(home);
+	if (ft_strncmp(cwd, home, home_len) == 0)
 	{
-		return ("~");
+		new_cwd = ft_strjoin("~", cwd + home_len);
+		if (!new_cwd)
+			ms_error_handler(ms, "Memory allocation failed", 1);
+		gc_add(new_cwd, &ms->gc);
+		return (new_cwd);
 	}
-	cwd = ft_strjoin("~", cwd);
-	gc_add(cwd, &ms->gc);
 	return (cwd);
 }
 
