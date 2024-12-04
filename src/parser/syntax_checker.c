@@ -40,7 +40,7 @@ int	ms_checkquotes(char *str, char c)
 	}
 	if (flag)
 	{
-		ft_putstr_fd("Error: unclosed quote\n", 2);
+		ms_error_handler(NULL, "Error: Unclosed quotes", 0);
 		return (FALSE);
 	}
 	return (TRUE);
@@ -112,16 +112,17 @@ int	ms_checkpipes(t_ms *ms, char *str)
 /*	Each check function returns in case of invalid syntax so as to avoid
 	printing multiple error msgs	*/
 
-void	ms_syntax_checker(t_ms *ms, char *str)
+int	ms_syntax_checker(t_ms *ms, char *str)
 {
 	if (!ms_checkquotes(str, 39))
-		return ;
+		return (FALSE);
 	if (!ms_checkquotes(str, 34))
-		return ;
+		return (FALSE);
 	if (!ms_checkpipes(ms, str))
-		return ;
+		return (FALSE);
 	if (!ms_checkspecialchar(str))
-		return ;
+		return (FALSE);
 	if (!ms_checkredirections(str))
-		return ;
+		return (FALSE);
+	return (TRUE);
 }

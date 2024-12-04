@@ -26,25 +26,48 @@ typedef struct s_ms
 {
 	t_list	*ms_env;
 	t_list	*gc;
+	t_list	*input;
+	char	**cmd_table;
 }	t_ms;
+
+typedef enum e_type_tokens
+{
+	T_ATOM,
+	T_LESS,
+	T_GREATER,
+	T_DBLESS,
+	T_DBGREATER,
+	T_PIPE,
+	T_LPARENTH,
+	T_RPARENTH,
+	T_AND,
+	T_OR,
+	T_NL
+}	t_token_type;
 
 //MAIN and LOOP functions
 void	ms_main_loop(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
 
-//TOKENIZER & SYNTAX CHECK
+//TOKENIZER
 void	ms_tokenizer(t_ms *ms, char *str);
-void	ms_syntax_checker(t_ms *ms, char *str);
+int		ms_count_tokens(char *str);
+void	ms_allocate_tokens(t_ms *ms, char *str);
+void	ms_get_tokens(t_ms *ms, char *str);
+void	ms_trim_tokens(t_ms *ms, char	**array);
+
+//SYNTAX CHECK
+int		ms_syntax_checker(t_ms *ms, char *str);
 int		ms_checkquotes(char *str, char c);
 int		ms_checkspecialchar(char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
-char	*ms_expand_variable(t_list **ms_env, char *str);
-int   ms_checkredirections(char *str);
+char	*ms_expand_variable(t_ms *ms, char *str);
+int		ms_checkredirections(char *str);
 char	*ms_replace_expanded(char *str, char *key, char *var);
 char	*ms_replace_null_value(char *str, char *key);
-char	*ms_search_env(t_list **ms_env, char *str, int start, t_list **gc);
+char	*ms_search_env(t_ms *ms, char *str, int start);
 
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);

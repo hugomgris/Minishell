@@ -80,16 +80,16 @@ int	ms_key_checker(char *key, const char *var)
 	return (0);
 }
 
-char	*ms_search_env(t_list **ms_env, char *str, int start, t_list **gc)
+char	*ms_search_env(t_ms *ms, char *str, int start)
 {
 	char	*key;
 	char	*tmp;
 	t_list	*aux;
 
 	tmp = ft_strdup(str);
-	gc_add(tmp, gc);
-	aux = *ms_env;
-	if (ms_env == NULL)
+	gc_add(tmp, &ms->gc);
+	aux = ms->ms_env;
+	if (aux == NULL)
 		return (0);
 	key = ft_strtok(tmp + start + 1, " ");
 	while (aux != NULL)
@@ -105,7 +105,7 @@ char	*ms_search_env(t_list **ms_env, char *str, int start, t_list **gc)
 	return (str);
 }
 
-char	*ms_expand_variable(t_list **ms_env, char *str, t_list **gc)
+char	*ms_expand_variable(t_ms *ms, char *str)
 {
 	int		i;
 
@@ -114,8 +114,8 @@ char	*ms_expand_variable(t_list **ms_env, char *str, t_list **gc)
 	{
 		if (str[i] == '$' && (str[i + 1] == '\0' || ft_isalnum(str[i + 1])))
 		{
-			str = ms_search_env(ms_env, str, i, gc);
-			gc_add(str, gc);
+			str = ms_search_env(ms, str, i);
+			gc_add(str, &ms->gc);
 		}
 		if (str[i] == '\0')
 			break ;
