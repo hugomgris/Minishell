@@ -6,11 +6,16 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 12:54:30 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/02 18:34:58 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/03 10:42:32 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void	print_list(void *content)
+{
+	ft_printf("%s\n", (char *)content);
+}
 
 /*
 Small exit handler that prints an exit msg, cleans ms_env and exits.

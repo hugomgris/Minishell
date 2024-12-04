@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 15:37:07 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/30 15:08:58 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/03 17:45:34 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@ This is the Garbage Collector hub. It is a simple tool that:
 	-Cleans up after itself with a function called before every exit.
 */
 
-void	ms_print_gc(t_list *gc, int index)
+void	ms_print_list(t_list *list)
 {
-	ft_printf("%d - GC List Contents: ", index);
-	while (gc)
+	ft_printf("printing list: \nxxxxxxxx\n");
+	while (list)
 	{
-		ft_printf("%p -> ", gc->content);
-		gc = gc->next;
+		ft_printf("%s\n", (char *)list->content);
+		list = list->next;
 	}
 	ft_printf("NULL\n");
 }

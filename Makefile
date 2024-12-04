@@ -28,6 +28,7 @@ SRCS 		:= 	src/main/minishell.c 			\
 				src/main/loop.c 				\
 				src/main/prompt_utils.c			\
 				src/builtins/cd.c 				\
+				src/builtins/cd_utils.c			\
 				src/builtins/echo.c 			\
 				src/builtins/env.c 				\
 				src/builtins/exit.c 			\
@@ -41,7 +42,8 @@ SRCS 		:= 	src/main/minishell.c 			\
 				src/parser/redirection_checker.c\
 				src/signals/signals.c 			\
 				src/env/env_manager.c 			\
-				src/env/env_utils.c 			\
+				src/env/env_utils1.c 			\
+				src/env/env_utils2.c 			\
 				src/utils/string_utils.c 		\
 				src/utils/error_handler.c 		\
 				src/utils/exit_handler.c		\

@@ -7,6 +7,7 @@
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
 /*   Updated: 2024/12/04 17:51:58 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/03 19:52:46 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,14 +86,31 @@ void	ms_sigquit_handler(void);
 t_list	*ms_copy_env(t_ms *ms, char **env);
 void	ms_add_env_variable(t_ms *ms, const char *env_var);
 char	*ms_create_user_entry(t_ms *ms);
+char	*ms_create_pwd_entry(t_ms *ms, char *cwd);
 char	*ms_get_prompt_user(t_ms *ms);
-char	*ms_username_from_psswd(t_list **gc);
-char	*ms_get_env_variable(t_list *ms_env, const char *var_name);
+char	*ms_username_from_psswd(t_ms *ms);
+char	*ms_get_env_variable(t_ms *ms, const char *var_name);
 char	*ms_get_cwd(t_ms *ms);
-char	*ms_get_hostname(char *session_manager, t_list **gc);
+char	*ms_get_hostname(char *session_manager, t_ms *ms);
+char	*ms_get_username(t_ms *ms);
+void	ms_set_env_variable(t_ms *ms, char *key, char *value);
+
+//EXECUTOR functions
+void	ms_executor(t_ms *ms);
+
+//BUILTIN functions
+void	ms_cd(t_ms *ms, char *path);
+int		ms_change_directory(t_ms *ms, char *new_path);
+int		ms_join_paths(char *cwd, char *path, char **new_path);
+void	ms_cd_absolute(t_ms *ms, char *path);
+void	ms_cd_home(t_ms *ms);
+void	ms_cd_back(t_ms *ms);
+void	ms_cd_relative(t_ms *ms, char *path);
+void	ms_update_env_pwd(t_list **env, const char *new_cwd);
+char	*ms_getcwd_or_error(t_ms *ms);
 
 //GARBAGE COLLECTOR functions
 void	gc_add(void *ptr, t_list **gc);
-void	ms_print_gc(t_list *gc, int index);
+void	ms_print_list(t_list *list);
 
 #endif

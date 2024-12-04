@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/02 20:32:58 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/03 15:45:47 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,28 +41,27 @@ For now, it just prints back the input.
 */
 void	ms_main_loop(t_ms *ms)
 {
-	char			*input;
-	static char		*prompt;
+	static char	*prompt;
 
 	while (42)
 	{
-		printf("Building prompt...\n");
 		prompt = ms_build_prompt(ms);
 		gc_add(prompt, &ms->gc);
-		input = readline(prompt);
-		gc_add(input, &ms->gc);
-		if (input == NULL)
+		ms->input = readline(prompt);
+		gc_add(ms->input, &ms->gc);
+		if (ms->input == NULL)
 		{
 			ms_exit_handler(ms, "exit");
 			break ;
 		}
-		input = ms_check_empty_input(ms, input);
-		if (!input)
+		ms->input = ms_check_empty_input(ms, ms->input);
+		if (!ms->input)
 			continue ;
-		if (ft_strlen(input) == 4 && !ft_strncmp(input, "exit", 4))
+		if (ft_strlen(ms->input) == 4 && !ft_strncmp(ms->input, "exit", 4))
 			ms_exit_handler(ms, "exit");
-		add_history(input);
-		ms_tokenizer(ms, input);
-		gc_add(input, &ms->gc);
+		add_history(ms->input);
+		ms_tokenizer(ms, ms->input);
+		ms_executor(ms);
+		gc_add(ms->input, &ms->gc);
 	}
 }
