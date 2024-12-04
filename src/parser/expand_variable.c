@@ -91,7 +91,7 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	tmp = ft_strdup(str);
 	gc_add(tmp, &ms->gc);
 	aux = ms->ms_env;
-	if (ms->ms_env == NULL)
+	if (aux == NULL)
 		return (0);
 	key = ft_strtok(tmp + start + 1, " ");
 	while (aux != NULL)

@@ -26,6 +26,7 @@ int	ms_checkoutfile(char *str)
 	{
 		if (str[i] == '>' && str[i + 1] == '>')
 		{
+			// call opening function in corresponding mode;
 			ft_printf("Redirect output to: s%\n", ft_strtok(str + 2, " "));
 			i += 2;
 		}
