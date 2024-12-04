@@ -1,33 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cucufu.c                                           :+:      :+:    :+:   */
+/*   ft_strrchr_n.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/26 12:46:25 by nponchon          #+#    #+#             */
-/*   Updated: 2024/11/30 10:05:19 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/12/04 18:00:29 by hmunoz-g          #+#    #+#             */
+/*   Updated: 2024/12/04 18:18:47 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	cucufu(int index)
+char	*ft_strrchr_n(const char *s, int c, int n)
 {
-	char	*cucufu_index_a;
-	char	*cucufu_index_b;
-	char	*conv;
+	size_t			len;
+	int				count;
+	unsigned char	target;
 
-	cucufu_index_a = "cucufu";
-	cucufu_index_b = NULL;
-	if (index)
+	count = 0;
+	target = (unsigned char)c;
+	len = 0;
+	while (s[len] != '\0')
+		len++;
+	while (len > 0)
 	{
-		conv = ft_itoa(index);
-		cucufu_index_a = ft_strjoin(cucufu_index_a, conv);
-		cucufu_index_b = ft_strjoin(cucufu_index_a, "\n");
-		free(cucufu_index_a);
-		free(conv);
+		len--;
+		if (s[len] == target)
+		{
+			count++;
+			if (count == n)
+				return ((char *)(s + len));
+		}
 	}
-	ft_putstr_fd(cucufu_index_b, 2);
-	free(cucufu_index_b);
+	return (NULL);
 }

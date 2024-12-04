@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checker.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/27 18:00:39 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/04 19:37:38 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 	- Check for special characters ('\', '\n', ';' etc.)
 */
 
-void	ms_checkquotes(char *str, char c)
+int	ms_checkquotes(char *str, char c)
 {
 	int	i;
 	int	flag;
@@ -39,10 +39,14 @@ void	ms_checkquotes(char *str, char c)
 			flag = 1;
 	}
 	if (flag)
-		ft_putstr_fd("Wrong pipe: no command before \"|\"\n", 2);
+	{
+		ms_error_handler(NULL, "Error: Unclosed quotes", 0);
+		return (FALSE);
+	}
+	return (TRUE);
 }
 
-void	ms_checkspecialchar(char *str)
+int	ms_checkspecialchar(char *str)
 {
 	int	i;
 
@@ -50,11 +54,36 @@ void	ms_checkspecialchar(char *str)
 	while (str[++i])
 	{
 		if (str[i] == 59 || str[i] == 92)
+		{
 			ft_putstr_fd("Invalid character: ';' '\\'\n", 2);
+			return (FALSE);
+		}
 	}
+	return (TRUE);
 }
 
-void	ms_checkpipes(char *str)
+int	ms_check_empty_pipe(t_ms *ms, char *str)
+{
+	str++;
+	while (ft_isspace(*str))
+	{
+		str++;
+	}
+	if (*str == '|')
+		return (TRUE);
+	else if (*str == '\0')
+	{
+		ms_error_handler(ms, "Wrong pipe: no command after \"|\"", 0);
+		return (TRUE);
+	}
+	else
+		return (FALSE);
+}
+
+/*	Note: even though the input is trimmed, there can be tabs at the
+	head and/or tail of the string, hence the ft_isspace()	*/
+
+int	ms_checkpipes(t_ms *ms, char *str)
 {
 	int	i;
 
@@ -63,19 +92,37 @@ void	ms_checkpipes(char *str)
 		;
 	if (str[i] == '|')
 	{
-		ft_putstr_fd("Wrong pipe: no command before \"|\"\n", 2);
-		return ;
+		ms_error_handler(ms, "Wrong pipe: no command before \"|\"", 0);
+		return (FALSE);
 	}
 	while (str[i++])
-		;
-	if (str[i - 2] == '|')
-		ft_putstr_fd("Wrong pipe: no command after \"|\"\n", 2);
+	{
+		if (str[i] == '|')
+		{
+			if (ms_check_empty_pipe(ms, str + i))
+			{
+				ms_error_handler(ms, "Wrong pipe: empty pipe \"|\"", 0);
+				return (FALSE);
+			}
+		}
+	}
+	return (TRUE);
 }
 
-void	ms_syntax_checker(char *str)
+/*	Each check function returns in case of invalid syntax so as to avoid
+	printing multiple error msgs	*/
+
+int	ms_syntax_checker(t_ms *ms, char *str)
 {
-	ms_checkquotes(str, 39);
-	ms_checkquotes(str, 34);
-	ms_checkpipes(str);
-	ms_checkspecialchar(str);
+	if (!ms_checkquotes(str, 39))
+		return (FALSE);
+	if (!ms_checkquotes(str, 34))
+		return (FALSE);
+	if (!ms_checkpipes(ms, str))
+		return (FALSE);
+	if (!ms_checkspecialchar(str))
+		return (FALSE);
+	if (!ms_checkredirections(ms, str))
+		return (FALSE);
+	return (TRUE);
 }

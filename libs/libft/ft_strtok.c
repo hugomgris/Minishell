@@ -1,33 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cucufu.c                                           :+:      :+:    :+:   */
+/*   ft_strtok.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/26 12:46:25 by nponchon          #+#    #+#             */
-/*   Updated: 2024/11/30 10:05:19 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/11/28 18:30:34 by hmunoz-g          #+#    #+#             */
+/*   Updated: 2024/12/02 20:48:34 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	cucufu(int index)
+char	*ft_strtok(char *str, const char *delim)
 {
-	char	*cucufu_index_a;
-	char	*cucufu_index_b;
-	char	*conv;
+	static char	*last;
+	char		*start;
 
-	cucufu_index_a = "cucufu";
-	cucufu_index_b = NULL;
-	if (index)
+	if (str)
+		last = str;
+	if (!last)
+		return (NULL);
+	while (*last && strchr(delim, *last))
+		last++;
+	if (!*last)
+		return (NULL);
+	start = last;
+	while (*last && !strchr(delim, *last))
+		last++;
+	if (*last)
 	{
-		conv = ft_itoa(index);
-		cucufu_index_a = ft_strjoin(cucufu_index_a, conv);
-		cucufu_index_b = ft_strjoin(cucufu_index_a, "\n");
-		free(cucufu_index_a);
-		free(conv);
+		*last = '\0';
+		last++;
 	}
-	ft_putstr_fd(cucufu_index_b, 2);
-	free(cucufu_index_b);
+	return (start);
 }
