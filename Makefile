@@ -38,6 +38,7 @@ SRCS 		:= 	src/main/minishell.c 			\
 				src/executor/redirection.c 		\
 				src/parser/parser.c 			\
 				src/parser/tokenizer.c 			\
+				src/parser/tokenizer_utils.c	\
 				src/parser/syntax_checker.c 	\
 				src/parser/expand_variable.c	\
 				src/parser/redirection_checker.c\
