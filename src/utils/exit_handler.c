@@ -27,5 +27,6 @@ void	ms_exit_handler(t_ms *ms, const char *msg)
 		ft_printf("%s\n", msg);
 	ft_lstclear(&ms->ms_env, free);
 	ft_lstclear(&ms->gc, free);
+	ft_lstclear(&ms->tokens, free);
 	exit(0);
 }
