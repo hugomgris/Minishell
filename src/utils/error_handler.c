@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/02 18:34:34 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/04 19:35:53 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	ms_error_handler(t_ms *ms, char *msg, int critical)
 	{
 		ft_lstclear(&ms->ms_env, free);
 		ft_lstclear(&ms->gc, free);
+		ft_lstclear(&ms->tokens, free);
 		exit (1);
 	}
 }
