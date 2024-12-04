@@ -6,8 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 17:51:58 by nponchon         ###   ########.fr       */
-/*   Updated: 2024/12/03 19:52:46 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:58:41 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +66,7 @@ int		ms_checkspecialchar(char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
 char	*ms_expand_variable(t_ms *ms, char *str);
-int		ms_checkredirections(char *str);
+int		ms_checkredirections(t_ms *ms, char *str);
 char	*ms_replace_expanded(char *str, char *key, char *var);
 char	*ms_replace_null_value(char *str, char *key);
 char	*ms_search_env(t_ms *ms, char *str, int start);
@@ -98,7 +97,7 @@ void	ms_set_env_variable(t_ms *ms, char *key, char *value);
 //EXECUTOR functions
 void	ms_executor(t_ms *ms);
 
-//BUILTIN functions
+//BUILTIN CD functions
 void	ms_cd(t_ms *ms, char *path);
 int		ms_change_directory(t_ms *ms, char *new_path);
 int		ms_join_paths(char *cwd, char *path, char **new_path);
@@ -106,8 +105,12 @@ void	ms_cd_absolute(t_ms *ms, char *path);
 void	ms_cd_home(t_ms *ms);
 void	ms_cd_back(t_ms *ms);
 void	ms_cd_relative(t_ms *ms, char *path);
+void	ms_cd_root(t_ms *ms, char *path);
 void	ms_update_env_pwd(t_list **env, const char *new_cwd);
 char	*ms_getcwd_or_error(t_ms *ms);
+char	*ms_expand_tilde(t_ms *ms, char*path);
+char	*ms_normalize_path(t_ms *ms, char *path);
+char	*ms_pop_from_path(char *path);
 
 //GARBAGE COLLECTOR functions
 void	gc_add(void *ptr, t_list **gc);

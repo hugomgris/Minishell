@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 12:45:35 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/30 10:00:53 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/04 18:10:28 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,5 +107,7 @@ char	*ft_append_c(char *start, char c);
 void	ft_print_array(char **array);
 void	cucufu(int index);
 char	*ft_strtok(char *str, const char *delim);
+char	*ft_strrchr_n(const char *s, int c, int n);
+char	*ft_strchr_n(const char *s, int c, int n);
 
 #endif

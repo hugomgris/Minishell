@@ -80,6 +80,8 @@ int	ms_key_checker(char *key, const char *var)
 	return (0);
 }
 
+//!if this is a function to get something from ms_env, there are functions in the
+//!env managers (utils1) to get, add or change ms_env entries.
 char	*ms_search_env(t_ms *ms, char *str, int start)
 {
 	char	*key;

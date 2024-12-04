@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   redirection_checker.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by nponchon          #+#    #+#             */
-/*   Updated: 2024/11/25 11:55:56 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/04 10:40:04 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	ms_checkoutfile(char *str)
     call here_doc initialiser directly, same with infile.
 */
 
-int	ms_checkinfile(char *str)
+int	ms_checkinfile(t_ms *ms, char *str)
 {
 	int	i;
 	int	here_doc;
@@ -54,7 +54,7 @@ int	ms_checkinfile(char *str)
 	{
 		if (str[i] == '<' && here_doc)
 		{
-			ms_error_handler(NULL, "Wrong infile", FALSE);
+			ms_error_handler(ms, "Wrong infile", FALSE);
 			return (FALSE);
 		}
 		if (str[i] == '<' && str[i + 1] == '<')
@@ -66,17 +66,17 @@ int	ms_checkinfile(char *str)
 			infile = TRUE;
 		if (infile)
 		{
-			;
+			cucufu(1);
 		}
 	}
 	return (TRUE);
 }
 
-int	ms_checkredirections(char *str)
+int	ms_checkredirections(t_ms *ms, char *str)
 {
-	if (!ms_checkinfile(str))
+	if (!ms_checkinfile(ms, str))
 		return (FALSE);
 	if (!ms_checkoutfile(str))
-    	return (FALSE);
+		return (FALSE);
 	return (TRUE);
 }

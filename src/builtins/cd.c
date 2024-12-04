@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/03 20:23:28 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/04 19:08:11 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	ms_cd_home(t_ms *ms)
 	home_dir = ms_get_env_variable(ms, "HOME=");
 	if (!home_dir)
 	{
-		ms_error_handler(ms, "cd: Home not set", 0);
+		ms_error_handler(ms, "minishell: cd: Home not set", 0);
 		return ;
 	}
 	cwd = ms_getcwd_or_error(ms);
@@ -57,7 +57,7 @@ void	ms_cd_back(t_ms *ms)
 	old_pwd = ms_get_env_variable(ms, "OLDPWD=");
 	if (!old_pwd)
 	{
-		ms_error_handler(ms, "cd: OLDPWD not set", 0);
+		ms_error_handler(ms, "minishell: cd: OLDPWD not set", 0);
 		return ;
 	}
 	cwd = ms_getcwd_or_error(ms);
@@ -77,33 +77,67 @@ void	ms_cd_relative(t_ms *ms, char *path)
 {
 	char	cwd[PATH_MAX];
 	char	*new_path;
+	char	*trimmed_path;
 
 	path = ft_strtrim(path, "/");
 	gc_add(path, &ms->gc);
 	if (getcwd(cwd, PATH_MAX) == NULL)
-		ms_error_handler(ms, "Error: couldn't find path", 0);
+		ms_error_handler(ms, "Minishell: cd : invalid path", 0);
 	else
 	{
 		if (ms_join_paths(cwd, path, &new_path) == -1)
 			ms_error_handler(ms, "Error: mem alloc failed", 1);
-		if (ms_change_directory(ms, new_path) == -1)
+		trimmed_path = new_path;
+		if (!ft_strncmp(new_path, "//", 2))
+			trimmed_path = new_path + 1;
+		if (ms_change_directory(ms, trimmed_path) == -1)
 			return ;
 		ms_set_env_variable(ms, "OLDPWD", cwd);
-		ms_set_env_variable(ms, "PWD", new_path);
+		ms_set_env_variable(ms, "PWD", trimmed_path);
 		gc_add(new_path, &ms->gc);
 	}
 }
 
 void	ms_cd(t_ms *ms, char *path)
 {
-	if (!path || path[0] == '~' || path[0] == '\0')
-		ms_cd_home(ms);
-	else if (path[0] == '/' && path[1])
+	if (!path || path[0] == '\0' || (path[0] == '~' && !path[1]))
+		return (ms_cd_home(ms));
+	else if (path[0] == '-' && !path[1])
+		return (ms_cd_back(ms));
+	else if (path[0] == '/' && !path[1])
+		return (ms_cd_root(ms, path));
+	if (path[0] == '~')
+		path = ms_expand_tilde(ms, path);
+	path = ms_normalize_path(ms, path);
+	gc_add(path, &ms->gc);
+	if (path[0] == '/')
 		ms_cd_absolute(ms, path);
-	/*else if (path[0] && !path[1])
-		ms_cd_root(ms); //! this is not yet implemented!! AND ITS NOT NEEDED BY I DON'T CARE YOU CAN'T STOP ME HAHAHAHA*/
-	else if (path[0] == '-')
-		ms_cd_back(ms);
 	else
 		ms_cd_relative(ms, path);
 }
+
+/*void	ms_cd(t_ms *ms, char *path)
+{
+	if (!path || path[0] == '\0' || (path[0] == '~' && !path[1]))
+		return (ms_cd_home(ms));
+	else if (path[0] == '/' && !path[1])
+		return (ms_cd_root(ms, path));
+	ft_printf("path:%s\n", path);
+	if (path[0] == '~')
+		path = ms_expand_tilde(ms, path);
+	ft_printf("expanded path:%s\n", path);
+	path = ms_normalize_path(ms, path);
+	ft_printf("norm path:%s\n", path);
+	gc_add(path, &ms->gc);
+	if (path[0] == '~')
+	{
+		path = ms_expand_tilde(ms, path);
+		return (ms_cd_absolute(ms, path));
+	}
+	else if (path[0] == '/')
+		return (ms_cd_absolute(ms, path));
+	else if (path[0] == '-')
+		return (ms_cd_back(ms));
+	else
+		return (ms_cd_relative(ms, path));
+}*/

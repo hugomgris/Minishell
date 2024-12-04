@@ -1,30 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor.c                                         :+:      :+:    :+:   */
+/*   ft_strrchr_n.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 15:55:35 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/12/04 18:00:29 by hmunoz-g          #+#    #+#             */
+/*   Updated: 2024/12/04 18:18:47 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "libft.h"
 
-void	ms_executor(t_ms *ms)
+char	*ft_strrchr_n(const char *s, int c, int n)
 {
-	char	*trimmed_input;
+	size_t			len;
+	int				count;
+	unsigned char	target;
 
-	trimmed_input = ft_strtrim(ms->input, " ");
-	gc_add(trimmed_input, &ms->gc);
-	if (!ft_strncmp(trimmed_input, "cd", 2))
+	count = 0;
+	target = (unsigned char)c;
+	len = 0;
+	while (s[len] != '\0')
+		len++;
+	while (len > 0)
 	{
-		if (ft_strlen(trimmed_input) == 2)
-			ms_cd(ms, NULL);
-		else if (trimmed_input[2] == ' ')
-			ms_cd(ms, trimmed_input + 3);
-		else
-			ms_error_handler(ms, "cd: invalid input", 0);
+		len--;
+		if (s[len] == target)
+		{
+			count++;
+			if (count == n)
+				return ((char *)(s + len));
+		}
 	}
+	return (NULL);
 }
