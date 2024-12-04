@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/02 18:29:37 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/04 17:51:58 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ typedef struct s_ms
 {
 	t_list	*ms_env;
 	t_list	*gc;
-	t_list	*input;
+	t_list	*tokens;
 	char	**cmd_table;
 }	t_ms;
 
@@ -50,12 +50,14 @@ void	ms_main_loop(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
 
-//TOKENIZER
+//TOKENIZER and UTILS
 void	ms_tokenizer(t_ms *ms, char *str);
-int		ms_count_tokens(char *str);
-void	ms_allocate_tokens(t_ms *ms, char *str);
-void	ms_get_tokens(t_ms *ms, char *str);
-void	ms_trim_tokens(t_ms *ms, char	**array);
+int		is_operator(char *c);
+void	ms_skip_space(char **str);
+void	ms_skip_quotes(char	*str, int *i);
+void	ms_extract_atom(t_ms *ms, char **str);
+void	ms_extract_operator(t_ms *ms, t_token_type type, char **str);
+void	ms_handle_operator(t_ms *ms, char **str);
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);
