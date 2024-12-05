@@ -6,21 +6,13 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 17:51:07 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/05 19:39:42 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-/*
-	TODO
-	Protect code in case of wrong operator syntax:
-	bash: syntax error near unexpected token `<<<'
-	bash: syntax error near unexpected token `>>'
-	etc.
-*/
-
-void	ms_extract_atom(t_ms *ms, char **str)
+int	ms_extract_atom(t_ms *ms, char **str)
 {
 	int		i;
 	char	*token;
@@ -29,24 +21,33 @@ void	ms_extract_atom(t_ms *ms, char **str)
 
 	i = 0;
 	tmp = *str;
-	while (tmp[i] && !is_operator(tmp + i) && !ft_isspace(tmp[i]))
+	while (tmp[i] && !is_operator(tmp + i) && !ft_isspace(tmp[i])
+		&& !is_quote(tmp[i]))
 	{
-		if (!ft_strncmp(tmp, "\"", 1) || !ft_strncmp(tmp, "'", 1))
-			ms_skip_quotes(tmp, &i);
+		if (tmp[i] == 34 || tmp[i] == 39)
+		{
+			if (!ms_skip_quotes(ms, tmp, &i))
+				return (TRUE);
+		}
 		else
 			i++;
 	}
 	token = ft_substr(tmp, 0, i);
 	node = ft_lstnew(token);
+	if (!token || !node)
+		ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
 	ft_lstadd_back(&ms->tokens, node);
 	(*str) += i;
+	return (FALSE);
 }
 
-void	ms_extract_operator(t_ms *ms, t_token_type type, char **str)
+int	ms_extract_operator(t_ms *ms, t_token_type type, char **str)
 {
 	char	*token;
 	t_list	*node;
 
+	if (ms_check_operator(ms, str))
+		return (TRUE);
 	if (type == T_DBGREATER || type == T_DBLESS
 		|| type == T_AND || type == T_OR)
 	{
@@ -59,47 +60,92 @@ void	ms_extract_operator(t_ms *ms, t_token_type type, char **str)
 		(*str)++;
 	}
 	node = ft_lstnew(token);
+	if (!token || !node)
+		ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
 	ft_lstadd_back(&ms->tokens, node);
+	return (FALSE);
 }
 
-void	ms_handle_operator(t_ms *ms, char **str)
+/*
+	TODO
+	Add rules to match only if token is ">>" and not ">>dsa" for example
+*/
+
+int	ms_handle_operator(t_ms *ms, char **str)
 {
 	if (!ft_strncmp(*str, "<<", 2))
-		ms_extract_operator(ms, T_DBLESS, str);
+		return (ms_extract_operator(ms, T_DBLESS, str));
 	if (!ft_strncmp(*str, ">>", 2))
-		ms_extract_operator(ms, T_DBGREATER, str);
+		return (ms_extract_operator(ms, T_DBGREATER, str));
 	if (!ft_strncmp(*str, "||", 2))
-		ms_extract_operator(ms, T_OR, str);
+		return (ms_extract_operator(ms, T_OR, str));
 	if (!ft_strncmp(*str, "&&", 2))
-		ms_extract_operator(ms, T_AND, str);
-	if (!ft_strncmp(*str, "<", 1))
-		ms_extract_operator(ms, T_LESS, str);
-	if (!ft_strncmp(*str, ">", 1))
-		ms_extract_operator(ms, T_GREATER, str);
-	if (!ft_strncmp(*str, "|", 1))
-		ms_extract_operator(ms, T_PIPE, str);
-	if (!ft_strncmp(*str, "(", 1))
-		ms_extract_operator(ms, T_LPARENTH, str);
-	if (!ft_strncmp(*str, ")", 1))
-		ms_extract_operator(ms, T_RPARENTH, str);
+		return (ms_extract_operator(ms, T_AND, str));
+	if (**str == '<')
+		return (ms_extract_operator(ms, T_LESS, str));
+	if (**str == '>')
+		return (ms_extract_operator(ms, T_GREATER, str));
+	if (**str == '|')
+		return (ms_extract_operator(ms, T_PIPE, str));
+	if (**str == '(')
+		return (ms_extract_operator(ms, T_LPARENTH, str));
+	if (**str == ')')
+		return (ms_extract_operator(ms, T_RPARENTH, str));
+	return (FALSE);
 }
 
-void	ms_tokenizer(t_ms *ms, char *str)
+int	ms_extract_quote(t_ms *ms, char **str)
 {
+	t_list	*node;
+	char	quote;
+	char	*token;
+	char	*tmp;
+	int		i;
+
+	i = 1;
+	quote = **str;
+	if (ft_strchr(*str + 1, quote))
+	{
+		tmp = ft_strdup(*str);
+		while (tmp[i] != quote)
+			i++;
+		free(tmp);
+		token = ft_substr(*str, 0, ++i);
+		node = ft_lstnew(token);
+		if (!token || !node)
+			ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
+		ft_lstadd_back(&ms->tokens, node);
+		*str += i;
+		return (FALSE);
+	}
+	ms_error_handler(ms, "Error: Invalid quote", 0);
+	return (TRUE);
+}
+
+int	ms_tokenizer(t_ms *ms, char *str)
+{
+	int	error;
+
 	ms->tokens = NULL;
+	error = 0;
 	while (*str)
 	{
+		if (error)
+		{
+			ft_lstclear(&ms->tokens, free);
+			return (FALSE);
+		}
 		if (ft_isspace(*str))
 		{
 			while (*str && ft_isspace(*str))
 				str++;
 		}
 		if (is_operator(str))
-			ms_handle_operator(ms, &str);
+			error = ms_handle_operator(ms, &str);
+		else if (is_quote(*str))
+			error = ms_extract_quote(ms, &str);
 		else
-			ms_extract_atom(ms, &str);
+			error = ms_extract_atom(ms, &str);
 	}
-	if (!ms_syntax_checker(ms, str))
-		return ;
-	str = ms_expand_variable(ms, str);
+	return (TRUE);
 }

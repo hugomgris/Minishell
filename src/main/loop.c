@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 15:51:15 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/05 18:59:05 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,8 @@ void	ms_main_loop(t_ms *ms)
 		if (ft_strlen(ms->input) == 4 && !ft_strncmp(ms->input, "exit", 4))
 			ms_exit_handler(ms, "exit");
 		add_history(ms->input);
-		ms_tokenizer(ms, ms->input);
+		if (!ms_parser(ms, ms->input))
+			continue ;
 		ms_executor(ms);
 		gc_add(ms->input, &ms->gc);
 	}

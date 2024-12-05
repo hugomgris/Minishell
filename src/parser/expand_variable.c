@@ -107,20 +107,42 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	return (str);
 }
 
-char	*ms_expand_variable(t_ms *ms, char *str)
+/*
+	TODO
+	Need to handle cases like:
+	nponchon@car13s2:~$ echo $USER$USER
+	nponchonnponchon
+*/
+
+void	ms_expand_variable(t_ms *ms)
 {
+	t_list	*aux;
+	char	*str;
 	int		i;
 
-	i = -1;
-	while (str[++i])
+	aux = ms->tokens;
+	while (aux)
 	{
-		if (str[i] == '$' && (str[i + 1] == '\0' || ft_isalnum(str[i + 1])))
-		{
-			str = ms_search_env(ms, str, i);
-			gc_add(str, &ms->gc);
-		}
-		if (str[i] == '\0')
-			break ;
+		printf("%s\n", (char *)aux->content);
+		aux = aux->next;
 	}
-	return (str);
+	return ;
+	aux = ms->tokens;
+	i = -1;
+	while (aux)
+	{
+		str = (char *)aux->content;
+		while (str[++i])
+		{
+			if (str[i] == '$' && (str[i + 1] == '\0' || ft_isalnum(str[i + 1])))
+			{
+				str = ms_search_env(ms, str, i);
+				gc_add(str, &ms->gc);
+			}
+			if (str[i] == '\0')
+				break ;
+		}
+		aux = aux->next;
+	}
+
 }

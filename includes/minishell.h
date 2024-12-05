@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 19:37:00 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/05 19:13:08 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,18 @@ char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
 
 //TOKENIZER and UTILS
-void	ms_tokenizer(t_ms *ms, char *str);
+int		ms_tokenizer(t_ms *ms, char *str);
 int		is_operator(char *c);
+int		is_quote(char c);
+int		ms_check_operator(t_ms *ms, char **str);
 void	ms_skip_space(char **str);
-void	ms_skip_quotes(char	*str, int *i);
-void	ms_extract_atom(t_ms *ms, char **str);
-void	ms_extract_operator(t_ms *ms, t_token_type type, char **str);
-void	ms_handle_operator(t_ms *ms, char **str);
+int		ms_skip_quotes(t_ms *ms, char	*str, int *i);
+int		ms_extract_atom(t_ms *ms, char **str);
+int		ms_extract_operator(t_ms *ms, t_token_type type, char **str);
+int		ms_handle_operator(t_ms *ms, char **str);
+
+//PARSER
+int		ms_parser(t_ms *ms, char *str);
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);
@@ -66,7 +71,7 @@ int		ms_checkquotes(char *str, char c);
 int		ms_checkspecialchar(char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
-char	*ms_expand_variable(t_ms *ms, char *str);
+void	ms_expand_variable(t_ms *ms);
 int		ms_checkredirections(t_ms *ms, char *str);
 char	*ms_replace_expanded(char *str, char *key, char *var);
 char	*ms_replace_null_value(char *str, char *key);
