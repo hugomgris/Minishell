@@ -13,38 +13,10 @@
 #include "../../includes/minishell.h"
 
 /*	TODO
-
-	- Check for quotes (opened and closed)
-	Enclosing characters in single-quotes ( '' ) shall preserve
-	the literal value of each character within the single-quotes. 
-	A single-quote cannot occur within single-quotes.
-
 	- Check for pipes (no pipe w/o command before or after)
 	
 	- Check for special characters ('\', '\n', ';' etc.)
 */
-
-int	ms_checkquotes(char *str, char c)
-{
-	int	i;
-	int	flag;
-
-	i = -1;
-	flag = 0;
-	while (str[++i])
-	{
-		if (str[i] == c && flag == 1)
-			flag = 0;
-		else if (str[i] == c && flag == 0)
-			flag = 1;
-	}
-	if (flag)
-	{
-		ms_error_handler(NULL, "Error: Unclosed quotes", 0);
-		return (FALSE);
-	}
-	return (TRUE);
-}
 
 int	ms_checkspecialchar(char *str)
 {
@@ -114,10 +86,6 @@ int	ms_checkpipes(t_ms *ms, char *str)
 
 int	ms_syntax_checker(t_ms *ms, char *str)
 {
-	if (!ms_checkquotes(str, 39))
-		return (FALSE);
-	if (!ms_checkquotes(str, 34))
-		return (FALSE);
 	if (!ms_checkpipes(ms, str))
 		return (FALSE);
 	if (!ms_checkspecialchar(str))

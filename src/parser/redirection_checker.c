@@ -24,14 +24,14 @@ int	ms_checkoutfile(char *str)
 	i = -1;
 	while (str[++i])
 	{
-		if (str[i] == '>' && str[i + 1] == '>')
+		if (ft_strnstr(str + i, ">", 1))
 		{
 			// call opening function in corresponding mode;
-			ft_printf("Redirect output to: s%\n", ft_strtok(str + 2, " "));
-			i += 2;
+			ft_printf("Redirect output to: %s\n", str + i);
+			i++;
 		}
-		else if (str[i] == '>' && ft_strtok(str + 1, " "))
-			ft_printf("Redirect output to: s%\n", ft_strtok(str + 2, " "));
+		else if (ft_strnstr(str + i, ">>", 2))
+			ft_printf("Redirect output to: %s\n", str + i);;
 	}
 	return (TRUE);
 }

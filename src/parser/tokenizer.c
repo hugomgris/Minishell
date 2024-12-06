@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/05 19:39:42 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/06 15:48:12 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,17 +99,18 @@ int	ms_extract_quote(t_ms *ms, char **str)
 	t_list	*node;
 	char	quote;
 	char	*token;
-	char	*tmp;
 	int		i;
 
 	i = 1;
 	quote = **str;
 	if (ft_strchr(*str + 1, quote))
 	{
-		tmp = ft_strdup(*str);
-		while (tmp[i] != quote)
+		token = ft_strdup(*str);
+		if (!token)
+			ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
+		while (token[i] != quote)
 			i++;
-		free(tmp);
+		free(token);
 		token = ft_substr(*str, 0, ++i);
 		node = ft_lstnew(token);
 		if (!token || !node)

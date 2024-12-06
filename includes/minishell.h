@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/05 19:13:08 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/06 15:27:55 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_ms
 	t_list	*tokens;
 	char	*input;
 	char	**cmd_table;
+	int		fds[1024];
 }	t_ms;
 
 typedef enum e_type_tokens
@@ -59,6 +60,7 @@ int		ms_check_operator(t_ms *ms, char **str);
 void	ms_skip_space(char **str);
 int		ms_skip_quotes(t_ms *ms, char	*str, int *i);
 int		ms_extract_atom(t_ms *ms, char **str);
+int		ms_extract_quote(t_ms *ms, char **str);
 int		ms_extract_operator(t_ms *ms, t_token_type type, char **str);
 int		ms_handle_operator(t_ms *ms, char **str);
 
@@ -67,7 +69,6 @@ int		ms_parser(t_ms *ms, char *str);
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);
-int		ms_checkquotes(char *str, char c);
 int		ms_checkspecialchar(char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);

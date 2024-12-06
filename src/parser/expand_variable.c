@@ -80,8 +80,8 @@ int	ms_key_checker(char *key, const char *var)
 	return (0);
 }
 
-//!if this is a function to get something from ms_env, there are functions in the
-//!env managers (utils1) to get, add or change ms_env entries.
+//!if this is a function to get something from ms_env, there are functions
+//!in the env managers (utils1) to get, add or change ms_env entries.
 char	*ms_search_env(t_ms *ms, char *str, int start)
 {
 	char	*key;
@@ -93,12 +93,18 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	aux = ms->ms_env;
 	if (aux == NULL)
 		return (0);
-	key = ft_strtok(tmp + start + 1, " ");
+	key = ft_strtok(tmp + start + 1, " $\"");
 	while (aux != NULL)
 	{
 		if (ms_key_checker(key, aux->content))
 		{
 			str = ms_replace_expanded(str, key, aux->content);
+			gc_add(str, &ms->gc);
+			if (ft_strchr(str, '$'))
+			{
+				key = ft_strtok(0, " $\"");
+				continue ;
+			}
 			return (str);
 		}
 		aux = aux->next;
@@ -106,13 +112,6 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	str = ms_replace_null_value(str, key);
 	return (str);
 }
-
-/*
-	TODO
-	Need to handle cases like:
-	nponchon@car13s2:~$ echo $USER$USER
-	nponchonnponchon
-*/
 
 void	ms_expand_variable(t_ms *ms)
 {
@@ -123,26 +122,21 @@ void	ms_expand_variable(t_ms *ms)
 	aux = ms->tokens;
 	while (aux)
 	{
-		printf("%s\n", (char *)aux->content);
-		aux = aux->next;
-	}
-	return ;
-	aux = ms->tokens;
-	i = -1;
-	while (aux)
-	{
 		str = (char *)aux->content;
+		i = -1;
 		while (str[++i])
 		{
+			if (!str[i] || str[i] == 39)
+				break ;
 			if (str[i] == '$' && (str[i + 1] == '\0' || ft_isalnum(str[i + 1])))
 			{
 				str = ms_search_env(ms, str, i);
-				gc_add(str, &ms->gc);
+				gc_add(aux->content, &ms->gc);
+				aux->content = str;
+				continue ;
 			}
-			if (str[i] == '\0')
-				break ;
 		}
+		printf("%s\n", (char *)aux->content);
 		aux = aux->next;
 	}
-
 }

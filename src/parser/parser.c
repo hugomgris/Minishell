@@ -14,10 +14,10 @@
 
 int	ms_parser(t_ms *ms, char *str)
 {
+	if (!ms_syntax_checker(ms, str))
+		return (FALSE);
 	if (!ms_tokenizer(ms, str))
 		return (FALSE);
 	ms_expand_variable(ms);
-	//if (!ms_syntax_checker(ms, str))
-	//	return (FALSE);
 	return (TRUE);
 }
