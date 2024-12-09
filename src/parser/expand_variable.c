@@ -28,8 +28,8 @@ char	*ms_replace_expanded(char *str, char *key, char *var)
 	i = -1;
 	j = -1;
 	var += ft_strlen(key) + 1;
-	new = (char *)malloc(sizeof(char) * (ft_strlen(str) \
-		+ ft_strlen(var) - ft_strlen(key)) + 1);
+	new = (char *)malloc(sizeof(char) \
+		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 1);
 	if (!new)
 		return (NULL);
 	while (str[++i] != '$')
@@ -49,8 +49,10 @@ char	*ms_replace_null_value(char *str, char *key)
 	int		i;
 
 	i = -1;
-	new = (char *)malloc(sizeof(char) * (ft_strlen(str) \
-		- ft_strlen(key)) + 2);
+	if (ft_strlen(str) == ft_strlen(key))
+		return (ft_strdup(""));
+	new = (char *)malloc(sizeof(char) \
+		* (ft_strlen(str) - ft_strlen(key)) + 1);
 	if (!new)
 		return (NULL);
 	while (str[++i] != '$')
@@ -73,11 +75,11 @@ int	ms_key_checker(char *key, const char *var)
 	while (key[++i])
 	{
 		if (key[i] != var[i])
-			return (0);
+			return (FALSE);
 		if (key[i + 1] == '\0' && var[i + 1] == '=')
-			return (1);
+			return (TRUE);
 	}
-	return (0);
+	return (FALSE);
 }
 
 //!if this is a function to get something from ms_env, there are functions
@@ -88,28 +90,27 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	char	*tmp;
 	t_list	*aux;
 
+	aux = ms->ms_env;
 	tmp = ft_strdup(str);
 	gc_add(tmp, &ms->gc);
-	aux = ms->ms_env;
-	if (aux == NULL)
+	if (aux == NULL || tmp == NULL)
 		return (0);
-	key = ft_strtok(tmp + start + 1, " $\"");
+	key = ft_strtok(tmp + start + 1, " *$\"");
 	while (aux != NULL)
 	{
 		if (ms_key_checker(key, aux->content))
 		{
-			str = ms_replace_expanded(str, key, aux->content);
-			gc_add(str, &ms->gc);
+			str = ms_replace_expanded(tmp, key, aux->content);
 			if (ft_strchr(str, '$'))
 			{
-				key = ft_strtok(0, " $\"");
+				key = ft_strtok(0, " *$\"");
 				continue ;
 			}
 			return (str);
 		}
 		aux = aux->next;
 	}
-	str = ms_replace_null_value(str, key);
+	str = ms_replace_null_value(tmp, key);
 	return (str);
 }
 
@@ -133,10 +134,10 @@ void	ms_expand_variable(t_ms *ms)
 				str = ms_search_env(ms, str, i);
 				gc_add(aux->content, &ms->gc);
 				aux->content = str;
+				i = -1;
 				continue ;
 			}
 		}
-		printf("%s\n", (char *)aux->content);
 		aux = aux->next;
 	}
 }

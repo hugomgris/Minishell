@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checker.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 19:37:38 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/09 10:34:34 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 /*	TODO
 	- Check for pipes (no pipe w/o command before or after)
-	
 	- Check for special characters ('\', '\n', ';' etc.)
 */
 
@@ -90,7 +89,7 @@ int	ms_syntax_checker(t_ms *ms, char *str)
 		return (FALSE);
 	if (!ms_checkspecialchar(str))
 		return (FALSE);
-	if (!ms_checkredirections(ms, str))
-		return (FALSE);
+	/*if (!ms_checkredirections(ms, str))
+		return (FALSE);*/
 	return (TRUE);
 }

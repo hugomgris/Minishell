@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/06 15:48:12 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/09 15:32:36 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ int	ms_handle_operator(t_ms *ms, char **str)
 		return (ms_extract_operator(ms, T_OR, str));
 	if (!ft_strncmp(*str, "&&", 2))
 		return (ms_extract_operator(ms, T_AND, str));
+	if (**str == '&')
+		return (ms_extract_operator(ms, T_AMPERSAND, str));
 	if (**str == '<')
 		return (ms_extract_operator(ms, T_LESS, str));
 	if (**str == '>')
@@ -127,7 +129,6 @@ int	ms_tokenizer(t_ms *ms, char *str)
 {
 	int	error;
 
-	ms->tokens = NULL;
 	error = 0;
 	while (*str)
 	{
@@ -136,11 +137,8 @@ int	ms_tokenizer(t_ms *ms, char *str)
 			ft_lstclear(&ms->tokens, free);
 			return (FALSE);
 		}
-		if (ft_isspace(*str))
-		{
-			while (*str && ft_isspace(*str))
-				str++;
-		}
+		while (*str && ft_isspace(*str))
+			str++;
 		if (is_operator(str))
 			error = ms_handle_operator(ms, &str);
 		else if (is_quote(*str))

@@ -3,14 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/03 17:54:05 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/09 13:56:39 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+/*
+	TODO
+	Check for possible limitation of FDs: what happens if minishell is limited
+	to using only 2 fds? 1? 0?
+*/
+
+void	ms_initialise_minishell(t_ms *ms, char **env)
+{
+	ms->ms_env = NULL;
+	ms->gc = NULL;
+	ms->tokens = NULL;
+	ms->exit_status = 0;
+	ms->ms_env = ms_copy_env(ms, env);
+}
 
 /*
 Current main function handles:
@@ -29,9 +44,7 @@ int	main(int argc, char **argv, char *env[])
 
 	(void)argc;
 	(void)argv;
-	ms.ms_env = NULL;
-	ms.gc = NULL;
-	ms.ms_env = ms_copy_env(&ms, env);
+	ms_initialise_minishell(&ms, env);
 	action.sa_handler = ms_signal_handler;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = SA_RESTART;

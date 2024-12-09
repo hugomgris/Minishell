@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/06 15:27:55 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/09 15:28:46 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_ms
 	t_list	*tokens;
 	char	*input;
 	char	**cmd_table;
+	int		exit_status;
 	int		fds[1024];
 }	t_ms;
 
@@ -43,11 +44,13 @@ typedef enum e_type_tokens
 	T_LPARENTH,
 	T_RPARENTH,
 	T_AND,
+	T_AMPERSAND,
 	T_OR,
 	T_NL
 }	t_token_type;
 
 //MAIN and LOOP functions
+void	ms_initialise_minishell(t_ms *ms, char **env);
 void	ms_main_loop(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
