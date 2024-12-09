@@ -12,10 +12,9 @@
 
 #include "../../includes/minishell.h"
 
-/*	Current state of things: the function looks up any $VAR string from
-	the input in the envp. In case of exact match, the input is rewritten
-	with expanded var, 	or with NULL if not found.
-	!This does not take possible quotes or exceptions ($? etc) into account yet.
+/*	
+	!This function does not take possible quotes
+	!or exceptions ($? etc) into account yet.
 	*/
 
 char	*ms_replace_expanded(char *str, char *key, char *var)
@@ -52,7 +51,7 @@ char	*ms_replace_null_value(char *str, char *key)
 	if (ft_strlen(str) == ft_strlen(key))
 		return (ft_strdup(""));
 	new = (char *)malloc(sizeof(char) \
-		* (ft_strlen(str) - ft_strlen(key)) + 1);
+		* (ft_strlen(str) - ft_strlen(key)) + 2);
 	if (!new)
 		return (NULL);
 	while (str[++i] != '$')
@@ -67,23 +66,33 @@ char	*ms_replace_null_value(char *str, char *key)
 	return (new);
 }
 
-int	ms_key_checker(char *key, const char *var)
+char	*ms_replace_exit_status(char *str, char *status)
 {
-	int	i;
+	char	*new;
+	int		i;
+	int		j;
 
 	i = -1;
-	while (key[++i])
+	j = -1;
+	printf("status=%s\n", status);
+	new = (char *)malloc(sizeof(char) \
+		* ((ft_strlen(str) - 2 + ft_strlen(status)) + 1));
+	if (!new)
+		return (NULL);
+	while (str[++i] != '$')
+		new[i] = str[i];
+	while (status[++j])
+		new[i + j] = status[j];
+	str += 2;
+	while (str[i])
 	{
-		if (key[i] != var[i])
-			return (FALSE);
-		if (key[i + 1] == '\0' && var[i + 1] == '=')
-			return (TRUE);
+		new[i + j] = str[i];
+		i++;
 	}
-	return (FALSE);
+	new[i + j] = '\0';
+	return (new);
 }
 
-//!if this is a function to get something from ms_env, there are functions
-//!in the env managers (utils1) to get, add or change ms_env entries.
 char	*ms_search_env(t_ms *ms, char *str, int start)
 {
 	char	*key;
@@ -95,23 +104,17 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	gc_add(tmp, &ms->gc);
 	if (aux == NULL || tmp == NULL)
 		return (0);
-	key = ft_strtok(tmp + start + 1, " *$\"");
+	key = ft_strtok(tmp + start + 1, " ^*$\"=/-+.:");
+	ms->exit_status = 127;
+	if (*key == '?')
+		return (ms_replace_exit_status(str, ft_itoa(ms->exit_status)));
 	while (aux != NULL)
 	{
 		if (ms_key_checker(key, aux->content))
-		{
-			str = ms_replace_expanded(tmp, key, aux->content);
-			if (ft_strchr(str, '$'))
-			{
-				key = ft_strtok(0, " *$\"");
-				continue ;
-			}
-			return (str);
-		}
+			return (ms_replace_expanded(str, key, aux->content));
 		aux = aux->next;
 	}
-	str = ms_replace_null_value(tmp, key);
-	return (str);
+	return (ms_replace_null_value(str, key));
 }
 
 void	ms_expand_variable(t_ms *ms)
@@ -129,9 +132,10 @@ void	ms_expand_variable(t_ms *ms)
 		{
 			if (!str[i] || str[i] == 39)
 				break ;
-			if (str[i] == '$' && (str[i + 1] == '\0' || ft_isalnum(str[i + 1])))
+			if (str[i] == '$' && (str[i + 1] == '\0' \
+				|| !ft_isspace(str[i + 1])))
 			{
-				str = ms_search_env(ms, str, i);
+				str = ms_search_env(ms, aux->content, i);
 				gc_add(aux->content, &ms->gc);
 				aux->content = str;
 				i = -1;

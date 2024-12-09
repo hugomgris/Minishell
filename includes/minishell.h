@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/09 15:28:46 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/09 19:18:01 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,17 +69,19 @@ int		ms_handle_operator(t_ms *ms, char **str);
 
 //PARSER
 int		ms_parser(t_ms *ms, char *str);
+void	ms_expand_variable(t_ms *ms);
+int		ms_key_checker(char *key, const char *var);
+char	*ms_replace_expanded(char *str, char *key, char *var);
+char	*ms_replace_null_value(char *str, char *key);
+char	*ms_replace_exit_status(char *str, char *status);
+char	*ms_search_env(t_ms *ms, char *str, int start);
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);
 int		ms_checkspecialchar(char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
-void	ms_expand_variable(t_ms *ms);
 int		ms_checkredirections(t_ms *ms, char *str);
-char	*ms_replace_expanded(char *str, char *key, char *var);
-char	*ms_replace_null_value(char *str, char *key);
-char	*ms_search_env(t_ms *ms, char *str, int start);
 
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);
