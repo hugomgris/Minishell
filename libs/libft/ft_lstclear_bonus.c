@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 10:06:46 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/11/30 14:53:27 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/10 14:02:07 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	ft_lstclear(t_list **lst, void (*del)(void *))
 	while (*lst)
 	{
 		tmp = (*lst)->next;
+		(void)(*del);
 		if (del)
 			del((*lst)->content);
 		free(*lst);

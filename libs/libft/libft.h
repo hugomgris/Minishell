@@ -6,14 +6,14 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 12:45:35 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 18:10:28 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/09 13:59:37 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
+#  define BUFFER_SIZE 4
 # endif
 # ifndef FD
 #  define FD 1
@@ -109,5 +109,8 @@ void	cucufu(int index);
 char	*ft_strtok(char *str, const char *delim);
 char	*ft_strrchr_n(const char *s, int c, int n);
 char	*ft_strchr_n(const char *s, int c, int n);
+size_t	ft_strcspn(const char *s, const char *reject);
+size_t	ft_strspn(const char *s, const char *accept);
+int		ft_isdigit_str(char *str);
 
 #endif

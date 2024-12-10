@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 19:35:53 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/10 08:38:06 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,11 @@ If critical error, calls Garbage Collector and exits.
 */
 void	ms_error_handler(t_ms *ms, char *msg, int critical)
 {
-	ft_putendl_fd(msg, STDERR_FILENO);
+	char	*output;
+
+	output = ft_strjoin("minishell: ", msg);
+	gc_add(output, &ms->gc);
+	ft_putendl_fd(output, STDERR_FILENO);
 	if (critical)
 	{
 		ft_lstclear(&ms->ms_env, free);

@@ -30,9 +30,13 @@ SRCS 		:= 	src/main/minishell.c 			\
 				src/builtins/cd.c 				\
 				src/builtins/cd_utils1.c		\
 				src/builtins/cd_utils2.c		\
+				src/builtins/cd_utils3.c		\
+				src/builtins/cd_utils4.c		\
 				src/builtins/echo.c 			\
 				src/builtins/env.c 				\
 				src/builtins/exit.c 			\
+				src/builtins/export.c			\
+				src/builtins/export_utils.c		\
 				src/executor/executor.c			\
 				src/executor/piping.c 			\
 				src/executor/redirection.c 		\
@@ -44,11 +48,9 @@ SRCS 		:= 	src/main/minishell.c 			\
 				src/parser/redirection_checker.c\
 				src/signals/signals.c 			\
 				src/env/env_manager.c 			\
-				src/env/env_utils1.c 			\
-				src/env/env_utils2.c 			\
+				src/env/env_utils.c 			\
 				src/utils/string_utils.c 		\
 				src/utils/error_handler.c 		\
-				src/utils/exit_handler.c		\
 				src/utils/garbage_collector.c	
 
 OBJS 		:= $(SRCS:.c=.o)

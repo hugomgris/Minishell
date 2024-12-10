@@ -6,13 +6,13 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 18:00:29 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 18:18:48 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/05 11:54:01 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strrchr_n(const char *s, int c, int n)
+char	*ft_strchr_n(const char *s, int c, int n)
 {
 	size_t			i;
 	int				count;
