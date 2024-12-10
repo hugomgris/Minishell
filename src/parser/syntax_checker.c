@@ -6,13 +6,14 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 12:20:32 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/10 14:03:47 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-/*	TODO
+/*	
+	TODO
 	- Check for pipes (no pipe w/o command before or after)
 	- Check for special characters ('\', '\n', ';' etc.)
 */

@@ -104,7 +104,7 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	gc_add(tmp, &ms->gc);
 	if (aux == NULL || tmp == NULL)
 		return (0);
-	key = ft_strtok(tmp + start + 1, " ^*$\"=/-+.:");
+	key = ft_strtok(tmp + start + 1, " ^*$\"\'=/-+.:");
 	if (*key == '?')
 	{
 		status = ft_itoa(ms->exit_status);
