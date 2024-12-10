@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 15:09:45 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:29:23 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,21 @@ void	ms_remove_quotes(t_ms *ms)
 	while (aux)
 	{
 		if (!ft_strncmp((char *)aux->content, "\"", 1))
+		{
 			tmp = ft_strtrim(aux->content, "\"");
+			if (!tmp)
+				ms_error_handler(ms, "Error: Malloc failed removing quotes", TRUE);
+			free(aux->content);
+			aux->content = tmp;
+		}
 		else if (!ft_strncmp((char *)aux->content, "\'", 1))
+		{
 			tmp = ft_strtrim(aux->content, "\'");
-		if (!tmp)
-			ms_error_handler(ms, "Error: Malloc failed removing quotes", TRUE);
-		free(aux->content);
-		aux->content = tmp;
+			if (!tmp)
+				ms_error_handler(ms, "Error: Malloc failed removing quotes", TRUE);
+			free(aux->content);
+			aux->content = tmp;
+		}
 		aux = aux->next;
 	}
 }
