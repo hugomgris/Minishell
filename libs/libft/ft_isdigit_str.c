@@ -3,15 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isdigit_str.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-<<<<<<< HEAD:libs/libft/ft_isdigit_str.c
-/*   Created: 2024/12/09 13:57:58 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/09 13:59:25 by hmunoz-g         ###   ########.fr       */
-=======
 /*   Created: 2024/11/28 12:54:30 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/09 11:13:51 by nponchon         ###   ########.fr       */
->>>>>>> develop3:src/utils/exit_handler.c
+/*   Updated: 2024/12/10 18:30:13 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

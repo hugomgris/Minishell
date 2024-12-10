@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/12/10 18:10:15 by hmunoz-g         ###   ########.fr       */
-=======
-/*   Updated: 2024/12/09 13:56:39 by nponchon         ###   ########.fr       */
->>>>>>> develop3
+/*   Updated: 2024/12/10 18:29:07 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +57,7 @@ int	main(int argc, char **argv, char *env[])
 
 	(void)argc;
 	(void)argv;
-<<<<<<< HEAD
 	ms_init(&ms, env);
-=======
-	ms_initialise_minishell(&ms, env);
->>>>>>> develop3
 	action.sa_handler = ms_signal_handler;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = SA_RESTART;

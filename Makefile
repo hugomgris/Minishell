@@ -25,45 +25,19 @@ RM			= rm -fr
 
 # -=-=-=-=-    FILES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
-<<<<<<< HEAD
-SRCS 		:= 	src/main/minishell.c 			\
-				src/main/loop.c 				\
-				src/main/prompt_utils.c			\
-				src/builtins/cd.c 				\
-				src/builtins/cd_utils1.c		\
-				src/builtins/cd_utils2.c		\
-				src/builtins/cd_utils3.c		\
-				src/builtins/cd_utils4.c		\
-				src/builtins/echo.c 			\
-				src/builtins/env.c 				\
-				src/builtins/exit.c 			\
-				src/builtins/export.c			\
-				src/builtins/export_utils.c		\
-				src/executor/executor.c			\
-				src/executor/piping.c 			\
-				src/executor/redirection.c 		\
-				src/parser/parser.c 			\
-				src/parser/tokenizer.c 			\
-				src/parser/tokenizer_utils.c	\
-				src/parser/syntax_checker.c 	\
-				src/parser/expand_variable.c	\
-				src/parser/redirection_checker.c\
-				src/signals/signals.c 			\
-				src/env/env_manager.c 			\
-				src/env/env_utils.c 			\
-				src/utils/string_utils.c 		\
-				src/utils/error_handler.c 		\
-				src/utils/garbage_collector.c	
-=======
 SRC 		:= 	main/minishell.c 			\
 				main/loop.c 				\
 				main/prompt_utils.c			\
 				builtins/cd.c 				\
 				builtins/cd_utils1.c		\
 				builtins/cd_utils2.c		\
+				builtins/cd_utils3.c		\
+				builtins/cd_utils4.c		\
 				builtins/echo.c 			\
 				builtins/env.c 				\
 				builtins/exit.c 			\
+				builtins/export_utils.c 	\
+				builtins/export.c 			\
 				executor/executor.c			\
 				executor/piping.c 			\
 				executor/redirection.c 		\
@@ -76,13 +50,10 @@ SRC 		:= 	main/minishell.c 			\
 				parser/redirection_checker.c\
 				signals/signals.c 			\
 				env/env_manager.c 			\
-				env/env_utils1.c 			\
-				env/env_utils2.c 			\
+				env/env_utils.c 			\
 				utils/string_utils.c 		\
 				utils/error_handler.c 		\
-				utils/exit_handler.c		\
 				utils/garbage_collector.c	
->>>>>>> develop3
 
 SRCDIR		= src
 SRCS		= $(addprefix $(SRCDIR)/, $(SRC))
