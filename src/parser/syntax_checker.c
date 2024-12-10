@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/09 10:34:34 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/10 12:20:32 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,12 @@ int	ms_check_empty_pipe(t_ms *ms, char *str)
 {
 	str++;
 	while (ft_isspace(*str))
-	{
 		str++;
-	}
 	if (*str == '|')
+	{
+		ms_error_handler(ms, "Wrong pipe: empty pipe \"|\"", 0);
 		return (TRUE);
+	}
 	else if (*str == '\0')
 	{
 		ms_error_handler(ms, "Wrong pipe: no command after \"|\"", 0);
@@ -50,9 +51,6 @@ int	ms_check_empty_pipe(t_ms *ms, char *str)
 	else
 		return (FALSE);
 }
-
-/*	Note: even though the input is trimmed, there can be tabs at the
-	head and/or tail of the string, hence the ft_isspace()	*/
 
 int	ms_checkpipes(t_ms *ms, char *str)
 {
@@ -71,23 +69,17 @@ int	ms_checkpipes(t_ms *ms, char *str)
 		if (str[i] == '|')
 		{
 			if (ms_check_empty_pipe(ms, str + i))
-			{
-				ms_error_handler(ms, "Wrong pipe: empty pipe \"|\"", 0);
 				return (FALSE);
-			}
 		}
 	}
 	return (TRUE);
 }
 
-/*	Each check function returns in case of invalid syntax so as to avoid
-	printing multiple error msgs	*/
-
 int	ms_syntax_checker(t_ms *ms, char *str)
 {
-	if (!ms_checkpipes(ms, str))
-		return (FALSE);
 	if (!ms_checkspecialchar(str))
+		return (FALSE);
+	if (!ms_checkpipes(ms, str))
 		return (FALSE);
 	/*if (!ms_checkredirections(ms, str))
 		return (FALSE);*/

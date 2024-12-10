@@ -17,7 +17,7 @@
 	!or exceptions ($? etc) into account yet.
 	*/
 
-char	*ms_replace_expanded(char *str, char *key, char *var)
+char	*ms_replace_expanded(t_ms *ms, char *str, char *key, char *var)
 {
 	char	*new;
 	int		i;
@@ -30,7 +30,7 @@ char	*ms_replace_expanded(char *str, char *key, char *var)
 	new = (char *)malloc(sizeof(char) \
 		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 1);
 	if (!new)
-		return (NULL);
+		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
 	while (str[++i] != '$')
 		new[i] = str[i];
 	while (var[++j])
@@ -42,7 +42,7 @@ char	*ms_replace_expanded(char *str, char *key, char *var)
 	return (new);
 }
 
-char	*ms_replace_null_value(char *str, char *key)
+char	*ms_replace_null_value(t_ms *ms, char *str, char *key)
 {
 	char	*new;
 	int		i;
@@ -53,7 +53,7 @@ char	*ms_replace_null_value(char *str, char *key)
 	new = (char *)malloc(sizeof(char) \
 		* (ft_strlen(str) - ft_strlen(key)) + 2);
 	if (!new)
-		return (NULL);
+		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
 	while (str[++i] != '$')
 		new[i] = str[i];
 	str += ft_strlen(key) + 1;
@@ -66,7 +66,7 @@ char	*ms_replace_null_value(char *str, char *key)
 	return (new);
 }
 
-char	*ms_replace_exit_status(char *str, char *status)
+char	*ms_replace_exit_status(t_ms *ms, char *str, char *status)
 {
 	char	*new;
 	int		i;
@@ -74,11 +74,10 @@ char	*ms_replace_exit_status(char *str, char *status)
 
 	i = -1;
 	j = -1;
-	printf("status=%s\n", status);
 	new = (char *)malloc(sizeof(char) \
 		* ((ft_strlen(str) - 2 + ft_strlen(status)) + 1));
 	if (!new)
-		return (NULL);
+		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
 	while (str[++i] != '$')
 		new[i] = str[i];
 	while (status[++j])
@@ -97,6 +96,7 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 {
 	char	*key;
 	char	*tmp;
+	char	*status;
 	t_list	*aux;
 
 	aux = ms->ms_env;
@@ -105,16 +105,19 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	if (aux == NULL || tmp == NULL)
 		return (0);
 	key = ft_strtok(tmp + start + 1, " ^*$\"=/-+.:");
-	ms->exit_status = 127;
 	if (*key == '?')
-		return (ms_replace_exit_status(str, ft_itoa(ms->exit_status)));
+	{
+		status = ft_itoa(ms->exit_status);
+		gc_add(status, &ms->gc);
+		return (ms_replace_exit_status(ms, str, status));
+	}
 	while (aux != NULL)
 	{
 		if (ms_key_checker(key, aux->content))
-			return (ms_replace_expanded(str, key, aux->content));
+			return (ms_replace_expanded(ms, str, key, aux->content));
 		aux = aux->next;
 	}
-	return (ms_replace_null_value(str, key));
+	return (ms_replace_null_value(ms, str, key));
 }
 
 void	ms_expand_variable(t_ms *ms)
