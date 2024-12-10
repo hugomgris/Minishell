@@ -3,48 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checker.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 19:37:38 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/10 14:03:47 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-/*	TODO
-
-	- Check for quotes (opened and closed)
-	Enclosing characters in single-quotes ( '' ) shall preserve
-	the literal value of each character within the single-quotes. 
-	A single-quote cannot occur within single-quotes.
-
+/*	
+	TODO
 	- Check for pipes (no pipe w/o command before or after)
-	
 	- Check for special characters ('\', '\n', ';' etc.)
 */
-
-int	ms_checkquotes(char *str, char c)
-{
-	int	i;
-	int	flag;
-
-	i = -1;
-	flag = 0;
-	while (str[++i])
-	{
-		if (str[i] == c && flag == 1)
-			flag = 0;
-		else if (str[i] == c && flag == 0)
-			flag = 1;
-	}
-	if (flag)
-	{
-		ms_error_handler(NULL, "Error: Unclosed quotes", 0);
-		return (FALSE);
-	}
-	return (TRUE);
-}
 
 int	ms_checkspecialchar(char *str)
 {
@@ -66,11 +38,12 @@ int	ms_check_empty_pipe(t_ms *ms, char *str)
 {
 	str++;
 	while (ft_isspace(*str))
-	{
 		str++;
-	}
 	if (*str == '|')
+	{
+		ms_error_handler(ms, "Wrong pipe: empty pipe \"|\"", 0);
 		return (TRUE);
+	}
 	else if (*str == '\0')
 	{
 		ms_error_handler(ms, "Wrong pipe: no command after \"|\"", 0);
@@ -79,9 +52,6 @@ int	ms_check_empty_pipe(t_ms *ms, char *str)
 	else
 		return (FALSE);
 }
-
-/*	Note: even though the input is trimmed, there can be tabs at the
-	head and/or tail of the string, hence the ft_isspace()	*/
 
 int	ms_checkpipes(t_ms *ms, char *str)
 {
@@ -100,29 +70,19 @@ int	ms_checkpipes(t_ms *ms, char *str)
 		if (str[i] == '|')
 		{
 			if (ms_check_empty_pipe(ms, str + i))
-			{
-				ms_error_handler(ms, "Wrong pipe: empty pipe \"|\"", 0);
 				return (FALSE);
-			}
 		}
 	}
 	return (TRUE);
 }
 
-/*	Each check function returns in case of invalid syntax so as to avoid
-	printing multiple error msgs	*/
-
 int	ms_syntax_checker(t_ms *ms, char *str)
 {
-	if (!ms_checkquotes(str, 39))
-		return (FALSE);
-	if (!ms_checkquotes(str, 34))
+	if (!ms_checkspecialchar(str))
 		return (FALSE);
 	if (!ms_checkpipes(ms, str))
 		return (FALSE);
-	if (!ms_checkspecialchar(str))
-		return (FALSE);
-	if (!ms_checkredirections(ms, str))
-		return (FALSE);
+	/*if (!ms_checkredirections(ms, str))
+		return (FALSE);*/
 	return (TRUE);
 }

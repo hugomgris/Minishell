@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/12/10 08:39:40 by hmunoz-g         ###   ########.fr       */
+=======
+/*   Updated: 2024/12/05 18:59:05 by nponchon         ###   ########.fr       */
+>>>>>>> develop3
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +60,12 @@ void	ms_main_loop(t_ms *ms)
 		if (!ms->input)
 			continue ;
 		add_history(ms->input);
+<<<<<<< HEAD
 		//ms_tokenizer(ms, ms->input);
+=======
+		if (!ms_parser(ms, ms->input))
+			continue ;
+>>>>>>> develop3
 		ms_executor(ms);
 		gc_add(ms->input, &ms->gc);
 	}

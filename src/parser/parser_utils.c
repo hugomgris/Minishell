@@ -1,32 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isdigit_str.c                                   :+:      :+:    :+:   */
+/*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-<<<<<<< HEAD:libs/libft/ft_isdigit_str.c
-/*   Created: 2024/12/09 13:57:58 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/09 13:59:25 by hmunoz-g         ###   ########.fr       */
-=======
-/*   Created: 2024/11/28 12:54:30 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/09 11:13:51 by nponchon         ###   ########.fr       */
->>>>>>> develop3:src/utils/exit_handler.c
+/*   Created: 2024/12/09 10:56:13 by nponchon          #+#    #+#             */
+/*   Updated: 2024/12/09 18:04:22 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/minishell.h"
 
-int	ft_isdigit_str(char *str)
+int	ms_key_checker(char *key, const char *var)
 {
 	int	i;
 
-	i = 0;
-	while (str[i])
+	i = -1;
+	while (key[++i])
 	{
-		if (!(str[i] >= 48 && str[i] <= 57))
-			return (0);
-		i++;
+		if (key[i] != var[i])
+			return (FALSE);
+		if (key[i + 1] == '\0' && var[i + 1] == '=')
+			return (TRUE);
 	}
-	return (1);
+	return (FALSE);
 }

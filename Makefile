@@ -15,15 +15,17 @@ NAME 		:= minishell
 
 CC			= cc
 FLAGS		= -Werror -Wall -Wextra -pthread -g -fsanitize=address
+DFLAGS		= -MT $@ -MMD -MP
 
 # -=-=-=-=-    PATH -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
 LIBFTDIR	= libs/libft/
 PRINTFDIR	= libs/libft/ft_printf/
-RM			= rm -f
+RM			= rm -fr
 
 # -=-=-=-=-    FILES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
+<<<<<<< HEAD
 SRCS 		:= 	src/main/minishell.c 			\
 				src/main/loop.c 				\
 				src/main/prompt_utils.c			\
@@ -52,18 +54,62 @@ SRCS 		:= 	src/main/minishell.c 			\
 				src/utils/string_utils.c 		\
 				src/utils/error_handler.c 		\
 				src/utils/garbage_collector.c	
+=======
+SRC 		:= 	main/minishell.c 			\
+				main/loop.c 				\
+				main/prompt_utils.c			\
+				builtins/cd.c 				\
+				builtins/cd_utils1.c		\
+				builtins/cd_utils2.c		\
+				builtins/echo.c 			\
+				builtins/env.c 				\
+				builtins/exit.c 			\
+				executor/executor.c			\
+				executor/piping.c 			\
+				executor/redirection.c 		\
+				parser/parser.c 			\
+				parser/parser_utils.c		\
+				parser/tokenizer.c 			\
+				parser/tokenizer_utils.c	\
+				parser/syntax_checker.c 	\
+				parser/expand_variable.c	\
+				parser/redirection_checker.c\
+				signals/signals.c 			\
+				env/env_manager.c 			\
+				env/env_utils1.c 			\
+				env/env_utils2.c 			\
+				utils/string_utils.c 		\
+				utils/error_handler.c 		\
+				utils/exit_handler.c		\
+				utils/garbage_collector.c	
+>>>>>>> develop3
 
-OBJS 		:= $(SRCS:.c=.o)
+SRCDIR		= src
+SRCS		= $(addprefix $(SRCDIR)/, $(SRC))
 
-DEPS		:= $(SRCS:.c=.d)
+OBJDIR		= .obj
+OBJS		= $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
+
+DEPDIR		= .dep/
+DEPS		= $(addprefix $(DEPDIR), $(SRC:.c=.d))
+DEPDIRS		= $(DEPDIR)builtins/ 	\
+			$(DEPDIR)env/ 			\
+			$(DEPDIR)executor/ 		\
+			$(DEPDIR)main/ 			\
+			$(DEPDIR)parser/ 		\
+			$(DEPDIR)signals/ 		\
+			$(DEPDIR)utils/
 
 # -=-=-=-=-    TARGETS -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
 all: make_libft make_printf $(NAME)
 
-%.o: %.c Makefile
-	$(CC) $(FLAGS) -MT $@ -MMD -MP -Ilibft -Ilibft/ft_printf -c $< -o $@
+$(OBJDIR)/%.o: $(SRCDIR)/%.c Makefile
+	@mkdir -p $(@D)
+	$(CC) $(FLAGS) $(DFLAGS) -Ilibft -Ilibft/ft_printf -c $< -o $@
 	@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
+	@mkdir -p $(DEPDIR) $(DEPDIRS)
+	@mv $(patsubst %.o,%.d,$@) $(subst $(OBJDIR),$(DEPDIR),$(@D))/
 
 $(NAME): $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a $(OBJS)
 	@echo "$(GREEN)Compiling minishell!$(DEF_COLOR)"
@@ -82,7 +128,7 @@ make_printf:
 clean:
 	@$(MAKE) clean -C $(LIBFTDIR)
 	@$(MAKE) clean -C $(PRINTFDIR)
-	@$(RM) $(OBJS) $(DEPS) 
+	@$(RM) $(OBJDIR) $(DEPDIR) 
 	@echo "$(RED)Cleaned object files and dependencies$(DEF_COLOR)"
 
 fclean: clean
