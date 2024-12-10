@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 19:37:00 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/10 14:22:32 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ typedef struct s_ms
 	t_list	*tokens;
 	char	*input;
 	char	**cmd_table;
+	int		exit_status;
+	int		fds[1024];
 }	t_ms;
 
 typedef enum e_type_tokens
@@ -42,35 +44,45 @@ typedef enum e_type_tokens
 	T_LPARENTH,
 	T_RPARENTH,
 	T_AND,
+	T_AMPERSAND,
 	T_OR,
 	T_NL
 }	t_token_type;
 
 //MAIN and LOOP functions
+void	ms_initialise_minishell(t_ms *ms, char **env);
 void	ms_main_loop(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
 
 //TOKENIZER and UTILS
-void	ms_tokenizer(t_ms *ms, char *str);
+int		ms_tokenizer(t_ms *ms, char *str);
 int		is_operator(char *c);
+int		is_quote(char c);
+int		ms_check_operator(t_ms *ms, char **str);
 void	ms_skip_space(char **str);
-void	ms_skip_quotes(char	*str, int *i);
-void	ms_extract_atom(t_ms *ms, char **str);
-void	ms_extract_operator(t_ms *ms, t_token_type type, char **str);
-void	ms_handle_operator(t_ms *ms, char **str);
+int		ms_skip_quotes(t_ms *ms, char	*str, int *i);
+int		ms_extract_atom(t_ms *ms, char **str);
+int		ms_extract_quote(t_ms *ms, char **str);
+int		ms_extract_operator(t_ms *ms, t_token_type type, char **str);
+int		ms_handle_operator(t_ms *ms, char **str);
+
+//PARSER
+int		ms_parser(t_ms *ms, char *str);
+void	ms_expand_variable(t_ms *ms);
+int		ms_key_checker(char *key, const char *var);
+char	*ms_replace_expanded(t_ms *ms, char *str, char *key, char *var);
+char	*ms_replace_null_value(t_ms *ms, char *str, char *key);
+char	*ms_replace_exit_status(t_ms *ms, char *str, char *status);
+char	*ms_search_env(t_ms *ms, char *str, int start);
+void	ms_remove_quotes(t_ms *ms);
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);
-int		ms_checkquotes(char *str, char c);
 int		ms_checkspecialchar(char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
-char	*ms_expand_variable(t_ms *ms, char *str);
 int		ms_checkredirections(t_ms *ms, char *str);
-char	*ms_replace_expanded(char *str, char *key, char *var);
-char	*ms_replace_null_value(char *str, char *key);
-char	*ms_search_env(t_ms *ms, char *str, int start);
 
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);

@@ -1,32 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit_handler.c                                     :+:      :+:    :+:   */
+/*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/28 12:54:30 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/09 11:13:51 by nponchon         ###   ########.fr       */
+/*   Created: 2024/12/09 10:56:13 by nponchon          #+#    #+#             */
+/*   Updated: 2024/12/09 18:04:22 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	print_list(void *content)
+int	ms_key_checker(char *key, const char *var)
 {
-	ft_printf("%s\n", (char *)content);
-}
+	int	i;
 
-/*
-Small exit handler that prints an exit msg, cleans ms_env and exits.
-If needed later on, we can move this to it's own file in utils.
-*/
-void	ms_exit_handler(t_ms *ms, const char *msg)
-{
-	if (msg)
-		ft_printf("%s\n", msg);
-	ft_lstclear(&ms->ms_env, free);
-	ft_lstclear(&ms->gc, free);
-	ft_lstclear(&ms->tokens, free);
-	exit(0);
+	i = -1;
+	while (key[++i])
+	{
+		if (key[i] != var[i])
+			return (FALSE);
+		if (key[i + 1] == '\0' && var[i + 1] == '=')
+			return (TRUE);
+	}
+	return (FALSE);
 }

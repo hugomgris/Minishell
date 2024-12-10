@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_checker.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/04 10:40:04 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/10 14:00:16 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,13 @@ int	ms_checkoutfile(char *str)
 	i = -1;
 	while (str[++i])
 	{
-		if (str[i] == '>' && str[i + 1] == '>')
+		if (ft_strnstr(str + i, ">", 1))
 		{
-			// call opening function in corresponding mode;
-			ft_printf("Redirect output to: s%\n", ft_strtok(str + 2, " "));
-			i += 2;
+			ft_printf("Redirect output to: %s\n", str + i);
+			i++;
 		}
-		else if (str[i] == '>' && ft_strtok(str + 1, " "))
-			ft_printf("Redirect output to: s%\n", ft_strtok(str + 2, " "));
+		else if (ft_strnstr(str + i, ">>", 2))
+			ft_printf("Redirect output to: %s\n", str + i);
 	}
 	return (TRUE);
 }
@@ -54,7 +53,7 @@ int	ms_checkinfile(t_ms *ms, char *str)
 	{
 		if (str[i] == '<' && here_doc)
 		{
-			ms_error_handler(ms, "Wrong infile", FALSE);
+			ms_error_handler(ms, "Wrong infile", 0);
 			return (FALSE);
 		}
 		if (str[i] == '<' && str[i + 1] == '<')
