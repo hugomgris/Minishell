@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_utils2.c                                       :+:      :+:    :+:   */
+/*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/04 13:44:54 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/10 10:23:03 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,13 @@ char	*ms_username_from_psswd(t_ms *ms)
 		if (token)
 		{
 			username = ft_strdup(token);
+			close(fd);
+			free(line);
 			gc_add(username, &ms->gc);
 			break ;
 		}
 		line = get_next_line(fd);
 	}
-	close(fd);
-	gc_add(line, &ms->gc);
 	return (username);
 }
 
@@ -48,10 +48,12 @@ char	*ms_get_prompt_user(t_ms *ms)
 	char	*prompt_user;
 	char	*session_manager;
 
+	if (ms->user)
+		return (ms->user);
 	hostname = NULL;
 	username = ms_get_username(ms);
 	if (!username)
-		username = "unknown";
+		username = "user";
 	session_manager = ms_get_env_variable(ms, "SESSION_MANAGER=");
 	if (session_manager)
 		hostname = ms_get_hostname(session_manager, ms);
@@ -95,20 +97,23 @@ char	*ms_get_hostname(char *session_manager, t_ms *ms)
 char	*ms_get_cwd(t_ms *ms)
 {
 	char	*cwd;
-	char	*home;
 	char	*new_cwd;
-	size_t	home_len;
 
-	cwd = ms_get_env_variable(ms, "PWD=");
+	if (ms_get_env_variable(ms, "PWD="))
+		cwd = ft_strdup(ms_get_env_variable(ms, "PWD="));
+	else
+	{
+		cwd = NULL;
+		cwd = getcwd(cwd, PATH_MAX);
+	}
+	if (!cwd)
+		cwd = ft_strdup("?");
+	gc_add(cwd, &ms->gc);
 	if (cwd[0] == '/' && !cwd[1])
 		return ("/");
-	home = ms_get_env_variable(ms, "HOME=");
-	if (!home)
-		return (cwd);
-	home_len = ft_strlen(home);
-	if (ft_strncmp(cwd, home, home_len) == 0)
+	if (ms->home && ft_strncmp(cwd, ms->home, ft_strlen(ms->home)) == 0)
 	{
-		new_cwd = ft_strjoin("~", cwd + home_len);
+		new_cwd = ft_strjoin("~", cwd + ft_strlen(ms->home));
 		if (!new_cwd)
 			ms_error_handler(ms, "Memory allocation failed", 1);
 		gc_add(new_cwd, &ms->gc);
@@ -125,6 +130,6 @@ char	*ms_get_username(t_ms *ms)
 	if (!username)
 		username = ms_username_from_psswd(ms);
 	if (!username)
-		username = "unknown";
+		username = "user";
 	return (username);
 }

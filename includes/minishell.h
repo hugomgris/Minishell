@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 14:22:32 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/10 18:24:46 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/stat.h>
+# include <errno.h>
 
 # define TRUE 1
 # define FALSE 0
@@ -27,10 +29,12 @@ typedef struct s_ms
 	t_list	*ms_env;
 	t_list	*gc;
 	t_list	*tokens;
+	char	*home;
+	char	*user;
+	char	*prompt;
 	char	*input;
 	char	**cmd_table;
 	int		exit_status;
-	int		fds[1024];
 }	t_ms;
 
 typedef enum e_type_tokens
@@ -86,7 +90,8 @@ int		ms_checkredirections(t_ms *ms, char *str);
 
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);
-void	ms_exit_handler(t_ms *ms, const char *msg);
+void	ms_exit_handler(t_ms *ms, const char *msg, int code);
+void	ms_exit(t_ms *ms, char **args);
 
 //SIGNAL HANDLER functions
 void	ms_signal_handler(int signal);
@@ -106,6 +111,8 @@ char	*ms_get_cwd(t_ms *ms);
 char	*ms_get_hostname(char *session_manager, t_ms *ms);
 char	*ms_get_username(t_ms *ms);
 void	ms_set_env_variable(t_ms *ms, char *key, char *value);
+char	*ms_make_home_ref(t_ms *ms, char **env);
+char	*ms_get_parent_path(t_ms *ms, char *cwd);
 
 //EXECUTOR functions
 void	ms_executor(t_ms *ms);
@@ -113,7 +120,7 @@ void	ms_executor(t_ms *ms);
 //BUILTIN CD functions
 void	ms_cd(t_ms *ms, char *path);
 int		ms_change_directory(t_ms *ms, char *new_path);
-int		ms_join_paths(char *cwd, char *path, char **new_path);
+int		ms_join_paths(t_ms *ms, char *cwd, char *path, char **new_path);
 void	ms_cd_absolute(t_ms *ms, char *path);
 void	ms_cd_home(t_ms *ms);
 void	ms_cd_back(t_ms *ms);
@@ -124,6 +131,28 @@ char	*ms_getcwd_or_error(t_ms *ms);
 char	*ms_expand_tilde(t_ms *ms, char*path);
 char	*ms_normalize_path(t_ms *ms, char *path);
 char	*ms_pop_from_path(char *path);
+void	ms_cd_ascend(t_ms *ms);
+void	ms_cd_symlink(t_ms *ms, char *path);
+int		ms_is_symlink(char *path);
+char	*ms_resolve_symlink(t_ms *ms, char *symlink);
+int		ms_cd_isdirectory(t_ms *ms, char *path);
+int		ms_check_directory_access(t_ms *ms, char *new_path);
+int		ms_update_oldpwd(t_ms *ms, char *current_pwd);
+
+//ENV, PWD, UNSET, ECHO and EXPORT builtin functions
+void	ms_env(t_ms *ms);
+void	ms_pwd(t_ms *ms);
+void	ms_unset(t_ms *ms, char **args);
+void	ms_echo(t_ms *ms, char **args);
+void	ms_export(t_ms *ms, char **input);
+void	ms_export_ex(t_ms *ms, char *key, char *value);
+void	ms_export_error(t_ms *ms, char *entry);
+int		ms_export_check(const char *var);
+void	ms_export_print(t_ms *ms);
+void	ms_process_export_arg(t_ms *ms, char *arg);
+void	ms_export_with_value(t_ms *ms, char *arg, char *sign);
+void	ms_export_without_value(t_ms *ms, char *arg);
+t_list	*ms_sort(t_list *lst, int (*cmp)(const void *, const void *, size_t));
 
 //GARBAGE COLLECTOR functions
 void	gc_add(void *ptr, t_list **gc);
