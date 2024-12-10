@@ -15,53 +15,72 @@ NAME 		:= minishell
 
 CC			= cc
 FLAGS		= -Werror -Wall -Wextra -pthread -g -fsanitize=address
+DFLAGS		= -MT $@ -MMD -MP
 
 # -=-=-=-=-    PATH -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
 LIBFTDIR	= libs/libft/
 PRINTFDIR	= libs/libft/ft_printf/
-RM			= rm -f
+RM			= rm -fr
 
 # -=-=-=-=-    FILES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
-SRCS 		:= 	src/main/minishell.c 			\
-				src/main/loop.c 				\
-				src/main/prompt_utils.c			\
-				src/builtins/cd.c 				\
-				src/builtins/cd_utils1.c		\
-				src/builtins/cd_utils2.c		\
-				src/builtins/echo.c 			\
-				src/builtins/env.c 				\
-				src/builtins/exit.c 			\
-				src/executor/executor.c			\
-				src/executor/piping.c 			\
-				src/executor/redirection.c 		\
-				src/parser/parser.c 			\
-				src/parser/tokenizer.c 			\
-				src/parser/tokenizer_utils.c	\
-				src/parser/syntax_checker.c 	\
-				src/parser/expand_variable.c	\
-				src/parser/redirection_checker.c\
-				src/signals/signals.c 			\
-				src/env/env_manager.c 			\
-				src/env/env_utils1.c 			\
-				src/env/env_utils2.c 			\
-				src/utils/string_utils.c 		\
-				src/utils/error_handler.c 		\
-				src/utils/exit_handler.c		\
-				src/utils/garbage_collector.c	
+SRC 		:= 	main/minishell.c 			\
+				main/loop.c 				\
+				main/prompt_utils.c			\
+				builtins/cd.c 				\
+				builtins/cd_utils1.c		\
+				builtins/cd_utils2.c		\
+				builtins/cd_utils3.c		\
+				builtins/cd_utils4.c		\
+				builtins/echo.c 			\
+				builtins/env.c 				\
+				builtins/exit.c 			\
+				builtins/export_utils.c 	\
+				builtins/export.c 			\
+				executor/executor.c			\
+				executor/piping.c 			\
+				executor/redirection.c 		\
+				parser/parser.c 			\
+				parser/parser_utils.c		\
+				parser/tokenizer.c 			\
+				parser/tokenizer_utils.c	\
+				parser/syntax_checker.c 	\
+				parser/expand_variable.c	\
+				parser/redirection_checker.c\
+				signals/signals.c 			\
+				env/env_manager.c 			\
+				env/env_utils.c 			\
+				utils/string_utils.c 		\
+				utils/error_handler.c 		\
+				utils/garbage_collector.c	
 
-OBJS 		:= $(SRCS:.c=.o)
+SRCDIR		= src
+SRCS		= $(addprefix $(SRCDIR)/, $(SRC))
 
-DEPS		:= $(SRCS:.c=.d)
+OBJDIR		= .obj
+OBJS		= $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
+
+DEPDIR		= .dep/
+DEPS		= $(addprefix $(DEPDIR), $(SRC:.c=.d))
+DEPDIRS		= $(DEPDIR)builtins/ 	\
+			$(DEPDIR)env/ 			\
+			$(DEPDIR)executor/ 		\
+			$(DEPDIR)main/ 			\
+			$(DEPDIR)parser/ 		\
+			$(DEPDIR)signals/ 		\
+			$(DEPDIR)utils/
 
 # -=-=-=-=-    TARGETS -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
 all: make_libft make_printf $(NAME)
 
-%.o: %.c Makefile
-	$(CC) $(FLAGS) -MT $@ -MMD -MP -Ilibft -Ilibft/ft_printf -c $< -o $@
+$(OBJDIR)/%.o: $(SRCDIR)/%.c Makefile
+	@mkdir -p $(@D)
+	$(CC) $(FLAGS) $(DFLAGS) -Ilibft -Ilibft/ft_printf -c $< -o $@
 	@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
+	@mkdir -p $(DEPDIR) $(DEPDIRS)
+	@mv $(patsubst %.o,%.d,$@) $(subst $(OBJDIR),$(DEPDIR),$(@D))/
 
 $(NAME): $(LIBFTDIR)libft.a $(PRINTFDIR)libftprintf.a $(OBJS)
 	@echo "$(GREEN)Compiling minishell!$(DEF_COLOR)"
@@ -80,7 +99,7 @@ make_printf:
 clean:
 	@$(MAKE) clean -C $(LIBFTDIR)
 	@$(MAKE) clean -C $(PRINTFDIR)
-	@$(RM) $(OBJS) $(DEPS) 
+	@$(RM) $(OBJDIR) $(DEPDIR) 
 	@echo "$(RED)Cleaned object files and dependencies$(DEF_COLOR)"
 
 fclean: clean

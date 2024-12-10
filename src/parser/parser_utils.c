@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstclear_bonus.c                                :+:      :+:    :+:   */
+/*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/20 10:06:46 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 14:02:07 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/12/09 10:56:13 by nponchon          #+#    #+#             */
+/*   Updated: 2024/12/09 18:04:22 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/minishell.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+int	ms_key_checker(char *key, const char *var)
 {
-	t_list	*tmp;
+	int	i;
 
-	if (!lst || !*lst)
-		return ;
-	while (*lst)
+	i = -1;
+	while (key[++i])
 	{
-		tmp = (*lst)->next;
-		//(void)(*del);
-		if (del)
-			del((*lst)->content);
-		free(*lst);
-		*lst = tmp;
+		if (key[i] != var[i])
+			return (FALSE);
+		if (key[i + 1] == '\0' && var[i + 1] == '=')
+			return (TRUE);
 	}
-	*lst = NULL;
+	return (FALSE);
 }
