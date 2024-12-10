@@ -56,7 +56,7 @@ void	ms_main_loop(t_ms *ms)
 		if (!ms->input)
 			continue ;
 		add_history(ms->input);
-		//ms_tokenizer(ms, ms->input);
+		ms_tokenizer(ms, ms->input);
 		ms_executor(ms);
 		gc_add(ms->input, &ms->gc);
 	}
