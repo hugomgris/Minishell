@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 16:29:23 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/11 17:14:31 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	ms_remove_quotes(t_ms *ms)
 		{
 			tmp = ft_strtrim(aux->content, "\"");
 			if (!tmp)
-				ms_error_handler(ms, "Error: Malloc failed removing quotes", TRUE);
+				ms_error_handler(ms, "Error: Malloc failed removing quotes", 1);
 			free(aux->content);
 			aux->content = tmp;
 		}
@@ -32,7 +32,7 @@ void	ms_remove_quotes(t_ms *ms)
 		{
 			tmp = ft_strtrim(aux->content, "\'");
 			if (!tmp)
-				ms_error_handler(ms, "Error: Malloc failed removing quotes", TRUE);
+				ms_error_handler(ms, "Error: Malloc failed removing quotes", 1);
 			free(aux->content);
 			aux->content = tmp;
 		}
@@ -42,21 +42,11 @@ void	ms_remove_quotes(t_ms *ms)
 
 int	ms_parser(t_ms *ms, char *str)
 {
-	t_list	*tmp;
-
 	if (!ms_syntax_checker(ms, str))
 		return (FALSE);
 	if (!ms_tokenizer(ms, str))
 		return (FALSE);
 	ms_expand_variable(ms);
 	ms_remove_quotes(ms);
-	tmp = ms->tokens;
-	while (tmp)
-	{
-		printf("%s\n", (char *)tmp->content);
-		tmp = tmp->next;
-	}
-	ft_lstclear(&ms->tokens, free);
-	ms->tokens = NULL;
 	return (TRUE);
 }

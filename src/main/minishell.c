@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 18:29:07 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/11 13:47:52 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	ms_initialise_minishell(t_ms *ms, char **env)
 	ms->gc = NULL;
 	ms->tokens = NULL;
 	ms->exit_status = 0;
+	ms->heredoc = 0;
 	ms->ms_env = ms_copy_env(ms, env);
 }
 
@@ -45,6 +46,7 @@ void	ms_init(t_ms *ms, char **env)
 	ms->user = NULL;
 	ms->tokens = NULL;
 	ms->exit_status = 0;
+	ms->heredoc = 0;
 	ms->ms_env = ms_copy_env(ms, env);
 	ms->home = ms_make_home_ref(ms, env);
 	ms->user = ms_get_prompt_user(ms);

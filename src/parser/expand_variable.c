@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-/*	
-	!This function does not take possible quotes
-	!or exceptions ($? etc) into account yet.
-	*/
-
 char	*ms_replace_expanded(t_ms *ms, char *str, char *key, char *var)
 {
 	char	*new;
@@ -133,7 +128,7 @@ void	ms_expand_variable(t_ms *ms)
 		i = -1;
 		while (str[++i])
 		{
-			if (!str[i] || str[i] == 39)
+			if (!str[i] || (!i && str[i] == 39))
 				break ;
 			if (str[i] == '$' && (str[i + 1] == '\0' \
 				|| !ft_isspace(str[i + 1])))
