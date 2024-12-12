@@ -51,12 +51,8 @@ char	*ms_replace_null_value(t_ms *ms, char *str, char *key)
 		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
 	while (str[++i] != '$')
 		new[i] = str[i];
-	str += ft_strlen(key) + 1;
-	while (str[i])
-	{
-		new[i] = str[i];
-		i++;
-	}
+	str += i + ft_strlen(key) + 1;
+	new[i++] = *str;
 	new[i] = '\0';
 	return (new);
 }
@@ -84,6 +80,7 @@ char	*ms_replace_exit_status(t_ms *ms, char *str, char *status)
 		i++;
 	}
 	new[i + j] = '\0';
+	free(status);
 	return (new);
 }
 
@@ -103,7 +100,6 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	if (*key == '?')
 	{
 		status = ft_itoa(ms->exit_status);
-		gc_add(status, &ms->gc);
 		return (ms_replace_exit_status(ms, str, status));
 	}
 	while (aux != NULL)

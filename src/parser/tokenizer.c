@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/11 18:02:27 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/12 19:52:00 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,35 +96,6 @@ int	ms_handle_operator(t_ms *ms, char **str)
 	return (FALSE);
 }
 
-int	ms_extract_quote(t_ms *ms, char **str)
-{
-	t_list	*node;
-	char	quote;
-	char	*token;
-	int		i;
-
-	i = 1;
-	quote = **str;
-	if (ft_strchr(*str + 1, quote))
-	{
-		token = ft_strdup(*str);
-		if (!token)
-			ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
-		while (token[i] != quote)
-			i++;
-		free(token);
-		token = ft_substr(*str, 0, ++i);
-		node = ft_lstnew(token);
-		if (!token || !node)
-			ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
-		ft_lstadd_back(&ms->tokens, node);
-		*str += i;
-		return (FALSE);
-	}
-	ms_error_handler(ms, "Error: Invalid quote", 0);
-	return (TRUE);
-}
-
 int	ms_tokenizer(t_ms *ms, char *str)
 {
 	int	error;
@@ -141,8 +112,6 @@ int	ms_tokenizer(t_ms *ms, char *str)
 			str++;
 		if (is_operator(str))
 			error = ms_handle_operator(ms, &str);
-		else if (is_quote(*str))
-			error = ms_extract_quote(ms, &str);
 		else
 			error = ms_extract_atom(ms, &str);
 	}
