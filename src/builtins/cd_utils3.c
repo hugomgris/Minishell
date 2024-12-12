@@ -6,12 +6,15 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 14:37:10 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 14:09:22 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/11 12:53:54 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Checks if path is symlink, returning 0 or confirmation.
+*/
 int	ms_is_symlink(char *path)
 {
 	struct stat	path_stat;
@@ -21,6 +24,12 @@ int	ms_is_symlink(char *path)
 	return (S_ISLNK(path_stat.st_mode));
 }
 
+/*
+Helper function that makes minishell able to handle symlinks.
+Using the ms_is_symlink function, returns the resolve symlink path.
+	(This means that if symlink, the resolved path has symlink ref;
+	if not, the resolved path has objective dir ref).
+*/
 char	*ms_resolve_symlink(t_ms *ms, char *symlink)
 {
 	char	*cwd;
@@ -48,6 +57,9 @@ char	*ms_resolve_symlink(t_ms *ms, char *symlink)
 	return (resolved_path);
 }
 
+/*
+Helper function that returns parent path from the CWD.
+*/
 char	*ms_get_parent_path(t_ms *ms, char *cwd)
 {
 	cwd = ms_expand_tilde(ms, cwd);
@@ -67,6 +79,10 @@ char	*ms_get_parent_path(t_ms *ms, char *cwd)
 	return (cwd);
 }
 
+/*
+Helper function to check if attempted cd path is a directory.
+It is used to handle specific cd error outputs.
+*/
 int	ms_cd_isdirectory(t_ms *ms, char *path)
 {
 	struct stat	path_stat;

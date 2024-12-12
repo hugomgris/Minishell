@@ -6,103 +6,115 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 15:49:12 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/12 10:47:07 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-char	*ms_make_home_ref(t_ms *ms, char **env)
+/*
+Helper function to build the ms_env entry that will be get/set/added.
+It handles special cases with no value (used for export builtin).
+*/
+char	*ms_build_entry(char *key, char *value)
 {
-	char	*cwd;
-	int		i;
+	char	*entry;
+	char	*tmp;
 
-	i = 0;
-	while (env[i])
-	{
-		if (!ft_strncmp(env[i], "HOME", 4))
-			return (env[i] + 5);
-		i++;
-	}
-	cwd = NULL;
-	cwd = getcwd(cwd, PATH_MAX);
-	if (!cwd)
-		return (NULL);
-	gc_add(cwd, &ms->gc);
-	cwd = ft_strchr(cwd, '/');
-	gc_add(cwd, &ms->gc);
-	cwd = ft_substr(cwd, 0, ft_strchr_n(cwd, '/', 3) - cwd);
-	gc_add(cwd, &ms->gc);
-	return (cwd);
+	if (!value)
+		return (ft_strdup(key));
+	tmp = ft_strjoin(key, "=");
+	entry = ft_strjoin(tmp, value);
+	free(tmp);
+	return (entry);
 }
 
+/*
+Changes the value of an existing env variable.
+*/
 void	ms_set_env_variable(t_ms *ms, char *key, char *value)
 {
 	t_list	*env;
 	char	*entry;
-	size_t	key_len;
 
-	key_len = ft_strlen(key);
 	env = ms->ms_env;
+	entry = ms_build_entry(key, value);
 	while (env)
 	{
-		if (!ft_strncmp((char *)env->content, key, key_len)
-			&& ((char *)env->content)[key_len] == '=')
+		if (!ft_strncmp(env->content, key, ft_strlen(key))
+			/*&& ((char *)env->content)[ft_strlen(key)] == '='*/)
 		{
 			free(env->content);
-			entry = ft_strjoin(key, "=");
-			gc_add(entry, &ms->gc);
-			entry = ft_strjoin(entry, value);
 			env->content = entry;
 			return ;
 		}
 		env = env->next;
 	}
-	entry = ft_strjoin(key, "=");
-	entry = ft_strjoin_free(entry, value);
 	ft_lstadd_back(&ms->ms_env, ft_lstnew(entry));
 }
 
-void	ms_add_env_variable(t_ms *ms, const char *env_var)
+/*
+Adds an env variable to the ms_env list.
+Recieves the whole var as a string ("KEY=VAL").
+The build of the var is handled by calling function.
+*/
+void	ms_add_env_variable(t_ms *ms, char *key, char *value)
 {
 	t_list	*new_node;
+	char	*entry;
 
-	new_node = ft_lstnew(ft_strdup(env_var));
+	entry = ms_build_entry(key, value);
+	new_node = ft_lstnew(entry);
 	if (!new_node)
 		ms_error_handler(ms, "Error: env copy failed", 0);
 	ft_lstadd_back(&ms->ms_env, new_node);
 }
 
-char	*ms_get_env_variable(t_ms *ms, const char *var_name)
+/*
+Gets an environment variable from the ms_env list.
+Gets the key ("NAME=") as argument to search through the entries.
+If found, returns the value of the variable (i.e. what's after '=').
+*/
+char	*ms_get_env_variable(t_ms *ms, char *key)
 {
 	t_list	*current;
-	char	*value;
+	size_t	key_len;
+	char	*entry;
 
 	current = ms->ms_env;
+	key_len = ft_strlen(key);
 	while (current)
 	{
-		value = current->content;
-		if (ft_strncmp(value, var_name, ft_strlen(var_name)) == 0)
-			return (value + ft_strlen(var_name));
+		entry = current->content;
+		if (!ft_strncmp(entry, key, key_len) && entry[key_len] == '=')
+			return (entry + key_len + 1);
 		current = current->next;
 	}
 	return (NULL);
 }
 
+/*
+Function to make a linked list copy of the env variables.
+If unset env, returns NULL.
+List is stored in the ms_env t_list inside the ms minishell struct.
+*/
 t_list	*ms_copy_env(t_ms *ms, char **env)
 {
 	int		i;
+	char	**key_value;
 
 	if (!env || !*env)
 		return (NULL);
-	else
+	i = 0;
+	while (env[i])
 	{
-		i = 0;
-		while (env[i])
+		key_value = ft_split(env[i], '=');
+		if (key_value)
 		{
-			ms_add_env_variable(ms, env[i]);
-			i++;
+			ms_add_env_variable(ms, key_value[0], key_value[1]);
+			ft_free(key_value);
 		}
+		i++;
 	}
 	return (ms->ms_env);
 }

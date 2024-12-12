@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/09 15:32:36 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/12 17:24:20 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,8 +141,6 @@ int	ms_tokenizer(t_ms *ms, char *str)
 			str++;
 		if (is_operator(str))
 			error = ms_handle_operator(ms, &str);
-		else if (is_quote(*str))
-			error = ms_extract_quote(ms, &str);
 		else
 			error = ms_extract_atom(ms, &str);
 	}

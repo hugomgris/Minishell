@@ -1,39 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_lstcpy_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/16 17:42:02 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 09:57:51 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/09/20 10:14:51 by hmunoz-g          #+#    #+#             */
+/*   Updated: 2024/12/12 12:05:37 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char *s1, const char *s2)
+t_list	*ft_lstcpy(t_list *original)
 {
-	char	*str;
-	size_t	i;
-	size_t	c;
+	t_list	*new_list;
+	t_list	*new_node;
 
-	if (!s1)
+	new_list = NULL;
+	while (original)
 	{
-		s1 = malloc(sizeof(char) + 1);
-		if (!s1)
-			return (0);
-		s1[0] = 0;
+		new_node = ft_lstnew(ft_strdup(original->content));
+		if (!new_node)
+			return (NULL);
+		ft_lstadd_back(&new_list, new_node);
+		original = original->next;
 	}
-	str = (char *)malloc(sizeof(char) * ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (!str)
-		return (ft_free_gnl(&s1));
-	i = -1;
-	while (s1[++i])
-		str[i] = s1[i];
-	c = -1;
-	while (s2[++c])
-		str[i + c] = s2[c];
-	str[i + c] = '\0';
-	return (str);
+	return (new_list);
 }

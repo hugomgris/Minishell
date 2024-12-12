@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 18:29:07 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/11 11:53:22 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,26 +18,14 @@
 	to using only 2 fds? 1? 0?
 */
 
-void	ms_initialise_minishell(t_ms *ms, char **env)
-{
-	ms->ms_env = NULL;
-	ms->gc = NULL;
-	ms->tokens = NULL;
-	ms->exit_status = 0;
-	ms->ms_env = ms_copy_env(ms, env);
-}
-
 /*
-Current main function handles:
--Making a copy of environment (implicit check of existing env var)
--Setting up the sigaction and signal handler
--Setting up and initializing the main loop (print prompt, wait for input/signals)
--In mandatory phase, both arms.gc and argv are voided.
-	In bonus they might be useful.
-
-TODO: take as many main lines as possible to the init function
+Initialization of the ms minishell struct.
+Stores fixed values of env variables if existing.
+It sets up the necessary NULLs and handles:
+	-Making a copy of the env variables
+	-Storing a home reference in the ms struct
+	-Storing a user reference in the ms struct
 */
-
 void	ms_init(t_ms *ms, char **env)
 {
 	ms->ms_env = NULL;
@@ -50,20 +38,29 @@ void	ms_init(t_ms *ms, char **env)
 	ms->user = ms_get_prompt_user(ms);
 }
 
+/*
+Magic sparks, minishell begins.
+Calls ms struct initialization function.
+Sets up signal handling.
+Launches the minishell loop.
+*/
 int	main(int argc, char **argv, char *env[])
 {
 	struct sigaction	action;
+	struct sigaction	quit_action;
 	t_ms				ms;
 
 	(void)argc;
 	(void)argv;
 	ms_init(&ms, env);
-	action.sa_handler = ms_signal_handler;
-	sigemptyset(&action.sa_mask);
 	action.sa_flags = SA_RESTART;
+	action.sa_handler = ms_signal_handler;
 	if (sigaction(SIGINT, &action, NULL) == -1)
 		ms_error_handler(&ms, "SIGINT sigaction error", 0);
 	if (sigaction(SIGTSTP, &action, NULL) == -1)
 		ms_error_handler(&ms, "SIGTSTP sigaction error", 0);
+	quit_action.sa_handler = SIG_IGN;
+	if (sigaction(SIGQUIT, &quit_action, NULL) == -1)
+		ms_error_handler(&ms, "SIGQUIT sigaction error", 0);
 	ms_main_loop(&ms);
 }
