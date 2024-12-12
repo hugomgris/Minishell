@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 22:07:55 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/12 23:09:40 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,12 @@ int	ms_count_quotes(char *str)
 	return (count);
 }
 
-char	*ms_trim_quotes(t_ms *ms, char *str, int count)
+char	*ms_trim_quotes(t_ms *ms, char *str, int len)
 {
 	char	quote;
 	char	*new;
-	int		len;
 	int		i;
 
-	len = ft_strlen(str) - count;
 	new = (char *)malloc(sizeof(char) * len + 1);
 	if (!new)
 		ms_exit_handler(ms, "Error: Malloc failed trimming a quote", 1);
@@ -84,6 +82,7 @@ void	ms_remove_quotes(t_ms *ms)
 	t_list	*aux;
 	char	*tmp;
 	int		count;
+	int		len;
 
 	aux = ms->tokens;
 	tmp = ft_strdup((char *)aux->content);
@@ -93,7 +92,9 @@ void	ms_remove_quotes(t_ms *ms)
 		if (ft_strchr(tmp, S_QUOTE) || ft_strchr(tmp, D_QUOTE))
 		{
 			count = ms_count_quotes(tmp);
-			aux->content = ms_trim_quotes(ms, tmp, count);
+			len = ft_strlen(tmp) - count;
+			gc_add(aux->content, &ms->gc);
+			aux->content = ms_trim_quotes(ms, tmp, len);
 		}
 		aux = aux->next;
 	}

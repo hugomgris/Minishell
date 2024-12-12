@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 19:52:00 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/12 22:52:00 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,7 @@ int	ms_extract_atom(t_ms *ms, char **str)
 
 	i = 0;
 	tmp = *str;
-	while (tmp[i] && !is_operator(tmp + i) && !ft_isspace(tmp[i])
-		/*&& !is_quote(tmp[i])*/)
+	while (tmp[i] && !is_operator(tmp + i) && !ft_isspace(tmp[i]))
 	{
 		if (tmp[i] == 34 || tmp[i] == 39)
 		{
