@@ -6,12 +6,18 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 14:07:59 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/12 09:47:35 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Makes cd able to handle symlinks.
+All cding with normalized paths go through here to check if symlink.
+If argument is a non-working symlink, outputs error.
+Else, calls change director function.
+*/
 void	ms_cd_symlink(t_ms *ms, char *path)
 {
 	char	*resolved_path;
@@ -33,6 +39,12 @@ void	ms_cd_symlink(t_ms *ms, char *path)
 			return ;
 }
 
+/*
+Handles cding to home dir.
+Just in case, if there is no HOME ref in ms struct, outputs error.
+(This is an extreme edge case that happens if minishell is launched
+	with unset env from a non-existing dir)
+*/
 void	ms_cd_home(t_ms *ms)
 {
 	if (ms->home == NULL)
@@ -44,22 +56,34 @@ void	ms_cd_home(t_ms *ms)
 		return ;
 }
 
+/*
+Handles cding into last visited dir.
+Last visited dir is taken from ms_env (OLDPWD).
+If OLDPWD is unset, outputs error.
+*/
 void	ms_cd_back(t_ms *ms)
 {
 	char	*aux;
 
-	if (!ms_get_env_variable(ms, "OLDPWD="))
+	if (!ms_get_env_variable(ms, "OLDPWD"))
 	{
 		ms_error_handler(ms, "cd: OLDPWD not set", 0);
 		return ;
 	}
-	aux = ft_strdup(ms_get_env_variable(ms, "OLDPWD="));
+	aux = ft_strdup(ms_get_env_variable(ms, "OLDPWD"));
 	gc_add(aux, &ms->gc);
 	if (ms_change_directory(ms, aux) == -1)
 		return ;
 	ft_printf("%s\n", aux);
 }
 
+/*
+Handles cding into parent directory (cd ..).
+Calls function that searches for parent dir.
+Safely works from a non existing dir or absence of parent dir as bash does:
+	-First attempt outputs specific error.
+	-Second attempt calls ascend function to search for closest available parent.
+*/
 void	ms_cd_parent(t_ms *ms)
 {
 	static int	try = 1;
@@ -86,6 +110,18 @@ void	ms_cd_parent(t_ms *ms)
 	return (ms_cd_ascend(ms));
 }
 
+/*
+CD builtin command hub.
+Checks argument and calls a variety of cd functions depending on the case.
+Special/specific cases are handled directly. Others go through normlizing.
+Right now, minishell cd can handle:
+	-Relative and absolute paths.
+	-cd back (../), multiple times and with path insertion
+	-cd - to go to the previous visited dir
+	-cd ~ to go directly to home
+	-cd / to go directly to root
+	-Symlinks, both to existing and non existing dirs (erroring in 2nd case)
+*/
 void	ms_cd(t_ms *ms, char *path)
 {
 	if (!path || path[0] == '\0' || (path[0] == '~' && !path[1]))

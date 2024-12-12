@@ -6,12 +6,18 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 15:49:43 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 14:06:53 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/12 09:47:19 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Bypass function that expands the initial portion of a path starting with '~'.
+'~' is a substitution character for /home/user,
+	so this is a normalizing step that makes minishell able to accept
+		cd paths with '~' abbreviation.
+*/
 char	*ms_expand_tilde(t_ms *ms, char *path)
 {
 	char	*expanded_path;
@@ -27,6 +33,9 @@ char	*ms_expand_tilde(t_ms *ms, char *path)
 	return (path);
 }
 
+/*
+Bypass function to join paths in case of inserted '..' or '.' in argument path.
+*/
 int	ms_join_paths(t_ms *ms, char *cwd, char *path, char **new_path)
 {
 	size_t	cwd_len;
@@ -46,13 +55,19 @@ int	ms_join_paths(t_ms *ms, char *cwd, char *path, char **new_path)
 	return (0);
 }
 
+/*
+The heart of the cd builtin command.
+Attempts to change directory to path received as argument.
+Handles change attempt error both with output and int return.
+Handles the necessary changes to PWD and OLDPWD ms_env entries, if set.
+*/
 int	ms_change_directory(t_ms *ms, char *new_path)
 {
 	char	*current_pwd;
 
 	if (ms_check_directory_access(ms, new_path) == -1)
 		return (-1);
-	current_pwd = ms_get_env_variable(ms, "PWD=");
+	current_pwd = ms_get_env_variable(ms, "PWD");
 	if (!current_pwd)
 	{
 		current_pwd = ms_get_cwd(ms);
@@ -67,6 +82,10 @@ int	ms_change_directory(t_ms *ms, char *new_path)
 	return (0);
 }
 
+/*
+Flow control function to check for cwd availability.
+Outputs error if cwd ins unreachable (being in a non-existing dir case).
+*/
 char	*ms_getcwd_or_error(t_ms *ms)
 {
 	char	*cwd;
@@ -81,16 +100,11 @@ char	*ms_getcwd_or_error(t_ms *ms)
 	return (cwd);
 }
 
+/*
+Handles cding to root directory (case cd /).
+*/
 void	ms_cd_root(t_ms *ms, char *path)
 {
-	char	*old_cwd;
-	char	*cwd;
-
-	old_cwd = ms_get_cwd(ms);
-	if (old_cwd)
-		gc_add(old_cwd, &ms->gc);
-	ms_change_directory(ms, path);
-	cwd = ms_getcwd_or_error(ms);
-	if (cwd)
-		gc_add(cwd, &ms->gc);
+	if (ms_change_directory(ms, path) == -1)
+		return ;
 }
