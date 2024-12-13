@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 17:24:20 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/12 22:52:00 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,7 @@ int	ms_extract_atom(t_ms *ms, char **str)
 
 	i = 0;
 	tmp = *str;
-	while (tmp[i] && !is_operator(tmp + i) && !ft_isspace(tmp[i])
-		&& !is_quote(tmp[i]))
+	while (tmp[i] && !is_operator(tmp + i) && !ft_isspace(tmp[i]))
 	{
 		if (tmp[i] == 34 || tmp[i] == 39)
 		{
@@ -94,35 +93,6 @@ int	ms_handle_operator(t_ms *ms, char **str)
 	if (**str == ')')
 		return (ms_extract_operator(ms, T_RPARENTH, str));
 	return (FALSE);
-}
-
-int	ms_extract_quote(t_ms *ms, char **str)
-{
-	t_list	*node;
-	char	quote;
-	char	*token;
-	int		i;
-
-	i = 1;
-	quote = **str;
-	if (ft_strchr(*str + 1, quote))
-	{
-		token = ft_strdup(*str);
-		if (!token)
-			ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
-		while (token[i] != quote)
-			i++;
-		free(token);
-		token = ft_substr(*str, 0, ++i);
-		node = ft_lstnew(token);
-		if (!token || !node)
-			ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
-		ft_lstadd_back(&ms->tokens, node);
-		*str += i;
-		return (FALSE);
-	}
-	ms_error_handler(ms, "Error: Invalid quote", 0);
-	return (TRUE);
 }
 
 int	ms_tokenizer(t_ms *ms, char *str)

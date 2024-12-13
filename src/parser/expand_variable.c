@@ -12,11 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-/*	
-	!This function does not take possible quotes
-	!or exceptions ($? etc) into account yet.
-	*/
-
 char	*ms_replace_expanded(t_ms *ms, char *str, char *key, char *var)
 {
 	char	*new;
@@ -56,12 +51,8 @@ char	*ms_replace_null_value(t_ms *ms, char *str, char *key)
 		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
 	while (str[++i] != '$')
 		new[i] = str[i];
-	str += ft_strlen(key) + 1;
-	while (str[i])
-	{
-		new[i] = str[i];
-		i++;
-	}
+	str += i + ft_strlen(key) + 1;
+	new[i++] = *str;
 	new[i] = '\0';
 	return (new);
 }
@@ -89,6 +80,7 @@ char	*ms_replace_exit_status(t_ms *ms, char *str, char *status)
 		i++;
 	}
 	new[i + j] = '\0';
+	free(status);
 	return (new);
 }
 
@@ -133,7 +125,7 @@ void	ms_expand_variable(t_ms *ms)
 		i = -1;
 		while (str[++i])
 		{
-			if (!str[i] || str[i] == 39)
+			if (!str[i] || (!i && str[i] == 39))
 				break ;
 			if (str[i] == '$' && (str[i + 1] == '\0' \
 				|| !ft_isspace(str[i + 1])))

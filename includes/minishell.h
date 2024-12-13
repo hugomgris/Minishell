@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/13 10:29:13 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/12 23:09:12 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 
 # define TRUE 1
 # define FALSE 0
+# define S_QUOTE '\''
+# define D_QUOTE '\"'
 
 typedef struct s_ms
 {
@@ -36,6 +38,7 @@ typedef struct s_ms
 	char	*input;
 	char	**cmd_table;
 	int		exit_status;
+	int		heredoc;
 }	t_ms;
 
 typedef enum e_type_tokens
@@ -82,13 +85,16 @@ char	*ms_replace_null_value(t_ms *ms, char *str, char *key);
 char	*ms_replace_exit_status(t_ms *ms, char *str, char *status);
 char	*ms_search_env(t_ms *ms, char *str, int start);
 void	ms_remove_quotes(t_ms *ms);
-
+int		ms_count_quotes(char *str);
+char	*ms_trim_quotes(t_ms *ms, char *str, int len);
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);
 int		ms_checkspecialchar(char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
 int		ms_checkredirections(t_ms *ms, char *str);
+int		ms_checkoutfile(t_ms *ms, char *str);
+int		ms_checkinfile(t_ms *ms, char *str);
 
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);
