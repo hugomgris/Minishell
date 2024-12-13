@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/13 12:37:04 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/13 12:45:29 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char	*ms_trim_quotes(char *str, char *new, int len);
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);
-int		ms_checkspecialchar(char *str);
+int		ms_checkspecialchar(t_ms *ms, char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
 int		ms_checkredirections(t_ms *ms, char *str);

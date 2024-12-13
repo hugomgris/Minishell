@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/11 12:45:50 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/13 12:46:16 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 	- Check for special characters ('\', '\n', ';' etc.)
 */
 
-int	ms_checkspecialchar(char *str)
+int	ms_checkspecialchar(t_ms *ms, char *str)
 {
 	int	i;
 
@@ -27,7 +27,7 @@ int	ms_checkspecialchar(char *str)
 	{
 		if (str[i] == 59 || str[i] == 92)
 		{
-			ft_putstr_fd("Invalid character: ';' '\\'\n", 2);
+			ms_error_handler(ms, "Invalid character: ';' '\\'\n", 1);
 			return (FALSE);
 		}
 	}
@@ -78,7 +78,7 @@ int	ms_checkpipes(t_ms *ms, char *str)
 
 int	ms_syntax_checker(t_ms *ms, char *str)
 {
-	if (!ms_checkspecialchar(str))
+	if (!ms_checkspecialchar(ms, str))
 		return (FALSE);
 	if (!ms_checkpipes(ms, str))
 		return (FALSE);
