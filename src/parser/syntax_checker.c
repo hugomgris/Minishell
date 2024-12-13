@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/13 12:46:16 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/13 15:38:54 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	ms_checkspecialchar(t_ms *ms, char *str)
 	{
 		if (str[i] == 59 || str[i] == 92)
 		{
-			ms_error_handler(ms, "Invalid character: ';' '\\'\n", 1);
+			ms_error_handler(ms, "Invalid character: ';' '\\'\n", 0);
 			return (FALSE);
 		}
 	}

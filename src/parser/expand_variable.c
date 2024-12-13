@@ -15,19 +15,23 @@
 char	*ms_replace_expanded(t_ms *ms, char *str, char *key, char *var)
 {
 	char	*new;
+	char	quote;
 	int		i;
 	int		j;
 	int		k;
 
 	i = -1;
 	j = -1;
+	quote = 0;
 	var += ft_strlen(key) + 1;
 	new = (char *)malloc(sizeof(char) \
 		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 1);
 	if (!new)
 		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
 	while (str[++i] != '$')
+	{
 		new[i] = str[i];
+	}
 	while (var[++j])
 		new[i + j] = var[j];
 	k = ft_strlen(key) + i;
@@ -95,7 +99,7 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	gc_add(tmp, &ms->gc);
 	if (aux == NULL || tmp == NULL)
 		return (0);
-	key = ft_strtok(tmp + start + 1, " ^*$\"\'=/-+.:");
+	key = ft_strtok(tmp + start + 1, " #^*$\"\'=/-+.:");
 	if (*key == '?')
 	{
 		status = ft_itoa(ms_get_set(0, 0));
@@ -124,8 +128,12 @@ void	ms_expand_variable(t_ms *ms)
 		i = -1;
 		while (str[++i])
 		{
-			if (!str[i] || (!i && str[i] == 39))
-				break ;
+			if (str[i] == S_QUOTE)
+			{
+				i++;
+				while (str[i] != S_QUOTE)
+					i++;
+			}
 			if (str[i] == '$' && (str[i + 1] == '\0' \
 				|| !ft_isspace(str[i + 1])))
 			{

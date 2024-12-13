@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/13 12:37:05 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/13 15:45:15 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,10 +82,10 @@ void	ms_remove_quotes(t_ms *ms)
 	int		len;
 
 	aux = ms->tokens;
-	tmp = ft_strdup((char *)aux->content);
-	gc_add(tmp, &ms->gc);
 	while (aux)
 	{
+		tmp = ft_strdup((char *)aux->content);
+		gc_add(tmp, &ms->gc);
 		if (ft_strchr(tmp, S_QUOTE) || ft_strchr(tmp, D_QUOTE))
 		{
 			count = ms_count_quotes(tmp);
@@ -94,7 +94,6 @@ void	ms_remove_quotes(t_ms *ms)
 			if (!new)
 				ms_exit_handler(ms, "Error: Malloc failed trimming a quote", 1);
 			gc_add(aux->content, &ms->gc);
-			gc_add(new, &ms->gc);
 			aux->content = ms_trim_quotes(tmp, new, len);
 		}
 		aux = aux->next;
