@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/11 11:53:22 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/13 08:52:36 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,20 @@
 	Check for possible limitation of FDs: what happens if minishell is limited
 	to using only 2 fds? 1? 0?
 */
+
+void	ms_set_shlvl(t_ms *ms)
+{
+	char	*shlvl;
+
+	if (ms_get_env_variable(ms, "SHLVL"))
+	{
+		shlvl = ft_itoa(ft_atoi(ms_get_env_variable(ms, "SHLVL")) + 1);
+		gc_add(shlvl, &ms->gc);
+		ms_set_env_variable(ms, "SHLVL", shlvl);
+	}
+	else
+		ms_add_env_variable(ms, "SHLVL", "1");
+}
 
 /*
 Initialization of the ms minishell struct.
@@ -36,6 +50,7 @@ void	ms_init(t_ms *ms, char **env)
 	ms->ms_env = ms_copy_env(ms, env);
 	ms->home = ms_make_home_ref(ms, env);
 	ms->user = ms_get_prompt_user(ms);
+	ms_set_shlvl(ms);
 }
 
 /*

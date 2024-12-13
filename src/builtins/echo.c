@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 12:21:40 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/13 09:56:37 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ void	ms_echo(t_list *tokens)
 	}
 	if (current->content)
 	{
+		if (!ft_strncmp(current->content, "?", 1) && !current->next)
+			ft_printf("%d\n", ms_get_set(0, 0));
 		while (current)
 		{
 			ft_putstr_fd(current->content, 1);

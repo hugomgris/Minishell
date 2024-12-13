@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 20:10:05 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/13 10:29:13 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ void	ms_initialise_minishell(t_ms *ms, char **env);
 void	ms_main_loop(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
+void	ms_set_shlvl(t_ms *ms);
 
 //TOKENIZER and UTILS
 int		ms_tokenizer(t_ms *ms, char *str);
@@ -119,17 +120,18 @@ char	*ms_get_parent_path(t_ms *ms, char *cwd);
 
 //EXECUTOR functions
 void	ms_executor(t_ms *ms);
-void	execute_parent(pid_t pid, int *status);
+void	execute_parent(t_ms *ms, pid_t pid, int *status);
 void	execute_child(t_ms *ms, char **arr);
+char	*validate_command(t_ms *ms);
 char	*ms_get_command_path(t_ms *ms, char *cmd);
+char	*ms_get_env_path_or_def(t_ms *ms);
 char	**ms_make_argv(t_ms *ms, t_list *tokens);
 void	ms_execute_builtin(t_ms *ms);
 int		ms_is_builtin(char *cmd);
 void	ms_child_process(t_ms *ms, char **arr);
-void	ms_parent_process(pid_t pid, int *status);
+void	ms_parent_process(t_ms *ms, pid_t pid, int *status);
 void	ms_executor_cleanup(t_ms *ms, char **arr);
 char	**ms_env_to_array(t_list *ms_env);
-char	*validate_command(t_ms *ms);
 
 //BUILTIN CD functions
 void	ms_cd(t_ms *ms, char *path);

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 20:15:25 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/13 10:30:24 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,14 @@ void	ms_child_process(t_ms *ms, char **arr)
 /*
 Makes the parent process wait until child process ends.
 */
-void	ms_parent_process(pid_t pid, int *status)
+void	ms_parent_process(t_ms *ms, pid_t pid, int *status)
 {
-	waitpid(pid, status, 0);
+	if (waitpid(pid, status, 0) == -1)
+	{
+		ms_error_handler(ms, "Error: Waitpid failed", 0);
+		ms_get_set(1, 1);
+		return ;
+	}
 	ms_get_set(1, WEXITSTATUS(*status));
 }
 
@@ -49,10 +54,10 @@ void	execute_child(t_ms *ms, char **arr)
 Control flow function that calls for parent process execution.
 Rises the flag for the SIGINT handler to know if its in child or parent proc.
 */
-void	execute_parent(pid_t pid, int *status)
+void	execute_parent(t_ms *ms, pid_t pid, int *status)
 {
 	ms_get_set(1, 1);
-	ms_parent_process(pid, status);
+	ms_parent_process(ms, pid, status);
 }
 
 /*
@@ -69,19 +74,22 @@ void	ms_executor(t_ms *ms)
 	char	*path;
 
 	arr = ms_env_to_array(ms->ms_env);
-	path = validate_command(ms);
 	if (ms_is_builtin(ms->tokens->content))
 		ms_execute_builtin(ms);
-	else if (path)
+	else
 	{
-		gc_add(path, &ms->gc);
-		pid = fork();
-		if (pid == -1)
-			ms_error_handler(ms, "Fork failed", 0);
-		else if (pid == 0)
-			execute_child(ms, arr);
-		else
-			execute_parent(pid, &status);
+		path = validate_command(ms);
+		if (path)
+		{
+			gc_add(path, &ms->gc);
+			pid = fork();
+			if (pid == -1)
+				ms_error_handler(ms, "Fork failed", 0);
+			else if (pid == 0)
+				execute_child(ms, arr);
+			else
+				execute_parent(ms, pid, &status);
+		}
 	}
 	ms_executor_cleanup(ms, arr);
 }
