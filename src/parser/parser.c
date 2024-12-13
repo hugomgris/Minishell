@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/13 10:52:18 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/13 12:37:05 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,11 @@ int	ms_count_quotes(char *str)
 	return (count);
 }
 
-char	*ms_trim_quotes(t_ms *ms, char *str, int len)
+char	*ms_trim_quotes(char *str, char *new, int len)
 {
 	char	quote;
-	char	*new;
 	int		i;
 
-	new = (char *)malloc(sizeof(char) * len + 1);
-	if (!new)
-		ms_exit_handler(ms, "Error: Malloc failed trimming a quote", 1);
 	quote = 0;
 	i = 0;
 	while (i < len)
@@ -81,6 +77,7 @@ void	ms_remove_quotes(t_ms *ms)
 {
 	t_list	*aux;
 	char	*tmp;
+	char	*new;
 	int		count;
 	int		len;
 
@@ -93,8 +90,12 @@ void	ms_remove_quotes(t_ms *ms)
 		{
 			count = ms_count_quotes(tmp);
 			len = ft_strlen(tmp) - count;
+			new = (char *)malloc(sizeof(char) * len + 1);
+			if (!new)
+				ms_exit_handler(ms, "Error: Malloc failed trimming a quote", 1);
 			gc_add(aux->content, &ms->gc);
-			aux->content = ms_trim_quotes(ms, tmp, len);
+			gc_add(new, &ms->gc);
+			aux->content = ms_trim_quotes(tmp, new, len);
 		}
 		aux = aux->next;
 	}

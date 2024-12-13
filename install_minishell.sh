@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to switch the symlink for minishell in ~/bin
-# Usage: ./switch_minishell_symlink.sh /path/to/new/minishell
+# Usage: ./install_minishell.sh .
 
 # Check if the user provided a target path
 if [ "$#" -ne 1 ]; then
