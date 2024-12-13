@@ -6,12 +6,16 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 11:23:05 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 15:49:20 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/12 11:18:23 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Helper function to check cd path's aiming dir availability.
+Handles different possible error cases.
+*/
 int	ms_check_directory_access(t_ms *ms, char *new_path)
 {
 	if (access(new_path, F_OK) == -1)
@@ -25,19 +29,19 @@ int	ms_check_directory_access(t_ms *ms, char *new_path)
 	return (0);
 }
 
+/*
+Helper function that updates the OLDPWD entry in ms_env struct.
+If OLDPWD is unset, this makes it's resetting possible.
+It is a tool function to remake the OLDPWD in an unset env case.
+	I.E., if unset OLDPWD, this makes it reset possible after 2 cds.
+*/
 int	ms_update_oldpwd(t_ms *ms, char *current_pwd)
 {
-	char	*old_pwd;
-
 	if (access(current_pwd, F_OK) != -1)
 	{
-		if (!ms_get_env_variable(ms, "OLDPWD="))
+		if (!ms_get_env_variable(ms, "OLDPWD"))
 		{
-			old_pwd = ft_strjoin("OLDPWD=", current_pwd);
-			if (!old_pwd)
-				return (ms_error_handler(ms, "cd: Memory alloc failed", 1), -1);
-			gc_add(old_pwd, &ms->gc);
-			ms_add_env_variable(ms, old_pwd);
+			ms_add_env_variable(ms, "OLDPWD", current_pwd);
 		}
 		else
 		{

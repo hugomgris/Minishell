@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
 /*   Updated: 2024/12/13 10:52:18 by nponchon         ###   ########.fr       */
@@ -108,7 +108,5 @@ int	ms_parser(t_ms *ms, char *str)
 		return (FALSE);
 	ms_expand_variable(ms);
 	ms_remove_quotes(ms);
-	ms_print_list(ms->tokens);
-	ft_lstclear(&ms->tokens, free);
 	return (TRUE);
 }

@@ -99,7 +99,8 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	key = ft_strtok(tmp + start + 1, " ^*$\"\'=/-+.:");
 	if (*key == '?')
 	{
-		status = ft_itoa(ms->exit_status);
+		status = ft_itoa(ms_get_set(0, 0));
+		gc_add(status, &ms->gc);
 		return (ms_replace_exit_status(ms, str, status));
 	}
 	while (aux != NULL)

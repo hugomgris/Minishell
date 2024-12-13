@@ -6,26 +6,46 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:20:34 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 18:04:05 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/12 12:06:10 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Helper function that prints the export-ready variables in ms_env.
+The output is formatted following Bash's way of handling the export command.
+Works similarly as ENV command, but also prints variables w/o values
+*/
 void	ms_export_print(t_ms *ms)
 {
 	t_list	*current;
+	t_list	*sorted_env;
+	char	*sym;
+	char	*out;
 
-	current = ms->ms_env;
-	current = ms_sort(current, ft_memcmp);
+	sorted_env = ft_lstcpy(ms->ms_env);
+	sorted_env = ms_sort(sorted_env, ft_memcmp);
+	current = ms_sort(sorted_env, ft_memcmp);
 	while (current)
 	{
-		ft_printf("declare -x ");
-		ft_printf("%s\n", current->content);
+		sym = ft_strchr(current->content, '=');
+		if (sym)
+			out = ms_build_export_output(ms, current->content, sym);
+		else
+		{
+			out = ft_strdup(current->content);
+			gc_add(out, &ms->gc);
+		}
+		ft_printf("declare -x %s\n", out);
 		current = current->next;
 	}
+	ft_lstclear(&sorted_env, free);
 }
 
+/*
+Flow control function that checks key syntax to comply with export rules
+*/
 int	ms_export_check(const char *var)
 {
 	int	i;
@@ -42,6 +62,9 @@ int	ms_export_check(const char *var)
 	return (1);
 }
 
+/*
+Helper function that handles the export error output via ms_error_handler
+*/
 void	ms_export_error(t_ms *ms, char *entry)
 {
 	char	*output;
@@ -54,46 +77,49 @@ void	ms_export_error(t_ms *ms, char *entry)
 	ms_error_handler(ms, output, 0);
 }
 
+/*
+Executes the export command with variables.
+Handles required cases:
+	-If both a key and a value are input (i.e., arg has an '=')
+		changes or creates the variable.
+	-If there is no value asigned in input
+		changes or creates the variable without an assigned val.
+
+*/
 void	ms_export_ex(t_ms *ms, char *key, char *value)
 {
-	char	*fkey;
-	char	*entry;
-
 	if (value)
 	{
-		fkey = ft_strjoin(key, "=");
-		gc_add(fkey, &ms->gc);
-		if (ms_get_env_variable(ms, fkey))
+		if (ms_key_exists(ms, key))
 			ms_set_env_variable(ms, key, value);
 		else
-		{
-			entry = ft_strjoin(fkey, value);
-			gc_add(entry, &ms->gc);
-			ms_add_env_variable(ms, entry);
-		}
+			ms_add_env_variable(ms, key, value);
 	}
 	else
 	{
-		if (ms_get_env_variable(ms, key))
-			ms_set_env_variable(ms, key, "");
-		else
-			ms_add_env_variable(ms, key);
+		if (!ms_key_exists(ms, key))
+			ms_add_env_variable(ms, key, NULL);
 	}
 }
 
-void	ms_export(t_ms *ms, char **input)
+/*
+EXPORT builtin main handler.
+If there are no arguments, it calls the export print option.
+Else, it processes each argument through exec fuction.
+*/
+void	ms_export(t_ms *ms, t_list *tokens)
 {
-	int	i;
+	t_list	*current;
 
-	i = 0;
-	if (!input[1])
+	if (!tokens->next)
 	{
 		ms_export_print(ms);
 		return ;
 	}
-	while (input[i])
+	current = tokens->next;
+	while (current)
 	{
-		ms_process_export_arg(ms, input[i]);
-		i++;
+		ms_process_export_arg(ms, current->content);
+		current = current->next;
 	}
 }

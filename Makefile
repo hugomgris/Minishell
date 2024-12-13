@@ -36,9 +36,12 @@ SRC 		:= 	main/minishell.c 			\
 				builtins/echo.c 			\
 				builtins/env.c 				\
 				builtins/exit.c 			\
-				builtins/export_utils.c 	\
+				builtins/export_utils1.c 	\
+				builtins/export_utils2.c 	\
 				builtins/export.c 			\
 				executor/executor.c			\
+				executor/executor_utils1.c	\
+				executor/executor_utils2.c	\
 				executor/piping.c 			\
 				executor/redirection.c 		\
 				parser/parser.c 			\
