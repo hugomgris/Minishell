@@ -6,11 +6,22 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:56:13 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/16 12:39:55 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/16 12:56:41 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void	ms_skip_squote(char *str, int *i)
+{
+	if (str[*i] == S_QUOTE)
+	{
+		(*i)++;
+		while (str[*i] != S_QUOTE)
+			(*i)++;
+	}
+	return ;
+}
 
 int	ms_key_checker(char *key, const char *var)
 {

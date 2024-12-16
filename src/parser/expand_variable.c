@@ -123,12 +123,7 @@ void	ms_expand_variable(t_ms *ms)
 		i = -1;
 		while (str[++i])
 		{
-			if (str[i] == S_QUOTE)
-			{
-				i++;
-				while (str[i] != S_QUOTE)
-					i++;
-			}
+			ms_skip_squote(str, &i);
 			if (str[i] == '$' && str[i + 1] != '\0' \
 				&& !ft_isspace(str[i + 1]) && str[i + 1] != '$'
 				&& !is_quote(str[i + 1]))
