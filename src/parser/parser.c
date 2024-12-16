@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 12:47:00 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/16 17:02:09 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,36 @@ void	ms_remove_quotes(t_ms *ms)
 	}
 }
 
+void	ms_remove_empty_tokens(t_list **lst, void (*del)(void *))
+{
+	t_list	*current;
+	t_list	*previous;
+
+	current = *lst;
+	previous = NULL;
+	while (current)
+	{
+		if (current->content && !ft_strncmp((char *)current->content, "", 1))
+		{
+			if (previous)
+				previous->next = current->next;
+			else
+				*lst = current->next;
+			del(current->content);
+			free(current);
+			if (previous)
+				current = previous->next;
+			else
+				current = *lst;
+		}
+		else
+		{
+			previous = current;
+			current = current->next;
+		}
+	}
+}
+
 int	ms_parser(t_ms *ms, char *str)
 {
 	if (!ms_syntax_checker(ms, str))
@@ -107,6 +137,7 @@ int	ms_parser(t_ms *ms, char *str)
 	if (!ms_tokenizer(ms, str))
 		return (FALSE);
 	ms_expand_variable(ms);
+	ms_remove_empty_tokens(&ms->tokens, free);
 	ms_remove_quotes(ms);
 	return (TRUE);
 }

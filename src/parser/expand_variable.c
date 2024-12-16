@@ -12,30 +12,31 @@
 
 #include "../../includes/minishell.h"
 
-char	*ms_replace_expanded(t_ms *ms, char *str, char *key, char *var)
+char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 {
 	char	*new;
-	char	quote;
+	char	*var;
 	int		i;
 	int		j;
 	int		k;
 
 	i = -1;
 	j = -1;
-	quote = 0;
-	var += ft_strlen(key) + 1;
+	var = ms_get_env_variable(ms, key);
+	printf("str=%s, key=%s, var=%s\n", str, key, var);
 	new = (char *)malloc(sizeof(char) \
 		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 1);
 	if (!new)
 		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
-	while (str[++i] != '$')
+	while (++i < mark)
 		new[i] = str[i];
 	while (var[++j])
 		new[i + j] = var[j];
 	k = ft_strlen(key) + i;
+	i += j;
 	while (str[++k])
-		new[i + j++] = str[k];
-	new[i + j] = '\0';
+		new[i++] = str[k];
+	new[i] = '\0';
 	return (new);
 }
 
@@ -54,7 +55,11 @@ char	*ms_replace_null_value(t_ms *ms, char *str, char *key)
 	while (str[++i] != '$')
 		new[i] = str[i];
 	str += i + ft_strlen(key) + 1;
-	new[i++] = *str;
+	while (*str)
+	{
+		new[i++] = *str;
+		str++;
+	}
 	new[i] = '\0';
 	return (new);
 }
@@ -104,7 +109,7 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	while (aux != NULL)
 	{
 		if (ms_key_checker(key, aux->content))
-			return (ms_replace_expanded(ms, str, key, aux->content));
+			return (ms_replace_expanded(ms, str, key, start));
 		aux = aux->next;
 	}
 	return (ms_replace_null_value(ms, str, key));
@@ -123,8 +128,9 @@ void	ms_expand_variable(t_ms *ms)
 		i = -1;
 		while (str[++i])
 		{
-			ms_skip_squote(str, &i);
-			if (str[i] == '$' && str[i + 1] != '\0' \
+			if (!ms_skip_squote(str, &i))
+				break ;
+			else if (str[i] == '$' && str[i + 1] != '\0' \
 				&& !ft_isspace(str[i + 1]) && str[i + 1] != '$'
 				&& !is_quote(str[i + 1]))
 			{
@@ -132,7 +138,6 @@ void	ms_expand_variable(t_ms *ms)
 				gc_add(aux->content, &ms->gc);
 				aux->content = str;
 				i = -1;
-				continue ;
 			}
 		}
 		aux = aux->next;
