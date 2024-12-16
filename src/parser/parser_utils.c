@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:56:13 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/12 17:18:47 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/16 12:25:58 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,24 @@ int	ms_extract_quote(t_ms *ms, char **str)
 	}
 	ms_error_handler(ms, "Error: Invalid quote", 0);
 	return (TRUE);
+}
+
+char	*ms_get_key(t_ms *ms, char *str)
+{
+	char	*key;
+	int		i;
+
+	i = 0;
+	if (!str[i] || ft_isspace(str[i]) || is_quote(str[i]))
+		key = ft_strdup("$");
+	else
+	{
+		while (str[i] != '$' && str[i]
+			&& !ft_isspace(str[i]) && !is_quote(str[i]))
+			i++;
+		key = ft_substr(str, 0, i);
+	}
+	gc_add(key, &ms->gc);
+	printf("%s\n", key);
+	return (key);
 }

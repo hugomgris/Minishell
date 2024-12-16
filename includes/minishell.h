@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/13 17:15:10 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/16 12:00:50 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ int		ms_handle_operator(t_ms *ms, char **str);
 int		ms_parser(t_ms *ms, char *str);
 void	ms_expand_variable(t_ms *ms);
 int		ms_key_checker(char *key, const char *var);
+char	*ms_get_key(t_ms *ms, char *str);
 char	*ms_replace_expanded(t_ms *ms, char *str, char *key, char *var);
 char	*ms_replace_null_value(t_ms *ms, char *str, char *key);
 char	*ms_replace_exit_status(t_ms *ms, char *str, char *status);
