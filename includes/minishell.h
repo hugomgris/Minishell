@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 16:37:37 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 11:12:41 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,10 @@ int		ms_extract_atom(t_ms *ms, char **str);
 int		ms_extract_quote(t_ms *ms, char **str);
 int		ms_extract_operator(t_ms *ms, t_token_type type, char **str);
 int		ms_handle_operator(t_ms *ms, char **str);
+void	ms_remove_empty_tokens(t_list **lst, void (*del)(void *));
+int		is_empty_token(void *content);
+void	remove_token(t_list **lst, t_list *prev, \
+	t_list *cur, void (*del)(void *));
 
 //PARSER
 int		ms_parser(t_ms *ms, char *str);
@@ -89,7 +93,6 @@ int		ms_skip_squote(char *str, int *i);
 void	ms_remove_quotes(t_ms *ms);
 int		ms_count_quotes(char *str);
 char	*ms_trim_quotes(char *str, char *new, int len);
-void	ms_remove_empty_tokens(t_list **lst, void (*del)(void *));
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);

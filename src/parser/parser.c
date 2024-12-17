@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 17:02:09 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 11:13:43 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,36 +97,6 @@ void	ms_remove_quotes(t_ms *ms)
 			aux->content = ms_trim_quotes(tmp, new, len);
 		}
 		aux = aux->next;
-	}
-}
-
-void	ms_remove_empty_tokens(t_list **lst, void (*del)(void *))
-{
-	t_list	*current;
-	t_list	*previous;
-
-	current = *lst;
-	previous = NULL;
-	while (current)
-	{
-		if (current->content && !ft_strncmp((char *)current->content, "", 1))
-		{
-			if (previous)
-				previous->next = current->next;
-			else
-				*lst = current->next;
-			del(current->content);
-			free(current);
-			if (previous)
-				current = previous->next;
-			else
-				current = *lst;
-		}
-		else
-		{
-			previous = current;
-			current = current->next;
-		}
 	}
 }
 
