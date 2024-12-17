@@ -12,6 +12,11 @@
 
 #include "../../includes/minishell.h"
 
+/*
+	Replaces a variable with its value from the env list if a match for the key
+	is found in the env list.
+*/
+
 char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 {
 	char	*new;
@@ -23,7 +28,7 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 	i = -1;
 	j = -1;
 	var = ms_get_env_variable(ms, key);
-	printf("str=%s, key=%s, var=%s\n", str, key, var);
+	//printf("str=%s, key=%s, var=%s\n", str, key, var);
 	new = (char *)malloc(sizeof(char) \
 		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 1);
 	if (!new)
@@ -39,6 +44,11 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 	new[i] = '\0';
 	return (new);
 }
+
+/*
+	Replaces any $VAR that is not set in env and/or is NULL by NULL within
+	the original string or returns an empty string if the variable is the token.
+*/
 
 char	*ms_replace_null_value(t_ms *ms, char *str, char *key)
 {
@@ -63,6 +73,11 @@ char	*ms_replace_null_value(t_ms *ms, char *str, char *key)
 	new[i] = '\0';
 	return (new);
 }
+
+/*
+	Replaces the variable '$?' with the exit status of the latest
+	executed command within a string or as a single token.
+*/
 
 char	*ms_replace_exit_status(t_ms *ms, char *str, char *status)
 {
@@ -90,6 +105,11 @@ char	*ms_replace_exit_status(t_ms *ms, char *str, char *status)
 	return (new);
 }
 
+/*
+	If the char '$' is found in the token, it gets the key and looks for
+	the corresponding value in the env list.
+*/
+
 char	*ms_search_env(t_ms *ms, char *str, int start)
 {
 	char	*key;
@@ -114,6 +134,12 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	}
 	return (ms_replace_null_value(ms, str, key));
 }
+
+/*
+	Iterates over the content of a token to check for '$' char,
+	indicating a variable to expand.
+	Ignores the parts within single quotes.
+*/
 
 void	ms_expand_variable(t_ms *ms)
 {
