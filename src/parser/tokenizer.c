@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 15:16:08 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:53:52 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 	Extracts and tokenises an atom, ie. any text that is not an operator such as
 	('echo' or 'blabla') from the user input, adding it to the token list.
 */
-
 int	ms_extract_atom(t_ms *ms, char **str)
 {
 	int		i;
@@ -49,7 +48,6 @@ int	ms_extract_atom(t_ms *ms, char **str)
 	Extracts and tokenises any operator including parenthesis,
 	adding it to the token list.
 */
-
 int	ms_extract_operator(t_ms *ms, t_token_type type, char **str)
 {
 	char	*token;
@@ -81,7 +79,6 @@ int	ms_extract_operator(t_ms *ms, t_token_type type, char **str)
 	It will need to mark each operator with its associated type
 	(replacing the string itself?)
 */
-
 int	ms_handle_operator(t_ms *ms, char **str)
 {
 	if (!ft_strncmp(*str, "<<", 2))
@@ -113,7 +110,6 @@ int	ms_handle_operator(t_ms *ms, char **str)
 	Iterates over the user input as a string, and gets tokens
 	depending on their types (operator or atom) to form a list.
 */
-
 int	ms_tokenizer(t_ms *ms, char *str)
 {
 	int	error;

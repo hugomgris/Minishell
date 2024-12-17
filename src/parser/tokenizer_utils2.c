@@ -6,12 +6,17 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:10:37 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/17 11:15:17 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:53:38 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+	Iterates over a list and checks for potential empty tokens. If a token
+	is empty, it is freed and the pointer from the previous token redirected to
+	the next token, or NULL if at the end of the list.
+*/
 void	ms_remove_empty_tokens(t_list **lst, void (*del)(void *))
 {
 	t_list	*current;
@@ -37,11 +42,18 @@ void	ms_remove_empty_tokens(t_list **lst, void (*del)(void *))
 	}
 }
 
+/*
+	Checks if a token is an empty string.
+	Useful to check after the variable expansion has occured.
+*/
 int	is_empty_token(void *content)
 {
 	return (ft_strncmp((char *)content, "", 1) == 0);
 }
 
+/*
+	Removes a token from a list and frees it.
+*/
 void	remove_token(t_list **lst, t_list *prev, \
 	t_list *cur, void (*del)(void *))
 {

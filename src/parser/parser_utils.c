@@ -6,12 +6,19 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:56:13 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/16 16:37:19 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:39:27 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+	Advances the pointer of a string when it finds an opening single quote,
+	until it reaches the closing quote. The string NEEDS to be correctly quoted,
+	otherwise SEGFAULT happens.
+	If the closing single quote is the last character of the string,
+	it returns NULL.
+*/
 int	ms_skip_squote(char *str, int *i)
 {
 	if (str[*i] == S_QUOTE)
@@ -25,6 +32,10 @@ int	ms_skip_squote(char *str, int *i)
 	return (1);
 }
 
+/*
+	Extracts a token from a string that is within quotes (double or single).
+	Currently obsolete, as the extraction is done with ms_extract_atom instead.
+*/
 int	ms_key_checker(char *key, const char *var)
 {
 	int	i;
@@ -40,6 +51,10 @@ int	ms_key_checker(char *key, const char *var)
 	return (FALSE);
 }
 
+/*
+	Extracts a token from a string that is within quotes (double or single).
+	Currently obsolete, as the extraction is done with ms_extract_atom.
+*/
 int	ms_extract_quote(t_ms *ms, char **str)
 {
 	t_list	*node;
@@ -69,6 +84,11 @@ int	ms_extract_quote(t_ms *ms, char **str)
 	return (TRUE);
 }
 
+/*
+	Gets the corresponding key after identifying a '$'in a string.
+	If '$' is directly followed by a separator, returns '$'.
+	Else, returns the key without the '$'. 
+*/
 char	*ms_get_key(t_ms *ms, char *str)
 {
 	char	*key;

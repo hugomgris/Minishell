@@ -6,18 +6,16 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/13 15:38:54 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:32:25 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*	
-	TODO
-	- Check for pipes (no pipe w/o command before or after)
-	- Check for special characters ('\', '\n', ';' etc.)
+	Checks for special characters that are not handled by the minishell
+	('\', '\n', ';' etc.).
 */
-
 int	ms_checkspecialchar(t_ms *ms, char *str)
 {
 	int	i;
@@ -34,6 +32,10 @@ int	ms_checkspecialchar(t_ms *ms, char *str)
 	return (TRUE);
 }
 
+/*
+	Checks for an empty pipe, ie. a syntax with "| NULL |" or
+	"cmd | NULL".
+*/
 int	ms_check_empty_pipe(t_ms *ms, char *str)
 {
 	str++;
@@ -53,6 +55,10 @@ int	ms_check_empty_pipe(t_ms *ms, char *str)
 		return (FALSE);
 }
 
+/*
+	Checks for an empty pipe, ie. a syntax with "| NULL |" or
+	"cmd | NULL".
+*/
 int	ms_checkpipes(t_ms *ms, char *str)
 {
 	int	i;
@@ -76,6 +82,11 @@ int	ms_checkpipes(t_ms *ms, char *str)
 	return (TRUE);
 }
 
+/*
+	Checks for special characters that are not handled by minishell along
+	with the correct syntax for using pipes and redirections.
+	Returns error in case of bad syntax, displaying a new prompt to the user.
+*/
 int	ms_syntax_checker(t_ms *ms, char *str)
 {
 	if (!ms_checkspecialchar(ms, str))
