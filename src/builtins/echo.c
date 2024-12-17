@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 10:47:15 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/13 18:14:25 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Right now, it manages -n flag and prints tokens.
 Tokens that need expansion are received already expanded.
 TODO: handle cases with multiple -n
 TODO: correctly echo arguments like (echo '"hola'$USER'$USER"') (without spaces)
+TODO: should echo this >>> "holanponchon$USER"
 */
 void	ms_echo(t_ms *ms)
 {

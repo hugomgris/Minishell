@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 22:52:00 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 11:30:11 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	ms_extract_operator(t_ms *ms, t_token_type type, char **str)
 	if (ms_check_operator(ms, str))
 		return (TRUE);
 	if (type == T_DBGREATER || type == T_DBLESS
-		|| type == T_AND || type == T_OR)
+		|| type == T_AND || type == T_OR || type == T_SUBPRO)
 	{
 		token = ft_substr(*str, 0, 2);
 		*str += 2;
@@ -80,6 +80,8 @@ int	ms_handle_operator(t_ms *ms, char **str)
 		return (ms_extract_operator(ms, T_OR, str));
 	if (!ft_strncmp(*str, "&&", 2))
 		return (ms_extract_operator(ms, T_AND, str));
+	if (!ft_strncmp(*str, "2>", 2))
+		return (ms_extract_operator(ms, T_SUBPRO, str));
 	if (**str == '&')
 		return (ms_extract_operator(ms, T_AMPERSAND, str));
 	if (**str == '<')
