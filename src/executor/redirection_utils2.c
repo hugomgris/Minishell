@@ -6,12 +6,15 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 11:16:53 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:51:35 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Helper function to open a temporary heredoc and assign an FD to it.
+*/
 int	ms_open_tmp_heredoc(void)
 {
 	int	fd;
@@ -20,6 +23,11 @@ int	ms_open_tmp_heredoc(void)
 	return (fd);
 }
 
+/*
+Helper function to syncronize heredoc and signal handling.
+It is needed to be able to go out from heredoc input when sending
+	the SIGINT signal (i.e., CTRL+C)
+*/
 int	ms_handle_heredoc_signal(int tmp_fd, int *fd)
 {
 	close(tmp_fd);
@@ -29,6 +37,11 @@ int	ms_handle_heredoc_signal(int tmp_fd, int *fd)
 	return (-1);
 }
 
+/*
+Flow control function with the heredoc input loop.
+Prints the heredoc prompt (>) and takes user input until 
+	preset delimiter is detected.
+*/
 int	ms_write_heredoc_lines(int tmp_fd, char *delimiter)
 {
 	char	*line;
@@ -48,6 +61,12 @@ int	ms_write_heredoc_lines(int tmp_fd, char *delimiter)
 	return (0);
 }
 
+/*
+Flow control function to clear heredoc redirection.
+Closes the tmp file FD.
+Redirects input stream to the heredoc file contents.
+Unlinks the heredoc file. 
+*/
 int	ms_finalize_heredoc(int tmp_fd, int *fd)
 {
 	close(tmp_fd);
@@ -58,6 +77,11 @@ int	ms_finalize_heredoc(int tmp_fd, int *fd)
 	return (0);
 }
 
+/*
+Main heredoc handling function.
+Sends the signal to indicate "inside heredoc" state.
+Calls different heredoc manage helper functions.
+*/
 int	ms_handle_heredoc(char *delimiter, int *fd)
 {
 	int	tmp_fd;

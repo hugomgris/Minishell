@@ -6,14 +6,15 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 11:26:28 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:08:51 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Helper function that creates the argument array to be sent to a cmd exec.
+Helper function to create an argument array to be sent to execve.
+(execve needs path, arguments, environment).
 */
 char	**ms_make_argv(t_ms *ms, t_list *tokens)
 {
@@ -38,6 +39,10 @@ char	**ms_make_argv(t_ms *ms, t_list *tokens)
 	return (argv);
 }
 
+/*
+Flow control function to ensure system cmds work in an unset env case.
+If PATH env variable is unset, it fallsback to secure default paths.
+*/
 char	*ms_get_env_path_or_def(t_ms *ms)
 {
 	char	*path;
@@ -54,7 +59,7 @@ char	*ms_get_env_path_or_def(t_ms *ms)
 
 /*
 Flow control function that searches for commands in the system.
-If command exists, returns its path so it can be executed.
+If command exists, returns its system path to be sent to execve.
 */
 char	*ms_get_command_path(t_ms *ms, char *cmd)
 {
@@ -87,7 +92,7 @@ char	*ms_get_command_path(t_ms *ms, char *cmd)
 
 /*
 Helper function to check if an input command exists. 
-It is used to end execution if an invalid command is input.
+It results in execution termination if the input command is incorrect.
 */
 char	*ms_validate_command(t_ms *ms)
 {

@@ -6,14 +6,15 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 14:47:14 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/17 14:52:48 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Helper function to clear the execution tools (env array for children, tokens).
+Helper function to clear the execution tools (children's env array, tokens).
+Returns fd's to their initial values (default: stdin/stdout).
 */
 void	ms_executor_cleanup(t_ms *ms, char **arr, int stdout_b, int stdin_b)
 {
@@ -26,10 +27,14 @@ void	ms_executor_cleanup(t_ms *ms, char **arr, int stdout_b, int stdin_b)
 	ft_lstclear(&ms->filtered_tokens, free);
 }
 
+/*
+Helper function to filter tokens and rebuild env array.
+Token filtering is handled by secondary helper function.
+*/
 char	**ms_prepare_execution(t_ms *ms, char **arr)
 {
 	ms->filtered_tokens = ms_filter_tokens(ms->tokens);
-	arr = ms_list_to_array(ms, arr);
+	arr = ms_env_to_array(ms, arr);
 	if (!arr)
 	{
 		ms_error_handler(ms, "Failed to prepare environment", 0);
@@ -38,6 +43,11 @@ char	**ms_prepare_execution(t_ms *ms, char **arr)
 	return (arr);
 }
 
+/*
+Flow control function that handles call to system commands.
+Calls helper functions to retrieve a cmd path.
+Forks processes and sets up the child and parent execution.
+*/
 int	ms_handle_system_command(t_ms *ms, char **arr)
 {
 	char	*path;
@@ -63,9 +73,11 @@ int	ms_handle_system_command(t_ms *ms, char **arr)
 
 /*
 Executor hub.
-Makes some checks to know if it needs to execute a builtin or a system cmd.
-Creates forks for child processes, calls for execution of both child and parent.
-Calls the executor cleanup.
+Goes through different steps:
+	-Calls function to prepare exec (to divide redir from exec tokens).
+	-Checks if there's need for redirection handling
+	-Checks if input contains system or builtin comands.
+	-Calls the function that cleans the execution tools.
 */
 void	ms_executor(t_ms *ms)
 {
@@ -89,9 +101,9 @@ void	ms_executor(t_ms *ms)
 			return ;
 		}
 	}
-	if (ms_is_builtin(ms->filtered_tokens->content))
+	if (ms->filtered_tokens && ms_is_builtin(ms->filtered_tokens->content))
 		ms_execute_builtin(ms);
-	else
+	else if (ms->filtered_tokens)
 		ms_handle_system_command(ms, arr);
 	ms_executor_cleanup(ms, arr, stdout_b, stdin_b);
 }

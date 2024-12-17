@@ -6,19 +6,16 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 13:47:28 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:24:41 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	ms_free_partial_array(char **arr, int index)
-{
-	while (index > 0)
-		free(arr[--index]);
-	free(arr);
-}
-
+/*
+Helper function to allocate the array rebuild of the env variables
+	that will be sent to child processes.
+*/
 char	**ms_allocate_env_array(t_list *list)
 {
 	int		count;
@@ -31,9 +28,10 @@ char	**ms_allocate_env_array(t_list *list)
 
 /*
 Re-creates an array of env variables from ms_env linked list initial copy.
-It is needed to send to child processes as their env array.
+It only adds variables with a set value to the array.
+(Empty set values can exist, as well as vars without value (i.e., no '=')).
 */
-char	**ms_list_to_array(t_ms *ms, char **arr)
+char	**ms_env_to_array(t_ms *ms, char **arr)
 {
 	t_list	*current;
 	int		i;
@@ -43,14 +41,17 @@ char	**ms_list_to_array(t_ms *ms, char **arr)
 	i = 0;
 	while (current)
 	{
-		arr[i] = ft_strdup((char *)current->content);
-		if (!arr[i])
+		if (ft_strchr(current->content, '='))
 		{
-			ms_free_partial_array(arr, i);
-			return (NULL);
+			arr[i] = ft_strdup((char *)current->content);
+			if (!arr[i])
+			{
+				ft_free(arr);
+				return (NULL);
+			}
+			i++;
 		}
 		current = current->next;
-		i++;
 	}
 	arr[i] = NULL;
 	return (arr);
