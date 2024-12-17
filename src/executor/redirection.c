@@ -6,12 +6,15 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 11:55:25 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:29:25 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Helper function to open files and assign FDs to them.
+*/
 int	ms_open(char *file, int flags, int *fd)
 {
 	if (*fd != -1)
@@ -22,6 +25,12 @@ int	ms_open(char *file, int flags, int *fd)
 	return (0);
 }
 
+/*
+Flow control function that handles the different possible redirection types.
+Gets the type from helper function.
+Depending on type, creates/opens file, appends/truncates output.
+Contains heredoc handle call.
+*/
 int	ms_setup_redirects(t_list *token, int *fds, t_ms *ms)
 {
 	int	type;
@@ -49,6 +58,11 @@ int	ms_setup_redirects(t_list *token, int *fds, t_ms *ms)
 	return (0);
 }
 
+/*
+Main redirection handler.
+Creates an array of FDs, setups redirect from tokens.
+After redirection handling, closes the FD array. 
+*/
 int	ms_redirection(t_ms *ms)
 {
 	t_list	*token;

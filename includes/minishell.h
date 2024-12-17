@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 11:28:34 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:24:49 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,9 +156,8 @@ int		ms_is_builtin(char *cmd);
 void	ms_child_process(t_ms *ms, char **arr);
 void	ms_parent_process(t_ms *ms, pid_t pid, int *status);
 void	ms_executor_cleanup(t_ms *ms, char **arr, int stdout_b, int stdin_b);
-char	**ms_list_to_array(t_ms *ms, char **arr);
+char	**ms_env_to_array(t_ms *ms, char **arr);
 char	**ms_allocate_env_array(t_list *list);
-void	ms_free_partial_array(char **arr, int index);
 
 //REDIRECTION functions
 int		ms_redirection(t_ms *ms);
