@@ -6,58 +6,59 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/13 10:30:24 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/16 14:47:14 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Searches for commands using the env path.
-If command is not found, returns an error.
+Helper function to clear the execution tools (env array for children, tokens).
 */
-void	ms_child_process(t_ms *ms, char **arr)
+void	ms_executor_cleanup(t_ms *ms, char **arr, int stdout_b, int stdin_b)
 {
-	char	*cmd_path;
-
-	cmd_path = ms_get_command_path(ms, ms->tokens->content);
-	if (!cmd_path || execve(cmd_path, ms_make_argv(ms, ms->tokens), arr) == -1)
-		ms_error_handler(ms, "Command not found or execve failed", 0);
-	gc_add(cmd_path, &ms->gc);
+	ft_free(arr);
+	dup2(stdout_b, STDOUT_FILENO);
+	dup2(stdin_b, STDIN_FILENO);
+	close(stdout_b);
+	close(stdin_b);
+	ft_lstclear(&ms->tokens, free);
+	ft_lstclear(&ms->filtered_tokens, free);
 }
 
-/*
-Makes the parent process wait until child process ends.
-*/
-void	ms_parent_process(t_ms *ms, pid_t pid, int *status)
+char	**ms_prepare_execution(t_ms *ms, char **arr)
 {
-	if (waitpid(pid, status, 0) == -1)
+	ms->filtered_tokens = ms_filter_tokens(ms->tokens);
+	arr = ms_list_to_array(ms, arr);
+	if (!arr)
 	{
-		ms_error_handler(ms, "Error: Waitpid failed", 0);
-		ms_get_set(1, 1);
-		return ;
+		ms_error_handler(ms, "Failed to prepare environment", 0);
+		return (NULL);
 	}
-	ms_get_set(1, WEXITSTATUS(*status));
+	return (arr);
 }
 
-/*
-Control flow function that calls for child process execution.
-Rises the flag for the SIGINT handler to know if its in child or parent proc.
-*/
-void	execute_child(t_ms *ms, char **arr)
+int	ms_handle_system_command(t_ms *ms, char **arr)
 {
-	ms_get_set(1, 0);
-	ms_child_process(ms, arr);
-}
+	char	*path;
+	pid_t	pid;
+	int		status;
 
-/*
-Control flow function that calls for parent process execution.
-Rises the flag for the SIGINT handler to know if its in child or parent proc.
-*/
-void	execute_parent(t_ms *ms, pid_t pid, int *status)
-{
-	ms_get_set(1, 1);
-	ms_parent_process(ms, pid, status);
+	path = ms_validate_command(ms);
+	if (!path)
+		return (0);
+	gc_add(path, &ms->gc);
+	pid = fork();
+	if (pid == -1)
+	{
+		ms_error_handler(ms, "Fork failed", 0);
+		return (0);
+	}
+	else if (pid == 0)
+		execute_child(ms, arr);
+	else
+		execute_parent(ms, pid, &status);
+	return (1);
 }
 
 /*
@@ -68,28 +69,29 @@ Calls the executor cleanup.
 */
 void	ms_executor(t_ms *ms)
 {
-	pid_t	pid;
-	int		status;
+	int		stdout_b;
+	int		stdin_b;
 	char	**arr;
-	char	*path;
 
-	arr = ms_env_to_array(ms->ms_env);
-	if (ms_is_builtin(ms->tokens->content))
-		ms_execute_builtin(ms);
-	else
+	stdout_b = dup(STDOUT_FILENO);
+	stdin_b = dup(STDIN_FILENO);
+	arr = (char **)malloc(sizeof(char *) * (ft_lstsize(ms->ms_env) + 1));
+	if (!arr)
+		return ;
+	arr = ms_prepare_execution(ms, arr);
+	if (!arr)
+		return ;
+	if (ms_has_redirection(ms))
 	{
-		path = validate_command(ms);
-		if (path)
+		if (ms_redirection(ms) == -1)
 		{
-			gc_add(path, &ms->gc);
-			pid = fork();
-			if (pid == -1)
-				ms_error_handler(ms, "Fork failed", 0);
-			else if (pid == 0)
-				execute_child(ms, arr);
-			else
-				execute_parent(ms, pid, &status);
+			ms_executor_cleanup(ms, arr, stdout_b, stdin_b);
+			return ;
 		}
 	}
-	ms_executor_cleanup(ms, arr);
+	if (ms_is_builtin(ms->filtered_tokens->content))
+		ms_execute_builtin(ms);
+	else
+		ms_handle_system_command(ms, arr);
+	ms_executor_cleanup(ms, arr, stdout_b, stdin_b);
 }

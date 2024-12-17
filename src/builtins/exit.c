@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/11 11:59:33 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/17 11:40:02 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,12 @@ void	ms_exit_handler(t_ms *ms, const char *msg, int code)
 Exit builtin command intermediary.
 Checks arguments, handles the exit code, calls handler.
 */
-void	ms_exit(t_ms *ms, t_list *tokens)
+void	ms_exit(t_ms *ms)
 {
 	int		code;
+	t_list	*tokens;
 
+	tokens = ms->filtered_tokens;
 	if (ft_lstsize(tokens) >= 3)
 	{
 		ms_error_handler(ms, "exit: too many arguments", 0);

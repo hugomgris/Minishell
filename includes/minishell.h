@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
 /*   Updated: 2024/12/17 11:28:34 by nponchon         ###   ########.fr       */
@@ -32,6 +32,7 @@ typedef struct s_ms
 	t_list	*ms_env;
 	t_list	*gc;
 	t_list	*tokens;
+	t_list	*filtered_tokens;
 	char	*home;
 	char	*user;
 	char	*prompt;
@@ -57,6 +58,14 @@ typedef enum e_type_tokens
 	T_NL,
 	T_SUBPRO
 }	t_token_type;
+
+typedef void	(*t_builtin_func)(t_ms *);
+
+typedef struct s_builtin_map
+{
+	const char		*name;
+	t_builtin_func	func;
+}	t_builtin_map;
 
 //MAIN and LOOP functions
 void	ms_initialise_minishell(t_ms *ms, char **env);
@@ -107,7 +116,7 @@ int		ms_checkinfile(t_ms *ms, char *str);
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);
 void	ms_exit_handler(t_ms *ms, const char *msg, int code);
-void	ms_exit(t_ms *ms, t_list *tokens);
+void	ms_exit(t_ms *ms);
 
 //SIGNAL HANDLER functions
 void	ms_signal_handler(int signal);
@@ -134,9 +143,11 @@ char	*ms_get_parent_path(t_ms *ms, char *cwd);
 
 //EXECUTOR functions
 void	ms_executor(t_ms *ms);
+int		ms_handle_system_command(t_ms *ms, char **arr);
+char	**ms_prepare_execution(t_ms *ms, char **arr);
 void	execute_parent(t_ms *ms, pid_t pid, int *status);
 void	execute_child(t_ms *ms, char **arr);
-char	*validate_command(t_ms *ms);
+char	*ms_validate_command(t_ms *ms);
 char	*ms_get_command_path(t_ms *ms, char *cmd);
 char	*ms_get_env_path_or_def(t_ms *ms);
 char	**ms_make_argv(t_ms *ms, t_list *tokens);
@@ -144,11 +155,28 @@ void	ms_execute_builtin(t_ms *ms);
 int		ms_is_builtin(char *cmd);
 void	ms_child_process(t_ms *ms, char **arr);
 void	ms_parent_process(t_ms *ms, pid_t pid, int *status);
-void	ms_executor_cleanup(t_ms *ms, char **arr);
-char	**ms_env_to_array(t_list *ms_env);
+void	ms_executor_cleanup(t_ms *ms, char **arr, int stdout_b, int stdin_b);
+char	**ms_list_to_array(t_ms *ms, char **arr);
+char	**ms_allocate_env_array(t_list *list);
+void	ms_free_partial_array(char **arr, int index);
+
+//REDIRECTION functions
+int		ms_redirection(t_ms *ms);
+int		ms_setup_redirects(t_list *token, int *fds, t_ms *ms);
+int		ms_open(char *file, int flags, int *fd);
+int		ms_has_redirection(t_ms *ms);
+int		ms_detect_redirector(char *token);
+t_list	*ms_filter_tokens(t_list *tokens);
+void	ms_close_redirect_fds(int input, int output, int append, int stderr_fd);
+int		ms_handle_open_error(t_ms *ms, char *filename);
+int		ms_handle_heredoc(char *delimiter, int *fd);
+int		ms_finalize_heredoc(int tmp_fd, int *fd);
+int		ms_write_heredoc_lines(int tmp_fd, char *delimiter);
+int		ms_handle_heredoc_signal(int tmp_fd, int *fd);
+int		ms_open_tmp_heredoc(void);
 
 //BUILTIN CD functions
-void	ms_cd(t_ms *ms, char *path);
+void	ms_cd(t_ms *ms);
 int		ms_change_directory(t_ms *ms, char *new_path);
 int		ms_join_paths(t_ms *ms, char *cwd, char *path, char **new_path);
 void	ms_cd_absolute(t_ms *ms, char *path);
@@ -168,13 +196,14 @@ char	*ms_resolve_symlink(t_ms *ms, char *symlink);
 int		ms_cd_isdirectory(t_ms *ms, char *path);
 int		ms_check_directory_access(t_ms *ms, char *new_path);
 int		ms_update_oldpwd(t_ms *ms, char *current_pwd);
+char	*ms_cd_initial_path(t_ms *ms);
 
 //ENV, PWD, UNSET, ECHO and EXPORT builtin functions
 void	ms_env(t_ms *ms);
 void	ms_pwd(t_ms *ms);
-void	ms_unset(t_ms *ms, t_list *tokens);
-void	ms_echo(t_list *tokens);
-void	ms_export(t_ms *ms, t_list *tokens);
+void	ms_unset(t_ms *ms);
+void	ms_echo(t_ms *ms);
+void	ms_export(t_ms *ms);
 void	ms_export_ex(t_ms *ms, char *key, char *value);
 void	ms_export_error(t_ms *ms, char *entry);
 int		ms_export_check(const char *var);

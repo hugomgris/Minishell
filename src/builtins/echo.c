@@ -20,28 +20,31 @@ TODO: handle cases with multiple -n
 TODO: correctly echo arguments like (echo '"hola'$USER'$USER"') (without spaces)
 TODO: should echo this >>> "holanponchon$USER"
 */
-void	ms_echo(t_list *tokens)
+void	ms_echo(t_ms *ms)
 {
 	int		n_flag;
 	t_list	*current;
 
 	n_flag = 0;
-	current = tokens->next;
-	if (tokens->next && !ft_strncmp(tokens->next->content, "-n", 2))
+	current = ms->filtered_tokens->next;
+	if (current && !ft_strncmp(current->content, "-n", 2))
 	{
 		n_flag = 1;
 		current = current->next;
 	}
-	if (current->content)
+	if (current && current->content
+		&& !ft_strncmp(current->content, "?", 1) && !current->next)
 	{
-		while (current)
-		{
-			ft_putstr_fd(current->content, 1);
-			if (current->next)
-				ft_putchar_fd(' ', 1);
-			current = current->next;
-		}
-		if (!n_flag)
-			ft_putchar_fd('\n', 1);
+		ft_printf("%d\n", ms_get_set(0, 0));
+		return ;
 	}
+	while (current)
+	{
+		ft_putstr_fd(current->content, 1);
+		if (current->next)
+			ft_putchar_fd(' ', 1);
+		current = current->next;
+	}
+	if (!n_flag)
+		ft_putchar_fd('\n', 1);
 }

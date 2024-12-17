@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 09:47:35 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/16 14:17:42 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,8 +122,11 @@ Right now, minishell cd can handle:
 	-cd / to go directly to root
 	-Symlinks, both to existing and non existing dirs (erroring in 2nd case)
 */
-void	ms_cd(t_ms *ms, char *path)
+void	ms_cd(t_ms *ms)
 {
+	char	*path;
+
+	path = ms_cd_initial_path(ms);
 	if (!path || path[0] == '\0' || (path[0] == '~' && !path[1]))
 		return (ms_cd_home(ms));
 	else if (!ft_strncmp(path, "...", 3))

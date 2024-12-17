@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:20:34 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 12:06:10 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/16 09:37:27 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,12 @@ EXPORT builtin main handler.
 If there are no arguments, it calls the export print option.
 Else, it processes each argument through exec fuction.
 */
-void	ms_export(t_ms *ms, t_list *tokens)
+void	ms_export(t_ms *ms)
 {
 	t_list	*current;
+	t_list	*tokens;
 
+	tokens = ms->filtered_tokens;
 	if (!tokens->next)
 	{
 		ms_export_print(ms);
