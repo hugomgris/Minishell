@@ -12,33 +12,31 @@
 
 #include "../../includes/minishell.h"
 
-/*	
-	!This function does not take possible quotes
-	!or exceptions ($? etc) into account yet.
-	*/
-
-char	*ms_replace_expanded(t_ms *ms, char *str, char *key, char *var)
+char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 {
 	char	*new;
+	char	*var;
 	int		i;
 	int		j;
 	int		k;
 
 	i = -1;
 	j = -1;
-	var += ft_strlen(key) + 1;
+	var = ms_get_env_variable(ms, key);
+	printf("str=%s, key=%s, var=%s\n", str, key, var);
 	new = (char *)malloc(sizeof(char) \
 		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 1);
 	if (!new)
 		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
-	while (str[++i] != '$')
+	while (++i < mark)
 		new[i] = str[i];
 	while (var[++j])
 		new[i + j] = var[j];
 	k = ft_strlen(key) + i;
+	i += j;
 	while (str[++k])
-		new[i + j++] = str[k];
-	new[i + j] = '\0';
+		new[i++] = str[k];
+	new[i] = '\0';
 	return (new);
 }
 
@@ -56,11 +54,11 @@ char	*ms_replace_null_value(t_ms *ms, char *str, char *key)
 		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
 	while (str[++i] != '$')
 		new[i] = str[i];
-	str += ft_strlen(key) + 1;
-	while (str[i])
+	str += i + ft_strlen(key) + 1;
+	while (*str)
 	{
-		new[i] = str[i];
-		i++;
+		new[i++] = *str;
+		str++;
 	}
 	new[i] = '\0';
 	return (new);
@@ -95,26 +93,23 @@ char	*ms_replace_exit_status(t_ms *ms, char *str, char *status)
 char	*ms_search_env(t_ms *ms, char *str, int start)
 {
 	char	*key;
-	char	*tmp;
 	char	*status;
 	t_list	*aux;
 
 	aux = ms->ms_env;
-	tmp = ft_strdup(str);
-	gc_add(tmp, &ms->gc);
-	if (aux == NULL || tmp == NULL)
+	if (aux == NULL)
 		return (0);
-	key = ft_strtok(tmp + start + 1, " ^*$\"\'=/-+.:");
+	key = ms_get_key(ms, str + start + 1);
 	if (*key == '?')
 	{
-		status = ft_itoa(ms->exit_status);
+		status = ft_itoa(ms_get_set(0, 0));
 		gc_add(status, &ms->gc);
 		return (ms_replace_exit_status(ms, str, status));
 	}
 	while (aux != NULL)
 	{
 		if (ms_key_checker(key, aux->content))
-			return (ms_replace_expanded(ms, str, key, aux->content));
+			return (ms_replace_expanded(ms, str, key, start));
 		aux = aux->next;
 	}
 	return (ms_replace_null_value(ms, str, key));
@@ -133,16 +128,16 @@ void	ms_expand_variable(t_ms *ms)
 		i = -1;
 		while (str[++i])
 		{
-			if (!str[i] || str[i] == 39)
+			if (!ms_skip_squote(str, &i))
 				break ;
-			if (str[i] == '$' && (str[i + 1] == '\0' \
-				|| !ft_isspace(str[i + 1])))
+			else if (str[i] == '$' && str[i + 1] != '\0' \
+				&& !ft_isspace(str[i + 1]) && str[i + 1] != '$'
+				&& !is_quote(str[i + 1]))
 			{
 				str = ms_search_env(ms, aux->content, i);
 				gc_add(aux->content, &ms->gc);
 				aux->content = str;
 				i = -1;
-				continue ;
 			}
 		}
 		aux = aux->next;

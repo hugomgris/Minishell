@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 12:45:35 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/09 13:59:37 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/12 16:44:33 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,9 @@ typedef struct s_list
 char	*ft_itoa(int n);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *s);
-char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strjoin(char *s1, const char *s2);
 char	*ft_strjoin_free(char *s1, char *s2);
+char	*ft_strjoin3(char *s1, char *s2, char *s3);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char	*ft_strnstr(const char *big, const char *little, size_t len);
 char	*ft_strrchr(const char *s, int c);
@@ -86,6 +87,7 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *));
 void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
+t_list	*ft_lstcpy(t_list *original);
 
 int		ft_printf(char const *str, ...);
 ssize_t	ft_write_str(char *str);

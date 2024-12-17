@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 18:26:23 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/17 11:30:51 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ char	*ms_check_empty_input(t_ms *ms, char *input)
 
 /*
 Main loop for Minishell.
-Calls for prompt build. 
+Calls for prompt build.
 Uses readline() to get input and adds it to history.
-Handles graceful exits and empty input. 
-For now, it just prints back the input.
+Catches CTRL+D input case (with null input check).
+Passes the input to the tokenizer and calls the executor.
 */
 void	ms_main_loop(t_ms *ms)
 {
@@ -56,8 +56,8 @@ void	ms_main_loop(t_ms *ms)
 		if (!ms->input)
 			continue ;
 		add_history(ms->input);
-		ms_tokenizer(ms, ms->input);
+		if (!ms_parser(ms, ms->input))
+			continue ;
 		ms_executor(ms);
-		gc_add(ms->input, &ms->gc);
 	}
 }

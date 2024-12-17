@@ -25,34 +25,42 @@ RM			= rm -fr
 
 # -=-=-=-=-    FILES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
-SRC 		:= 	main/minishell.c 			\
-				main/loop.c 				\
-				main/prompt_utils.c			\
-				builtins/cd.c 				\
-				builtins/cd_utils1.c		\
-				builtins/cd_utils2.c		\
-				builtins/cd_utils3.c		\
-				builtins/cd_utils4.c		\
-				builtins/echo.c 			\
-				builtins/env.c 				\
-				builtins/exit.c 			\
-				builtins/export_utils.c 	\
-				builtins/export.c 			\
-				executor/executor.c			\
-				executor/piping.c 			\
-				executor/redirection.c 		\
-				parser/parser.c 			\
-				parser/parser_utils.c		\
-				parser/tokenizer.c 			\
-				parser/tokenizer_utils.c	\
-				parser/syntax_checker.c 	\
-				parser/expand_variable.c	\
-				parser/redirection_checker.c\
-				signals/signals.c 			\
-				env/env_manager.c 			\
-				env/env_utils.c 			\
-				utils/string_utils.c 		\
-				utils/error_handler.c 		\
+SRC 		:= 	main/minishell.c 				\
+				main/loop.c 					\
+				main/prompt_utils.c				\
+				builtins/cd.c 					\
+				builtins/cd_utils1.c			\
+				builtins/cd_utils2.c			\
+				builtins/cd_utils3.c			\
+				builtins/cd_utils4.c			\
+				builtins/echo.c 				\
+				builtins/env.c 					\
+				builtins/exit.c 				\
+				builtins/export_utils1.c 		\
+				builtins/export_utils2.c 		\
+				builtins/export.c 				\
+				executor/executor.c				\
+				executor/executor_utils1.c		\
+				executor/executor_utils2.c		\
+				executor/executor_utils3.c		\
+				executor/executor_utils4.c		\
+				executor/piping.c 				\
+				executor/redirection.c 			\
+				executor/redirection_utils1.c 	\
+				executor/redirection_utils2.c 	\
+				parser/parser.c 				\
+				parser/parser_utils.c			\
+				parser/tokenizer.c 				\
+				parser/tokenizer_utils1.c	\
+				parser/tokenizer_utils2.c	\
+				parser/syntax_checker.c 		\
+				parser/expand_variable.c		\
+				parser/redirection_checker.c	\
+				signals/signals.c 				\
+				env/env_manager.c 				\
+				env/env_utils.c 				\
+				utils/string_utils.c 			\
+				utils/error_handler.c 			\
 				utils/garbage_collector.c	
 
 SRCDIR		= src

@@ -6,12 +6,16 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 10:23:03 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/12 09:48:31 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Prompt helper function used as fallback if username retrieval fails.
+Goes to the /etc/passwd file and extracts "root" value from its content.
+*/
 char	*ms_username_from_psswd(t_ms *ms)
 {
 	int		fd;
@@ -41,6 +45,10 @@ char	*ms_username_from_psswd(t_ms *ms)
 	return (username);
 }
 
+/*
+Prompt helper function to build the username+hostname chunk of the prompt.
+Calls username and hostname functions, concatenates return values.
+*/
 char	*ms_get_prompt_user(t_ms *ms)
 {
 	char	*username;
@@ -54,7 +62,7 @@ char	*ms_get_prompt_user(t_ms *ms)
 	username = ms_get_username(ms);
 	if (!username)
 		username = "user";
-	session_manager = ms_get_env_variable(ms, "SESSION_MANAGER=");
+	session_manager = ms_get_env_variable(ms, "SESSION_MANAGER");
 	if (session_manager)
 		hostname = ms_get_hostname(session_manager, ms);
 	if (!hostname)
@@ -68,6 +76,10 @@ char	*ms_get_prompt_user(t_ms *ms)
 	return (prompt_user);
 }
 
+/*
+Prompt helper function to get the hostname from the session_manager.
+If retrieval fails, falls back to a default "localhost" value.
+*/
 char	*ms_get_hostname(char *session_manager, t_ms *ms)
 {
 	char	*start;
@@ -94,13 +106,20 @@ char	*ms_get_hostname(char *session_manager, t_ms *ms)
 	}
 }
 
+/*
+Prompt helper function, also useful for anything that needs the CWD. 
+If ms_env has a PWD variable, returns it's value.
+Else, tries to getcwd().
+Else, falls back to an unknown value ("?"), as Bash does with a "."
+	This is needed for an unset env, non-existing dir minishell execution.
+*/
 char	*ms_get_cwd(t_ms *ms)
 {
 	char	*cwd;
 	char	*new_cwd;
 
-	if (ms_get_env_variable(ms, "PWD="))
-		cwd = ft_strdup(ms_get_env_variable(ms, "PWD="));
+	if (ms_get_env_variable(ms, "PWD"))
+		cwd = ft_strdup(ms_get_env_variable(ms, "PWD"));
 	else
 	{
 		cwd = NULL;
@@ -122,11 +141,15 @@ char	*ms_get_cwd(t_ms *ms)
 	return (cwd);
 }
 
+/*
+Prompt helper function.
+Gets the USER value from ms_env, or calls alternative methods.
+*/
 char	*ms_get_username(t_ms *ms)
 {
 	char	*username;
 
-	username = ms_get_env_variable(ms, "USER=");
+	username = ms_get_env_variable(ms, "USER");
 	if (!username)
 		username = ms_username_from_psswd(ms);
 	if (!username)

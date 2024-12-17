@@ -6,12 +6,17 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 14:30:06 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/10 14:08:06 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/12 09:47:18 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Helper function that pops a segment from a cd path.
+It is called if path contains inserted "..", and takes out
+	the preceding segment of said path.
+*/
 char	*ms_pop_from_path(char *path)
 {
 	int		len;
@@ -27,6 +32,11 @@ char	*ms_pop_from_path(char *path)
 	return (path);
 }
 
+/*
+Special helper case that returns either the cwd or the root path ("/").
+This is a safe mechanism so that Minishell can find at least one safe route,
+	even in extreme cases (like no-env cding from non-existing dirs).
+*/
 char	*ms_get_cwd_or_root(char *path)
 {
 	char	cwd[PATH_MAX];
@@ -38,6 +48,11 @@ char	*ms_get_cwd_or_root(char *path)
 	return (ft_strdup(cwd));
 }
 
+/*
+Helper function that handles inserted '..' and '.' segments in cd path.
+If '..', calls pop function.
+if '.', cleans the segment (it's existance has no impact in the final path).
+*/
 char	*ms_process_component(char *normalized, char *component, t_ms *ms)
 {
 	if (!ft_strncmp(component, "..", 2))
@@ -55,6 +70,12 @@ char	*ms_process_component(char *normalized, char *component, t_ms *ms)
 	return (normalized);
 }
 
+/*
+Flow control path normalization function.
+Makes every non-special path (ms_cd head cases) into a working absolute path.
+Breaks paths into components, which are processed with helper function.
+Returns a rebuild path from normalized components.
+*/
 char	*ms_normalize_path(t_ms *ms, char *path)
 {
 	char	*normalized;
@@ -83,6 +104,11 @@ char	*ms_normalize_path(t_ms *ms, char *path)
 	return (normalized);
 }
 
+/*
+Special case handling function.
+It is called from ms_cd_parent if direct parent is unreachable.
+Searches for closest available parent directory and attempts to move there.
+*/
 void	ms_cd_ascend(t_ms *ms)
 {
 	char	*cwd;
@@ -108,6 +134,6 @@ void	ms_cd_ascend(t_ms *ms)
 		cwd = ft_substr(cwd, 0, ft_strrchr(cwd, '/') - cwd);
 		gc_add(cwd, &ms->gc);
 	}
-	if (ms_get_env_variable(ms, "PWD="))
+	if (ms_get_env_variable(ms, "PWD"))
 		ms_set_env_variable(ms, "PWD", cwd);
 }
