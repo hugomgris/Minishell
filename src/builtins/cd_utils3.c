@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 14:37:10 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/11 12:53:54 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/16 14:17:56 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,4 +103,18 @@ int	ms_cd_isdirectory(t_ms *ms, char *path)
 		return (0);
 	else
 		return (-1);
+}
+
+char	*ms_cd_initial_path(t_ms *ms)
+{
+	if (!ms->filtered_tokens->next
+		|| ((char *)(ms->filtered_tokens->next->content))[0] == ' ')
+		return (NULL);
+	else if (ms->filtered_tokens->next && !ms->filtered_tokens->next->next)
+		return (ms->filtered_tokens->next->content);
+	else
+	{
+		ms_error_handler(ms, "cd: invalid args", 0);
+		return (NULL);
+	}
 }

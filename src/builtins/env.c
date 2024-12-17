@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 09:47:48 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/16 09:36:18 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,13 @@ UNSET builtin command handler.
 Searches for variable name in env list (ms_env).
 If found, pops it out of the list (handling links).
 */
-void	ms_unset(t_ms *ms, t_list *tokens)
+void	ms_unset(t_ms *ms)
 {
 	t_list	*current;
 	t_list	*previous;
+	t_list	*tokens;
 
+	tokens = ms->filtered_tokens;
 	if (!ms->ms_env || !tokens->next || ft_strchr(tokens->next->content, '='))
 		return ;
 	current = ms->ms_env;

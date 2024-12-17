@@ -80,7 +80,6 @@ char	*ms_replace_exit_status(t_ms *ms, char *str, char *status)
 		i++;
 	}
 	new[i + j] = '\0';
-	free(status);
 	return (new);
 }
 
