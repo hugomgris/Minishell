@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 14:26:45 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 11:30:51 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ void	ms_main_loop(t_ms *ms)
 		add_history(ms->input);
 		if (!ms_parser(ms, ms->input))
 			continue ;
+		ms_print_list(ms->tokens);
 		ms_executor(ms);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 11:12:41 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 11:28:34 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ typedef enum e_type_tokens
 	T_AND,
 	T_AMPERSAND,
 	T_OR,
-	T_NL
+	T_NL,
+	T_SUBPRO
 }	t_token_type;
 
 //MAIN and LOOP functions
