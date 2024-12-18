@@ -138,11 +138,11 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 */
 void	ms_expand_variable(t_ms *ms)
 {
-	t_list	*aux;
+	t_token	*aux;
 	char	*str;
 	int		i;
 
-	aux = ms->tokens;
+	aux = ms->tok;
 	while (aux)
 	{
 		str = (char *)aux->content;

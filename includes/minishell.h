@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 15:23:15 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 16:46:00 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,6 @@
 # define S_QUOTE '\''
 # define D_QUOTE '\"'
 
-typedef struct s_ms
-{
-	t_list	*ms_env;
-	t_list	*gc;
-	t_list	*tokens;
-	t_list	*filtered_tokens;
-	char	*home;
-	char	*user;
-	char	*prompt;
-	char	*input;
-	char	**cmd_table;
-	int		exit_status;
-	int		heredoc;
-}	t_ms;
-
 typedef enum e_type_tokens
 {
 	T_ATOM,
@@ -62,10 +47,26 @@ typedef enum e_type_tokens
 
 typedef struct s_token
 {
-	const char		*content;
-	t_token_type	*type;
-	t_token			*next;
+	void			*content;
+	t_token_type	type;
+	struct s_token	*next;
 }	t_token;
+
+typedef struct s_ms
+{
+	t_list	*ms_env;
+	t_list	*gc;
+	t_token	*tok;
+	t_list	*tokens;
+	t_list	*filtered_tokens;
+	char	*home;
+	char	*user;
+	char	*prompt;
+	char	*input;
+	char	**cmd_table;
+	int		exit_status;
+	int		heredoc;
+}	t_ms;
 
 typedef void	(*t_builtin_func)(t_ms *);
 
@@ -93,10 +94,14 @@ int		ms_extract_atom(t_ms *ms, char **str);
 int		ms_extract_quote(t_ms *ms, char **str);
 int		ms_extract_operator(t_ms *ms, t_token_type type, char **str);
 int		ms_handle_operator(t_ms *ms, char **str);
-void	ms_remove_empty_tokens(t_list **lst, void (*del)(void *));
+void	ms_remove_empty_tokens(t_token **lst, void (*del)(void *));
 int		is_empty_token(void *content);
-void	remove_token(t_list **lst, t_list *prev, \
-	t_list *cur, void (*del)(void *));
+t_token	*ms_new_token(void *content, t_token_type type);
+t_token	*ms_toklast(t_token *lst);
+void	ms_tokadd_back(t_token **lst, t_token *new);
+void	ms_tokclear(t_token **lst, void (*del)(void *));
+void	remove_token(t_token **lst, t_token *prev, \
+	t_token *cur, void (*del)(void *));
 
 //PARSER
 int		ms_parser(t_ms *ms, char *str);
@@ -229,5 +234,6 @@ int		ms_key_exists(t_ms *ms, char *key);
 //GARBAGE COLLECTOR functions
 void	gc_add(void *ptr, t_list **gc);
 void	ms_print_list(t_list *list);
+void	ms_print_toks(t_token *list);
 
 #endif

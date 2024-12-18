@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 18:59:15 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 15:57:27 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	ms_init(t_ms *ms, char **env)
 	ms->ms_env = NULL;
 	ms->gc = NULL;
 	ms->user = NULL;
+	ms->tok = NULL;
 	ms->tokens = NULL;
 	ms->exit_status = 0;
 	ms->heredoc = 0;

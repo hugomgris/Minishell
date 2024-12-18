@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 15:53:52 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 16:39:20 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	ms_extract_atom(t_ms *ms, char **str)
 	int		i;
 	char	*token;
 	char	*tmp;
-	t_list	*node;
+	t_token	*node;
 
 	i = 0;
 	tmp = *str;
@@ -36,10 +36,10 @@ int	ms_extract_atom(t_ms *ms, char **str)
 			i++;
 	}
 	token = ft_substr(tmp, 0, i);
-	node = ft_lstnew(token);
+	node = ms_new_token(token, T_ATOM);
 	if (!token || !node)
 		ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
-	ft_lstadd_back(&ms->tokens, node);
+	ms_tokadd_back(&ms->tok, node);
 	(*str) += i;
 	return (FALSE);
 }
@@ -50,26 +50,26 @@ int	ms_extract_atom(t_ms *ms, char **str)
 */
 int	ms_extract_operator(t_ms *ms, t_token_type type, char **str)
 {
-	char	*token;
-	t_list	*node;
+	char	*content;
+	t_token	*node;
 
 	if (ms_check_operator(ms, str))
 		return (TRUE);
 	if (type == T_DBGREATER || type == T_DBLESS
 		|| type == T_AND || type == T_OR || type == T_SUBPRO)
 	{
-		token = ft_substr(*str, 0, 2);
+		content = ft_substr(*str, 0, 2);
 		*str += 2;
 	}
 	else
 	{
-		token = ft_substr(*str, 0, 1);
+		content = ft_substr(*str, 0, 1);
 		(*str)++;
 	}
-	node = ft_lstnew(token);
-	if (!token || !node)
+	node = ms_new_token(content, type);
+	if (!content || !node)
 		ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
-	ft_lstadd_back(&ms->tokens, node);
+	ms_tokadd_back(&ms->tok, node);
 	return (FALSE);
 }
 

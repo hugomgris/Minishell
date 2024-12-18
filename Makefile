@@ -62,7 +62,8 @@ SRC 		:= 	main/minishell.c 				\
 				env/env_utils.c 				\
 				utils/string_utils.c 			\
 				utils/error_handler.c 			\
-				utils/garbage_collector.c	
+				utils/garbage_collector.c		\
+				utils/token_utils.c
 
 SRCDIR		= src
 SRCS		= $(addprefix $(SRCDIR)/, $(SRC))
