@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:56:13 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/17 15:39:27 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 17:30:03 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,20 @@
 	If the closing single quote is the last character of the string,
 	it returns NULL.
 */
-int	ms_skip_squote(char *str, int *i)
+int	ms_ignore_squote(char *str, int *i)
 {
+	int		j;
+	char	quote;
+
+	j = -1;
+	quote = 0;
+	while (str[++j] || j < *i)
+	{
+		if (str[j] == D_QUOTE)
+			quote = D_QUOTE;
+	}
+	if (quote)
+		return (1);
 	if (str[*i] == S_QUOTE)
 	{
 		(*i)++;

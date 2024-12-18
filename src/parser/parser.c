@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 15:27:43 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 12:30:08 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,5 +116,6 @@ int	ms_parser(t_ms *ms, char *str)
 	ms_expand_variable(ms);
 	ms_remove_empty_tokens(&ms->tokens, free);
 	ms_remove_quotes(ms);
+	ms_get_wildcards(ms);
 	return (TRUE);
 }

@@ -103,7 +103,8 @@ char	*ms_replace_exit_status(t_ms *ms, char *str, char *status)
 
 /*
 	If the char '$' is found in the token, it gets the key and looks for
-	the corresponding value in the env list.
+	the corresponding value in the env list. Only handles $? as a special
+	case, $@ and cases get replaced by NULL.
 */
 char	*ms_search_env(t_ms *ms, char *str, int start)
 {
@@ -148,7 +149,7 @@ void	ms_expand_variable(t_ms *ms)
 		i = -1;
 		while (str[++i])
 		{
-			if (!ms_skip_squote(str, &i))
+			if (!ms_ignore_squote(str, &i))
 				break ;
 			else if (str[i] == '$' && str[i + 1] != '\0' \
 				&& !ft_isspace(str[i + 1]) && str[i + 1] != '$'
@@ -157,7 +158,7 @@ void	ms_expand_variable(t_ms *ms)
 				str = ms_search_env(ms, aux->content, i);
 				gc_add(aux->content, &ms->gc);
 				aux->content = str;
-				i = -1;
+				i -= 1;
 			}
 		}
 		aux = aux->next;

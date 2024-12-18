@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 11:28:34 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 12:29:06 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <errno.h>
+# include <dirent.h>
 
 # define TRUE 1
 # define FALSE 0
@@ -99,10 +100,13 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark);
 char	*ms_replace_null_value(t_ms *ms, char *str, char *key);
 char	*ms_replace_exit_status(t_ms *ms, char *str, char *status);
 char	*ms_search_env(t_ms *ms, char *str, int start);
-int		ms_skip_squote(char *str, int *i);
+int		ms_ignore_squote(char *str, int *i);
 void	ms_remove_quotes(t_ms *ms);
 int		ms_count_quotes(char *str);
 char	*ms_trim_quotes(char *str, char *new, int len);
+
+//WILDCARDS
+void	ms_get_wildcards(t_ms *ms);
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);
