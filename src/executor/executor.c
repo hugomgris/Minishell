@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 14:52:48 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/18 10:53:17 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,10 @@ void	ms_executor_cleanup(t_ms *ms, char **arr, int stdout_b, int stdin_b)
 	dup2(stdin_b, STDIN_FILENO);
 	close(stdout_b);
 	close(stdin_b);
-	ft_lstclear(&ms->tokens, free);
-	ft_lstclear(&ms->filtered_tokens, free);
+	ft_lstclear(&ms->tokens, NULL);
+	ft_lstclear(&ms->exec_tokens, free);
+	ft_lstclear(&ms->redir_tokens, free);
+	ft_lstclear(&ms->pipe_tokens, free);
 }
 
 /*
@@ -33,7 +35,7 @@ Token filtering is handled by secondary helper function.
 */
 char	**ms_prepare_execution(t_ms *ms, char **arr)
 {
-	ms->filtered_tokens = ms_filter_tokens(ms->tokens);
+	ms_filter_tokens(ms);
 	arr = ms_env_to_array(ms, arr);
 	if (!arr)
 	{
@@ -101,9 +103,9 @@ void	ms_executor(t_ms *ms)
 			return ;
 		}
 	}
-	if (ms->filtered_tokens && ms_is_builtin(ms->filtered_tokens->content))
+	if (ms->exec_tokens && ms_is_builtin(ms->exec_tokens->content))
 		ms_execute_builtin(ms);
-	else if (ms->filtered_tokens)
+	else if (ms->exec_tokens)
 		ms_handle_system_command(ms, arr);
 	ms_executor_cleanup(ms, arr, stdout_b, stdin_b);
 }

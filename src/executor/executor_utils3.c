@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 11:45:43 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/18 09:26:58 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	ms_execute_builtin(t_ms *ms)
 	{"export", ms_export}
 	};
 
-	cmd = ms->filtered_tokens->content;
+	cmd = ms->exec_tokens->content;
 	i = 0;
 	while (i < sizeof(builtins) / sizeof(builtins[0]))
 	{

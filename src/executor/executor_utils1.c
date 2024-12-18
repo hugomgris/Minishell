@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 14:07:35 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/18 09:20:30 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	ms_child_process(t_ms *ms, char **arr)
 	cmd_path = ms_get_command_path(ms, ms->tokens->content);
 	if (!cmd_path)
 		ms_error_handler(ms, "Command not found or execve failed", 0);
-	if (execve(cmd_path, ms_make_argv(ms, ms->filtered_tokens), arr) == -1)
+	if (execve(cmd_path, ms_make_argv(ms, ms->exec_tokens), arr) == -1)
 		ms_error_handler(ms, "Command execution failed", 0);
 	gc_add(cmd_path, &ms->gc);
 }

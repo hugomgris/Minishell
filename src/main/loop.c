@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 11:30:51 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 10:58:23 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	ms_main_loop(t_ms *ms)
 		if (!ms->input)
 			continue ;
 		add_history(ms->input);
+		write_history(0);
 		if (!ms_parser(ms, ms->input))
 			continue ;
 		ms_executor(ms);

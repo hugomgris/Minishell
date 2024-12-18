@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 15:24:49 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/18 09:29:08 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,10 @@
 # include <sys/wait.h>
 # include <errno.h>
 
+# ifndef PATH_MAX
+#  define PATH_MAX 4096
+# endif
+
 # define TRUE 1
 # define FALSE 0
 # define S_QUOTE '\''
@@ -32,7 +36,9 @@ typedef struct s_ms
 	t_list	*ms_env;
 	t_list	*gc;
 	t_list	*tokens;
-	t_list	*filtered_tokens;
+	t_list	*redir_tokens;
+	t_list	*pipe_tokens;
+	t_list	*exec_tokens;
 	char	*home;
 	char	*user;
 	char	*prompt;
@@ -165,7 +171,7 @@ int		ms_setup_redirects(t_list *token, int *fds, t_ms *ms);
 int		ms_open(char *file, int flags, int *fd);
 int		ms_has_redirection(t_ms *ms);
 int		ms_detect_redirector(char *token);
-t_list	*ms_filter_tokens(t_list *tokens);
+void	ms_filter_tokens(t_ms *ms);
 void	ms_close_redirect_fds(int input, int output, int append, int stderr_fd);
 int		ms_handle_open_error(t_ms *ms, char *filename);
 int		ms_handle_heredoc(char *delimiter, int *fd);

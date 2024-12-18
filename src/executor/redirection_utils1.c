@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 15:37:39 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/18 12:09:11 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,38 @@
 /*
 Helper function to filter non-redirection tokens from input string.
 */
-t_list	*ms_filter_tokens(t_list *tokens)
+void	ms_filter_tokens(t_ms *ms)
 {
-	t_list	*filtered;
 	t_list	*current;
+	char	*token;
+	char	*n_token;
 
-	filtered = NULL;
-	current = tokens;
+	current = ms->tokens;
 	while (current)
 	{
-		if (!ms_detect_redirector(current->content))
-			ft_lstadd_back(&filtered, ft_lstnew(ft_strdup(current->content)));
-		else
+		token = current->content;
+		if (current->next)
+			n_token = current->next->content;
+		if (ms_detect_redirector(token))
+		{
+			ft_lstadd_back(&ms->redir_tokens, ft_lstnew(token));
+			ft_lstadd_back(&ms->redir_tokens, ft_lstnew(n_token));
 			current = current->next;
+		}
+		else if (!ft_strncmp(token, "|", 1) && !token[1])
+			ft_lstadd_back(&ms->pipe_tokens, ft_lstnew(token));
+		else
+			ft_lstadd_back(&ms->exec_tokens, ft_lstnew(token));
 		current = current->next;
 	}
-	return (filtered);
+	ft_printf("------tokens:\n");
+	ms_print_list(ms->tokens);
+	ft_printf("------redir_tokens:\n");
+	ms_print_list(ms->redir_tokens);
+	ft_printf("------pipe_tokens:\n");
+	ms_print_list(ms->pipe_tokens);
+	ft_printf("------exec_tokens:\n");
+	ms_print_list(ms->exec_tokens);
 }
 
 /*
@@ -62,14 +78,14 @@ Helper function to check if input string contains redirection tokens.
 */
 int	ms_has_redirection(t_ms *ms)
 {
-	t_list	*token;
+	t_list	*tokens;
 
-	token = ms->tokens;
-	while (token)
+	tokens = ms->redir_tokens;
+	while (tokens)
 	{
-		if (ms_detect_redirector(token->content))
+		if (ms_detect_redirector(tokens->content))
 			return (1);
-		token = token->next;
+		tokens = tokens->next;
 	}
 	return (0);
 }
@@ -80,8 +96,11 @@ Used in case an input redirection file doesn't exist.
 */
 int	ms_handle_open_error(t_ms *ms, char *filename)
 {
-	(void)filename;
-	ms_error_handler(ms, "No such file or directory", 0);
+	char	*output;
+
+	output = ft_strjoin(filename, ": No such file or directory");
+	gc_add(output, &ms->gc);
+	ms_error_handler(ms, output, 0);
 	return (-1);
 }
 
