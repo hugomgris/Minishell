@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 16:46:00 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 18:20:10 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ int		ms_ignore_squote(char *str, int *i);
 void	ms_remove_quotes(t_ms *ms);
 int		ms_count_quotes(char *str);
 char	*ms_trim_quotes(char *str, char *new, int len);
+void	ms_sort_toks(t_token *toks);
 
 //WILDCARDS
 void	ms_get_wildcards(t_ms *ms);
