@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 12:29:06 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 15:23:15 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,13 @@ typedef enum e_type_tokens
 	T_NL,
 	T_SUBPRO
 }	t_token_type;
+
+typedef struct s_token
+{
+	const char		*content;
+	t_token_type	*type;
+	t_token			*next;
+}	t_token;
 
 typedef void	(*t_builtin_func)(t_ms *);
 

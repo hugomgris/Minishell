@@ -6,11 +6,24 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:10:37 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/17 15:53:38 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 15:34:09 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+t_token	*ft_newtoken(void *content, t_token_type type)
+{
+	t_token	*new;
+
+	new = (t_token *)malloc(sizeof(t_token));
+	if (new == NULL)
+		return (NULL);
+	new->content = content;
+	new->type = type;
+	new->next = NULL;
+	return (new);
+}
 
 /*
 	Iterates over a list and checks for potential empty tokens. If a token
