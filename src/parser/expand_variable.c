@@ -104,7 +104,7 @@ char	*ms_replace_exit_status(t_ms *ms, char *str, char *status)
 /*
 	If the char '$' is found in the token, it gets the key and looks for
 	the corresponding value in the env list. Only handles $? as a special
-	case, $@ and cases get replaced by NULL.
+	case, $@ and other cases get replaced by NULL.
 */
 char	*ms_search_env(t_ms *ms, char *str, int start)
 {

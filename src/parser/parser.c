@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 17:46:00 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 18:40:13 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,13 @@ char	*ms_trim_quotes(char *str, char *new, int len)
 */
 void	ms_remove_quotes(t_ms *ms)
 {
-	t_list	*aux;
+	t_token	*aux;
 	char	*tmp;
 	char	*new;
 	int		count;
 	int		len;
 
-	aux = ms->tokens;
+	aux = ms->tok;
 	while (aux)
 	{
 		tmp = ft_strdup((char *)aux->content);
