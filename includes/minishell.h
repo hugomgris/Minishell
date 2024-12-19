@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 18:20:10 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/19 16:52:12 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ typedef enum e_type_tokens
 	T_AMPERSAND,
 	T_OR,
 	T_NL,
-	T_SUBPRO
+	T_SUBPRO,
+	T_SQUOTE
 }	t_token_type;
 
 typedef struct s_token
@@ -91,7 +92,8 @@ int		ms_check_operator(t_ms *ms, char **str);
 void	ms_skip_space(char **str);
 int		ms_skip_quotes(t_ms *ms, char	*str, int *i);
 int		ms_extract_atom(t_ms *ms, char **str);
-int		ms_extract_quote(t_ms *ms, char **str);
+int		ms_extract_atom_as_token(t_ms *ms, t_token *lst, char **str);
+int		ms_extract_quote(t_ms *ms, t_token *lst, char **str);
 int		ms_extract_operator(t_ms *ms, t_token_type type, char **str);
 int		ms_handle_operator(t_ms *ms, char **str);
 void	ms_remove_empty_tokens(t_token **lst, void (*del)(void *));
@@ -100,6 +102,10 @@ t_token	*ms_new_token(void *content, t_token_type type);
 t_token	*ms_toklast(t_token *lst);
 void	ms_tokadd_back(t_token **lst, t_token *new);
 void	ms_tokclear(t_token **lst, void (*del)(void *));
+void	process_token_content(char *tmp, t_token **subtok);
+void	process_unquoted(char **tmp, t_token **subtok);
+void	process_quotes(char **tmp, t_token **subtok, char quote);
+char	*ms_merge_subtoken(t_ms *ms, t_token *subtok);
 void	remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *));
 

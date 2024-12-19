@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/18 12:35:14 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/19 15:46:49 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,6 @@ void	ms_get_wildcards(t_ms *ms)
 	if (!dir)
 		ms_error_handler(ms, "Error opening current directory", 1);
 	fname = readdir(dir);
-	printf("%s\n", fname->d_name);
+	//printf("%s\n", fname->d_name);
 	closedir(dir);
 }

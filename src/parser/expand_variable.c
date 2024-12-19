@@ -131,35 +131,70 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	return (ms_replace_null_value(ms, str, key));
 }
 
-/*
-	Iterates over the content of a token to check for '$' char,
-	indicating a variable to expand.
-	Ignores the parts within single quotes.
-*/
-void	ms_expand_variable(t_ms *ms)
+void	ms_expand_subtoken(t_ms *ms, t_token *lst)
 {
 	t_token	*aux;
 	char	*str;
 	int		i;
 
-	aux = ms->tok;
+	aux = lst;
 	while (aux)
 	{
 		str = (char *)aux->content;
 		i = -1;
 		while (str[++i])
 		{
-			if (!ms_ignore_squote(str, &i))
+			if (str[i] == S_QUOTE && i == 0)
 				break ;
 			else if (str[i] == '$' && str[i + 1] != '\0' \
-				&& !ft_isspace(str[i + 1]) && str[i + 1] != '$'
-				&& !is_quote(str[i + 1]))
+				&& str[i + 1] != '$')
 			{
 				str = ms_search_env(ms, aux->content, i);
 				gc_add(aux->content, &ms->gc);
 				aux->content = str;
-				i -= 1;
+				i = -1;
 			}
+		}
+		aux = aux->next;
+	}
+}
+
+char	*ms_merge_subtoken(t_ms *ms, t_token *subtok)
+{
+	t_token	*aux;
+	char	*res;
+
+	aux = subtok;
+	res = ft_strdup("");
+	if (!res)
+		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
+	while (aux)
+	{
+		res = ft_strjoin(res, (char *)aux->content);
+		if (!res)
+			ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
+		aux = aux->next;
+	}
+	return (res);
+}
+
+void	ms_expand_variable(t_ms *ms)
+{
+	t_token	*aux;
+	t_token	*subtok;
+	char	*tmp;
+
+	aux = ms->tok;
+	subtok = NULL;
+	while (aux)
+	{
+		if (aux->type == 0 && ft_strchr((char *)aux->content, '$'))
+		{
+			tmp = ft_strdup((char *)aux->content);
+			process_token_content(tmp, &subtok);
+			free(tmp);
+			ms_expand_subtoken(ms, subtok);
+			aux->content = ms_merge_subtoken(ms, subtok);
 		}
 		aux = aux->next;
 	}

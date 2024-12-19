@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:56:13 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/17 17:30:03 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/19 15:29:56 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ int	ms_key_checker(char *key, const char *var)
 	Extracts a token from a string that is within quotes (double or single).
 	Currently obsolete, as the extraction is done with ms_extract_atom.
 */
-int	ms_extract_quote(t_ms *ms, char **str)
+int	ms_extract_quote(t_ms *ms, t_token *lst, char **str)
 {
-	t_list	*node;
+	t_token	*node;
 	char	quote;
 	char	*token;
 	int		i;
@@ -85,10 +85,10 @@ int	ms_extract_quote(t_ms *ms, char **str)
 			i++;
 		free(token);
 		token = ft_substr(*str, 0, ++i);
-		node = ft_lstnew(token);
+		node = ms_new_token(token, T_ATOM);
 		if (!token || !node)
 			ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
-		ft_lstadd_back(&ms->tokens, node);
+		ms_tokadd_back(&lst, node);
 		*str += i;
 		return (FALSE);
 	}

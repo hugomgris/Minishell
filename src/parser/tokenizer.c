@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 16:39:20 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/19 15:46:08 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,34 @@ int	ms_extract_atom(t_ms *ms, char **str)
 	if (!token || !node)
 		ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
 	ms_tokadd_back(&ms->tok, node);
+	(*str) += i;
+	return (FALSE);
+}
+
+int	ms_extract_atom_as_token(t_ms *ms, t_token *lst, char **str)
+{
+	int		i;
+	char	*token;
+	char	*tmp;
+	t_token	*node;
+
+	i = 0;
+	tmp = *str;
+	while (tmp[i] && !is_operator(tmp + i) && !ft_isspace(tmp[i]))
+	{
+		if (tmp[i] == 34 || tmp[i] == 39)
+		{
+			if (!ms_skip_quotes(ms, tmp, &i))
+				return (TRUE);
+		}
+		else
+			i++;
+	}
+	token = ft_substr(tmp, 0, i);
+	node = ms_new_token(token, T_ATOM);
+	if (!token || !node)
+		ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
+	ms_tokadd_back(&lst, node);
 	(*str) += i;
 	return (FALSE);
 }
