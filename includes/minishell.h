@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/19 16:52:12 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 12:06:20 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void	ms_tokclear(t_token **lst, void (*del)(void *));
 void	process_token_content(char *tmp, t_token **subtok);
 void	process_unquoted(char **tmp, t_token **subtok);
 void	process_quotes(char **tmp, t_token **subtok, char quote);
+void	ms_expand_subtoken(t_ms *ms, t_token *lst);
 char	*ms_merge_subtoken(t_ms *ms, t_token *subtok);
 void	remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *));
