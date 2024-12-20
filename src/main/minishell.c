@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 11:07:25 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/19 12:21:53 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ void	ms_init(t_ms *ms, char **env)
 	ms->ms_env = NULL;
 	ms->gc = NULL;
 	ms->user = NULL;
+	ms->tok = NULL;
 	ms->tokens = NULL;
 	ms->redir_tokens = NULL;
-	ms->pipe_tokens = NULL;
-	ms->exec_tokens = NULL;
+	ms->filtered_tokens = NULL;
 	ms->exit_status = 0;
 	ms->heredoc = 0;
 	ms->ms_env = ms_copy_env(ms, env);

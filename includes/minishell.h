@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 09:29:08 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/20 19:03:44 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,6 @@
 # define S_QUOTE '\''
 # define D_QUOTE '\"'
 
-typedef struct s_ms
-{
-	t_list	*ms_env;
-	t_list	*gc;
-	t_list	*tokens;
-	t_list	*redir_tokens;
-	t_list	*pipe_tokens;
-	t_list	*exec_tokens;
-	char	*home;
-	char	*user;
-	char	*prompt;
-	char	*input;
-	char	**cmd_table;
-	int		exit_status;
-	int		heredoc;
-}	t_ms;
-
 typedef enum e_type_tokens
 {
 	T_ATOM,
@@ -65,6 +48,34 @@ typedef enum e_type_tokens
 	T_SUBPRO
 }	t_token_type;
 
+typedef struct s_token
+{
+	void			*content;
+	t_token_type	type;
+	struct s_token	*next;
+}	t_token;
+
+typedef struct s_ms
+{
+	t_list	*ms_env;
+	t_list	*gc;
+	t_token	*tok;
+	t_list	*tokens;
+	t_list	*filtered_tokens;
+	t_list	*redir_tokens;
+	t_list	**exec_tokens;
+	char	**exec_chunks;
+	char	*home;
+	char	*user;
+	char	*prompt;
+	char	*input;
+	char	**cmd_table;
+	int		exit_status;
+	int		heredoc;
+	int		**pipe_fds;
+	int		pipe_count;
+}	t_ms;
+
 typedef void	(*t_builtin_func)(t_ms *);
 
 typedef struct s_builtin_map
@@ -72,6 +83,15 @@ typedef struct s_builtin_map
 	const char		*name;
 	t_builtin_func	func;
 }	t_builtin_map;
+
+typedef struct s_exec_data
+{
+	int		stdout_b;
+	int		stdin_b;
+	int		**pipes;
+	int		chunks;
+	int		index;
+}	t_exec_data;
 
 //MAIN and LOOP functions
 void	ms_initialise_minishell(t_ms *ms, char **env);
@@ -149,21 +169,56 @@ char	*ms_get_parent_path(t_ms *ms, char *cwd);
 
 //EXECUTOR functions
 void	ms_executor(t_ms *ms);
+char	**ms_extract_chunks(t_ms *ms, t_list **tokens);
+char	*ms_process_chunk(t_ms *ms, t_list **current);
+int		ms_count_chunks(t_list *tokens);
+int		ms_is_pipe(const char *token);
+char	**ms_env_to_array(t_ms *ms, char **arr);
+char	**ms_rebuild_env(t_ms *ms);
+void	ms_executor_cleanup(t_ms *ms, char **env);
+
+//PIPING functions
+void	ms_free_pipes(int **pipe_fds, int pipe_count);
+void	ms_wait_children(int count);
+void	ms_close_parent_pipes(int **pipe_fds, int pipe_count);
+void	ms_close_child_pipes(int **pipe_fds, int pipe_count);
+void	ms_setup_child_pipes(int **pipe_fds, int i, int pipe_count);
+void	ms_create_pipes(int **pipe_fds, int pipe_count);
+char	**ms_parse_args(char *exec_chunk, int *arg_count);
+int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);
+int		ms_try_path_execution(char *cmd_path, char **cmd_args, char **env);
+char	*ms_build_cmd_path(char *dir, char *cmd);
+int		ms_search_in_path(t_ms *ms, char **cmd_args, char **env);
+char	*ms_duplicate_path(t_ms *ms);
+char	*ms_build_cmd_path(char *dir, char *cmd);
+int		ms_try_path_execution(char *cmd_path, char **cmd_args, char **env);
+int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);
+
+/*
+//EXECUTOR functions
+void	ms_executor(t_ms *ms);
+int		ms_setup_pipes(t_ms *ms, t_exec_data *exec_data);
+void	ms_execute_chunk(t_ms *ms, char **env, t_exec_data *exec_data);
+int		ms_handle_pipe_redirections(t_exec_data *exec_data);
 int		ms_handle_system_command(t_ms *ms, char **arr);
-char	**ms_prepare_execution(t_ms *ms, char **arr);
-void	execute_parent(t_ms *ms, pid_t pid, int *status);
-void	execute_child(t_ms *ms, char **arr);
-char	*ms_validate_command(t_ms *ms);
-char	*ms_get_command_path(t_ms *ms, char *cmd);
-char	*ms_get_env_path_or_def(t_ms *ms);
-char	**ms_make_argv(t_ms *ms, t_list *tokens);
-void	ms_execute_builtin(t_ms *ms);
-int		ms_is_builtin(char *cmd);
+void	ms_divide_tokens(t_ms *ms, int *chunks);
 void	ms_child_process(t_ms *ms, char **arr);
 void	ms_parent_process(t_ms *ms, pid_t pid, int *status);
-void	ms_executor_cleanup(t_ms *ms, char **arr, int stdout_b, int stdin_b);
-char	**ms_env_to_array(t_ms *ms, char **arr);
+void	execute_child(t_ms *ms, char **arr);
+void	execute_parent(t_ms *ms, pid_t pid, int *status);
+char	**ms_make_argv(t_ms *ms, t_list *tokens);
+char	*ms_get_env_path_or_def(t_ms *ms);
+char	*ms_get_command_path(t_ms *ms, char *cmd);
+char	*ms_validate_command(t_ms *ms);
+void	ms_execute_builtin(t_ms *ms);
+int		ms_is_builtin(char *cmd);
+char	**ms_rebuild_env(t_ms *ms);
 char	**ms_allocate_env_array(t_list *list);
+char	**ms_env_to_array(t_ms *ms, char **arr);
+void	ms_executor_restore_fds(int stdout_b, int stdin_b);
+void	ms_executor_cleanup(t_ms *ms, char **arr, t_exec_data *exec_data);
+void	ms_create_exec_tokens(t_ms *ms, int count);
+*/
 
 //REDIRECTION functions
 int		ms_redirection(t_ms *ms);
@@ -171,7 +226,7 @@ int		ms_setup_redirects(t_list *token, int *fds, t_ms *ms);
 int		ms_open(char *file, int flags, int *fd);
 int		ms_has_redirection(t_ms *ms);
 int		ms_detect_redirector(char *token);
-void	ms_filter_tokens(t_ms *ms);
+void	ms_filter_tokens(t_ms *ms, t_list *chunk);
 void	ms_close_redirect_fds(int input, int output, int append, int stderr_fd);
 int		ms_handle_open_error(t_ms *ms, char *filename);
 int		ms_handle_heredoc(char *delimiter, int *fd);

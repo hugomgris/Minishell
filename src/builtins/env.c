@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 09:25:53 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/18 16:53:57 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	ms_unset(t_ms *ms)
 	t_list	*previous;
 	t_list	*tokens;
 
-	tokens = ms->exec_tokens;
+	tokens = ms->exec_tokens[0];
 	if (!ms->ms_env || !tokens->next || ft_strchr(tokens->next->content, '='))
 		return ;
 	current = ms->ms_env;

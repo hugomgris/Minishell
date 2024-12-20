@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:20:34 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 09:26:15 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/18 16:54:23 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void	ms_export(t_ms *ms)
 	t_list	*current;
 	t_list	*tokens;
 
-	tokens = ms->exec_tokens;
+	tokens = ms->exec_tokens[0];
 	if (!tokens->next)
 	{
 		ms_export_print(ms);

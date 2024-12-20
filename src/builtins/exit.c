@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 09:38:06 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/18 16:54:02 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	ms_exit(t_ms *ms)
 	int		code;
 	t_list	*tokens;
 
-	tokens = ms->exec_tokens;
+	tokens = ms->exec_tokens[0];
 	if (ft_lstsize(tokens) >= 3)
 	{
 		ms_error_handler(ms, "exit: too many arguments", 0);
