@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/19 16:58:39 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 13:32:07 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,21 @@ void	ms_remove_quotes(t_ms *ms)
 	}
 }
 
+void	ms_copy_toktolist(t_ms *ms)
+{
+	t_token	*aux;
+	t_list	*new;
+
+	new = NULL;
+	aux = ms->tok;
+	while (aux)
+	{
+		new = ft_lstnew(ft_strdup((char *)aux->content));
+		ft_lstadd_back(&ms->tokens, new);
+		aux = aux->next;
+	}
+}
+
 /*
 	Does a preliminary check of the user input and yields error
 	in case of incorrect input. Input get then tokenised, and the tokens
@@ -118,7 +133,6 @@ int	ms_parser(t_ms *ms, char *str)
 	ms_remove_empty_tokens(&ms->tok, free);
 	ms_sort_toks(ms->tok);
 	ms_get_wildcards(ms);
-	ms_print_toks(ms->tok);
-	ms_tokclear(&ms->tok, free);
-	return (FALSE);
+	ms_copy_toktolist(ms);
+	return (TRUE);
 }

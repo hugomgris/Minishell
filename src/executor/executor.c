@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 17:40:36 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 13:11:31 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	ms_executor_cleanup(t_ms *ms, char **arr, int stdout_b, int stdin_b)
 	close(stdin_b);
 	ft_lstclear(&ms->tokens, free);
 	ft_lstclear(&ms->filtered_tokens, free);
+	ms_tokclear(&ms->tok, free);
 }
 
 char	**ms_prepare_execution(t_ms *ms, char **arr)
