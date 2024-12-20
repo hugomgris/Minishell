@@ -144,7 +144,7 @@ void	ms_expand_variable(t_ms *ms)
 		if (aux->type == 0 && ft_strchr((char *)aux->content, '$'))
 		{
 			tmp = ft_strdup((char *)aux->content);
-			process_token_content(tmp, &subtok);
+			process_token_content(ms, tmp, &subtok);
 			free(tmp);
 			ms_expand_subtoken(ms, subtok);
 			aux->content = ms_merge_subtoken(ms, subtok);

@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 16:25:37 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/20 12:05:33 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 12:24:26 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,37 +59,53 @@ char	*ms_merge_subtoken(t_ms *ms, t_token *subtok)
 	return (res);
 }
 
-void	process_quotes(char **tmp, t_token **subtok, char quote)
+void	process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote)
 {
-	int	i;
+	t_token	*new;
+	char	*str;
+	int		i;
 
 	i = 1;
 	while ((*tmp)[i] && (*tmp)[i] != quote)
 		i++;
 	if ((*tmp)[i] == quote)
 		i++;
-	ms_tokadd_back(subtok, ms_new_token(ft_substr(*tmp, 0, i), T_ATOM));
+	str = ft_substr(*tmp, 0, i);
+	if (!str)
+		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
+	new = ms_new_token(str, T_ATOM);
+	if (!new)
+		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
+	ms_tokadd_back(subtok, new);
 	*tmp += i;
 }
 
-void	process_unquoted(char **tmp, t_token **subtok)
+void	process_unquoted(t_ms *ms, char **tmp, t_token **subtok)
 {
-	int	i;
+	t_token	*new;
+	char	*str;
+	int		i;
 
 	i = 0;
 	while ((*tmp)[i] && !is_quote((*tmp)[i]))
 		i++;
-	ms_tokadd_back(subtok, ms_new_token(ft_substr(*tmp, 0, i), T_ATOM));
+	str = ft_substr(*tmp, 0, i);
+	if (!str)
+		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
+	new = ms_new_token(str, T_ATOM);
+	if (!new)
+		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
+	ms_tokadd_back(subtok, new);
 	*tmp += i;
 }
 
-void	process_token_content(char *tmp, t_token **subtok)
+void	process_token_content(t_ms *ms, char *tmp, t_token **subtok)
 {
 	while (*tmp)
 	{
 		if (*tmp == D_QUOTE || *tmp == S_QUOTE)
-			process_quotes(&tmp, subtok, *tmp);
+			process_quotes(ms, &tmp, subtok, *tmp);
 		else
-			process_unquoted(&tmp, subtok);
+			process_unquoted(ms, &tmp, subtok);
 	}
 }
