@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/19 15:46:08 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 18:16:07 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	ms_extract_atom(t_ms *ms, char **str)
 
 	i = 0;
 	tmp = *str;
-	while (tmp[i] && !is_operator(tmp + i) && !ft_isspace(tmp[i]))
+	while (tmp[i] && !ms_is_operator(tmp + i) && !ft_isspace(tmp[i]))
 	{
 		if (tmp[i] == 34 || tmp[i] == 39)
 		{
@@ -53,7 +53,7 @@ int	ms_extract_atom_as_token(t_ms *ms, t_token *lst, char **str)
 
 	i = 0;
 	tmp = *str;
-	while (tmp[i] && !is_operator(tmp + i) && !ft_isspace(tmp[i]))
+	while (tmp[i] && !ms_is_operator(tmp + i) && !ft_isspace(tmp[i]))
 	{
 		if (tmp[i] == 34 || tmp[i] == 39)
 		{
@@ -152,7 +152,7 @@ int	ms_tokenizer(t_ms *ms, char *str)
 		}
 		while (*str && ft_isspace(*str))
 			str++;
-		if (is_operator(str))
+		if (ms_is_operator(str))
 			error = ms_handle_operator(ms, &str);
 		else
 			error = ms_extract_atom(ms, &str);

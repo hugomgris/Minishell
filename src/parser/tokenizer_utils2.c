@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:10:37 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/19 15:31:36 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 18:16:28 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ void	ms_remove_empty_tokens(t_token **lst, void (*del)(void *))
 	previous = NULL;
 	while (current)
 	{
-		if (current->content && is_empty_token(current->content))
+		if (current->content && ms_is_empty_token(current->content))
 		{
-			remove_token(lst, previous, current, del);
+			ms_remove_token(lst, previous, current, del);
 			if (previous)
 				current = previous->next;
 			else
@@ -46,7 +46,7 @@ void	ms_remove_empty_tokens(t_token **lst, void (*del)(void *))
 	Checks if a token is an empty string.
 	Useful to check after the variable expansion has occured.
 */
-int	is_empty_token(void *content)
+int	ms_is_empty_token(void *content)
 {
 	return (ft_strncmp((char *)content, "", 1) == 0);
 }
@@ -54,7 +54,7 @@ int	is_empty_token(void *content)
 /*
 	Removes a token from a list and frees it.
 */
-void	remove_token(t_token **lst, t_token *prev, \
+void	ms_remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *))
 {
 	if (prev)

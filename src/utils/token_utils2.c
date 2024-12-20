@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 16:25:37 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/20 13:28:34 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 18:16:56 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	*ms_merge_subtoken(t_ms *ms, t_token *subtok)
 	return (res);
 }
 
-void	process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote)
+void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote)
 {
 	t_token	*new;
 	char	*str;
@@ -82,15 +82,19 @@ void	process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote)
 	*tmp += i;
 }
 
-void	process_unquoted(t_ms *ms, char **tmp, t_token **subtok)
+void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok)
 {
 	t_token	*new;
 	char	*str;
 	int		i;
 
 	i = 0;
-	while ((*tmp)[i] && !is_quote((*tmp)[i]))
+	while ((*tmp)[i] && !ms_is_quote((*tmp)[i]))
+	{
 		i++;
+		if ((*tmp)[i] == '$')
+			break ;
+	}
 	str = ft_substr(*tmp, 0, i);
 	if (!str)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
@@ -103,13 +107,13 @@ void	process_unquoted(t_ms *ms, char **tmp, t_token **subtok)
 	*tmp += i;
 }
 
-void	process_token_content(t_ms *ms, char *tmp, t_token **subtok)
+void	ms_process_token_content(t_ms *ms, char *tmp, t_token **subtok)
 {
 	while (*tmp)
 	{
 		if (*tmp == D_QUOTE || *tmp == S_QUOTE)
-			process_quotes(ms, &tmp, subtok, *tmp);
+			ms_process_quotes(ms, &tmp, subtok, *tmp);
 		else
-			process_unquoted(ms, &tmp, subtok);
+			ms_process_unquoted(ms, &tmp, subtok);
 	}
 }

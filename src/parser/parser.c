@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 13:32:07 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 18:03:35 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ void	ms_copy_toktolist(t_ms *ms)
 }
 
 /*
+	The control tower for the parsing process.
 	Does a preliminary check of the user input and yields error
 	in case of incorrect input. Input get then tokenised, and the tokens
 	containing variable are expanded to their correct values. 
@@ -132,7 +133,7 @@ int	ms_parser(t_ms *ms, char *str)
 	ms_remove_quotes(ms);
 	ms_remove_empty_tokens(&ms->tok, free);
 	ms_sort_toks(ms->tok);
-	ms_get_wildcards(ms);
 	ms_copy_toktolist(ms);
-	return (TRUE);
+	ms_tokclear(&ms->tok, free);
+	return (FALSE);
 }

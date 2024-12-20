@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:56:13 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/19 15:29:56 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 18:15:29 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,12 +107,12 @@ char	*ms_get_key(t_ms *ms, char *str)
 	int		i;
 
 	i = 0;
-	if (!str[i] || ft_isspace(str[i]) || is_quote(str[i]))
+	if (!str[i] || ft_isspace(str[i]) || ms_is_quote(str[i]))
 		key = ft_strdup("$");
 	else
 	{
 		while (str[i] != '$' && str[i]
-			&& !ft_isspace(str[i]) && !is_quote(str[i]))
+			&& !ft_isspace(str[i]) && !ms_is_quote(str[i]))
 			i++;
 		key = ft_substr(str, 0, i);
 	}

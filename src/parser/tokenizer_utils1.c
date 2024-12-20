@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 17:49:40 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/17 16:20:08 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 18:15:02 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 	Returns TRUE if the character is a single or a double quote,
 	returns FALSE otherwise.
 */
-int	is_quote(char c)
+int	ms_is_quote(char c)
 {
 	if (c == 34 || c == 39)
 		return (TRUE);
@@ -27,7 +27,7 @@ int	is_quote(char c)
 	Returns TRUE if the character pointed to (or the two characters)
 	is an operator, returns FALSE otherwise.
 */
-int	is_operator(char *c)
+int	ms_is_operator(char *c)
 {
 	if (c[0] == '<' || c[0] == '>' || c[0] == '|' || c[0] == '&'
 		|| c[0] == '(' || c[0] == ')' || (c[0] == '2' && c[1] == '>'))
