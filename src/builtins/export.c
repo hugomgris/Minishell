@@ -12,6 +12,10 @@
 
 #include "../../includes/minishell.h"
 
+/*
+!export -p currently causes a double free, needs to be protected
+(according to the subject, the built-in export does NOT need to handle flags)
+*/
 int	ms_export_print(t_ms *ms, char **env)
 {
 	char	*sym;

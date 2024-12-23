@@ -17,6 +17,8 @@ ECHO builtin command main handler.
 Right now, it manages -n flag and prints tokens.
 Tokens that need expansion are received already expanded.
 TODO: handle cases with multiple -n
+!echo hola | wc -l 			should yield 1, currently yields hola
+TODO: check FD when using echo
 */
 int	ms_echo(char **cmd_args)
 {

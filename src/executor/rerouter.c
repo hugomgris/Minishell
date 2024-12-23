@@ -11,7 +11,8 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
+// !Need to check for exact match for builtins/commands,
+// !"echoedsa" must NOT be recognised as "echo"
 // Check if the command is a builtin
 int	ms_is_builtin(const char *cmd)
 {
