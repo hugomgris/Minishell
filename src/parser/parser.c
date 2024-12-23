@@ -6,20 +6,15 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 11:13:43 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/23 17:01:26 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-	TODO
-	- count number of quotes to remove
-	- realloc shorter string
-	- copy new from old skipping unnecessary quotes
-	- free old string
+	Counts the number of quotes to remove for reallocation of the shorter string.
 */
-
 int	ms_count_quotes(char *str)
 {
 	int		count;
@@ -44,6 +39,9 @@ int	ms_count_quotes(char *str)
 	return (count);
 }
 
+/*
+	Removes unnecessary quotes after the variable expansion has occured.
+*/
 char	*ms_trim_quotes(char *str, char *new, int len)
 {
 	char	quote;
@@ -73,15 +71,18 @@ char	*ms_trim_quotes(char *str, char *new, int len)
 	return (new);
 }
 
+/*
+	Iterates over the content of a token and removes the unnecessary quotes.
+*/
 void	ms_remove_quotes(t_ms *ms)
 {
-	t_list	*aux;
+	t_token	*aux;
 	char	*tmp;
 	char	*new;
 	int		count;
 	int		len;
 
-	aux = ms->tokens;
+	aux = ms->tok;
 	while (aux)
 	{
 		tmp = ft_strdup((char *)aux->content);
@@ -100,6 +101,28 @@ void	ms_remove_quotes(t_ms *ms)
 	}
 }
 
+void	ms_copy_toktolist(t_ms *ms)
+{
+	t_token	*aux;
+	t_list	*new;
+
+	new = NULL;
+	aux = ms->tok;
+	while (aux)
+	{
+		new = ft_lstnew(ft_strdup((char *)aux->content));
+		ft_lstadd_back(&ms->tokens, new);
+		aux = aux->next;
+	}
+}
+
+/*
+	The control tower for the parsing process.
+	Does a preliminary check of the user input and yields error
+	in case of incorrect input. Input get then tokenised, and the tokens
+	containing variable are expanded to their correct values. 
+	Empty tokens are then removed and the unnecessary quotes are trimmed.
+*/
 int	ms_parser(t_ms *ms, char *str)
 {
 	if (!ms_syntax_checker(ms, str))
@@ -107,7 +130,12 @@ int	ms_parser(t_ms *ms, char *str)
 	if (!ms_tokenizer(ms, str))
 		return (FALSE);
 	ms_expand_variable(ms);
-	ms_remove_empty_tokens(&ms->tokens, free);
+	ms_expand_wildcards(ms);
 	ms_remove_quotes(ms);
+	ms_remove_empty_tokens(&ms->tok, free);
+	ms_sort_toks(ms->tok);
+	//ms_print_toks(ms->tok);
+	ms_copy_toktolist(ms);
+	ms_tokclear(&ms->tok, free);
 	return (TRUE);
 }

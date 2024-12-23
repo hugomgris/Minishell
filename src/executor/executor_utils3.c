@@ -6,53 +6,84 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 11:45:43 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/21 13:05:53 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+This file contains helper/Flow-control functions for execution handling:
+	-ms_parse_args
+	-ms_exec_direct_path
+	-ms_try_path_execution
+	-ms_build_cmd_path
+	-ms_search_in_path
+*/
+
 #include "../../includes/minishell.h"
 
-/*
-Control flow function that branches builtin execution to each of the
-	builtin commands' specific handler functions.
-*/
-void	ms_execute_builtin(t_ms *ms)
+char	**ms_parse_args(char *exec_chunk, int *arg_count)
 {
-	size_t						i;
-	char						*cmd;
-	static const t_builtin_map	builtins[] = {
-	{"cd", ms_cd},
-	{"env", ms_env},
-	{"pwd", ms_pwd},
-	{"unset", ms_unset},
-	{"exit", ms_exit},
-	{"echo", ms_echo},
-	{"export", ms_export}
-	};
+	char	**cmd_args;
+	char	*token;
 
-	cmd = ms->filtered_tokens->content;
-	i = 0;
-	while (i < sizeof(builtins) / sizeof(builtins[0]))
+	*arg_count = 0;
+	cmd_args = malloc(sizeof(char *) * (strlen(exec_chunk) + 1));
+	if (!cmd_args)
+		return (NULL);
+	token = ft_strtok(exec_chunk, " ");
+	while (token)
 	{
-		if (ft_strncmp(cmd, builtins[i].name, ft_strlen(builtins[i].name)) == 0)
-		{
-			builtins[i]. func(ms);
-			return ;
-		}
-		i++;
+		cmd_args[(*arg_count)++] = token;
+		token = ft_strtok(NULL, " ");
 	}
+	cmd_args[*arg_count] = NULL;
+	return (cmd_args);
 }
 
-/*
-Helper function to check if input comand is a Minishell builtin.
-*/
-int	ms_is_builtin(char *cmd)
+char	*ms_process_directory(char **path_copy, char **dir)
 {
-	return ((!ft_strncmp(cmd, "cd", 2) && (!cmd[2] || cmd[2] == ' '))
-		|| (!ft_strncmp(cmd, "env", 3) && (!cmd[3] || cmd[3] == ' '))
-		|| (!ft_strncmp(cmd, "pwd", 3) && (!cmd[3] || cmd[3] == ' '))
-		|| (!ft_strncmp(cmd, "unset", 5) && (!cmd[5] || cmd[5] == ' '))
-		|| (!ft_strncmp(cmd, "exit", 4) && (!cmd[4] || cmd[4] == ' '))
-		|| (!ft_strncmp(cmd, "echo", 4) && (!cmd[4] || cmd[4] == ' '))
-		|| (!ft_strncmp(cmd, "export", 6) && (!cmd[6] || cmd[6] == ' ')));
+	if (!*dir)
+	{
+		free(*path_copy);
+		return (NULL);
+	}
+	return (ft_strtok(NULL, ":"));
+}
+
+int	ms_try_and_execute(char *cmd_path, char **cmd_args, char **env, char *path)
+{
+	if (ms_try_path_execution(cmd_path, cmd_args, env))
+	{
+		free(cmd_path);
+		free(path);
+		return (0);
+	}
+	free(cmd_path);
+	return (1);
+}
+
+// Helper function to search command in PATH
+int	ms_search_in_path(t_ms *ms, char **cmd_args, char **env)
+{
+	char	*path_copy;
+	char	*dir;
+	char	*cmd_path;
+
+	path_copy = ms_duplicate_path(ms);
+	if (!path_copy)
+		return (1);
+	dir = ft_strtok(path_copy, ":");
+	while (dir)
+	{
+		cmd_path = ms_build_cmd_path(dir, cmd_args[0]);
+		if (!cmd_path)
+		{
+			free(path_copy);
+			return (1);
+		}
+		if (!ms_try_and_execute(cmd_path, cmd_args, env, path_copy))
+			return (0);
+		dir = ms_process_directory(&path_copy, &dir);
+	}
+	return (1);
 }
