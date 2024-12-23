@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 16:29:58 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 16:34:49 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <errno.h>
+# include <dirent.h>
 
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
@@ -30,6 +31,8 @@
 # define FALSE 0
 # define S_QUOTE '\''
 # define D_QUOTE '\"'
+
+static int		g_var;
 
 typedef enum e_type_tokens
 {
@@ -45,7 +48,8 @@ typedef enum e_type_tokens
 	T_AMPERSAND,
 	T_OR,
 	T_NL,
-	T_SUBPRO
+	T_SUBPRO,
+	T_SQUOTE
 }	t_token_type;
 
 typedef struct s_token
@@ -104,19 +108,30 @@ void	ms_set_shlvl(t_ms *ms);
 
 //TOKENIZER and UTILS
 int		ms_tokenizer(t_ms *ms, char *str);
-int		is_operator(char *c);
-int		is_quote(char c);
+int		ms_is_operator(char *c);
+int		ms_is_quote(char c);
 int		ms_check_operator(t_ms *ms, char **str);
 void	ms_skip_space(char **str);
 int		ms_skip_quotes(t_ms *ms, char	*str, int *i);
 int		ms_extract_atom(t_ms *ms, char **str);
-int		ms_extract_quote(t_ms *ms, char **str);
+int		ms_extract_atom_as_token(t_ms *ms, t_token *lst, char **str);
+int		ms_extract_quote(t_ms *ms, t_token *lst, char **str);
 int		ms_extract_operator(t_ms *ms, t_token_type type, char **str);
 int		ms_handle_operator(t_ms *ms, char **str);
-void	ms_remove_empty_tokens(t_list **lst, void (*del)(void *));
-int		is_empty_token(void *content);
-void	remove_token(t_list **lst, t_list *prev, \
-	t_list *cur, void (*del)(void *));
+void	ms_remove_empty_tokens(t_token **lst, void (*del)(void *));
+int		ms_is_empty_token(void *content);
+t_token	*ms_new_token(void *content, t_token_type type);
+t_token	*ms_toklast(t_token *lst);
+void	ms_tokadd_back(t_token **lst, t_token *new);
+void	ms_tokclear(t_token **lst, void (*del)(void *));
+void	ms_process_token_content(t_ms *ms, char *tmp, t_token **subtok);
+void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok);
+void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote);
+void	ms_expand_subtoken(t_ms *ms, t_token *lst);
+char	*ms_merge_subtoken(t_ms *ms, t_token *subtok);
+void	ms_tokinsert(t_token **lst, t_token *current, t_token *new);
+void	ms_remove_token(t_token **lst, t_token *prev, \
+	t_token *cur, void (*del)(void *));
 
 //PARSER
 int		ms_parser(t_ms *ms, char *str);
@@ -127,10 +142,16 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark);
 char	*ms_replace_null_value(t_ms *ms, char *str, char *key);
 char	*ms_replace_exit_status(t_ms *ms, char *str, char *status);
 char	*ms_search_env(t_ms *ms, char *str, int start);
-int		ms_skip_squote(char *str, int *i);
+int		ms_ignore_squote(char *str, int *i);
 void	ms_remove_quotes(t_ms *ms);
 int		ms_count_quotes(char *str);
 char	*ms_trim_quotes(char *str, char *new, int len);
+void	ms_sort_toks(t_token *toks);
+
+//WILDCARDS
+void	ms_expand_wildcards(t_ms *ms);
+void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken);
+int		ms_match_count(char *pattern);
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);
@@ -303,5 +324,6 @@ int		ms_key_exists(t_ms *ms, char *key);
 //GARBAGE COLLECTOR functions
 void	gc_add(void *ptr, t_list **gc);
 void	ms_print_list(t_list *list);
+void	ms_print_toks(t_token *list);
 
 #endif

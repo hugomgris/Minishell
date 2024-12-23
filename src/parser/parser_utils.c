@@ -6,14 +6,33 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:56:13 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/16 16:37:19 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/20 18:15:29 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	ms_skip_squote(char *str, int *i)
+/*
+	Advances the pointer of a string when it finds an opening single quote,
+	until it reaches the closing quote. The string NEEDS to be correctly quoted,
+	otherwise SEGFAULT happens.
+	If the closing single quote is the last character of the string,
+	it returns NULL.
+*/
+int	ms_ignore_squote(char *str, int *i)
 {
+	int		j;
+	char	quote;
+
+	j = -1;
+	quote = 0;
+	while (str[++j] || j < *i)
+	{
+		if (str[j] == D_QUOTE)
+			quote = D_QUOTE;
+	}
+	if (quote)
+		return (1);
 	if (str[*i] == S_QUOTE)
 	{
 		(*i)++;
@@ -25,6 +44,10 @@ int	ms_skip_squote(char *str, int *i)
 	return (1);
 }
 
+/*
+	Extracts a token from a string that is within quotes (double or single).
+	Currently obsolete, as the extraction is done with ms_extract_atom instead.
+*/
 int	ms_key_checker(char *key, const char *var)
 {
 	int	i;
@@ -40,9 +63,13 @@ int	ms_key_checker(char *key, const char *var)
 	return (FALSE);
 }
 
-int	ms_extract_quote(t_ms *ms, char **str)
+/*
+	Extracts a token from a string that is within quotes (double or single).
+	Currently obsolete, as the extraction is done with ms_extract_atom.
+*/
+int	ms_extract_quote(t_ms *ms, t_token *lst, char **str)
 {
-	t_list	*node;
+	t_token	*node;
 	char	quote;
 	char	*token;
 	int		i;
@@ -58,10 +85,10 @@ int	ms_extract_quote(t_ms *ms, char **str)
 			i++;
 		free(token);
 		token = ft_substr(*str, 0, ++i);
-		node = ft_lstnew(token);
+		node = ms_new_token(token, T_ATOM);
 		if (!token || !node)
 			ms_error_handler(ms, "Error: Malloc failed allocating a token", 1);
-		ft_lstadd_back(&ms->tokens, node);
+		ms_tokadd_back(&lst, node);
 		*str += i;
 		return (FALSE);
 	}
@@ -69,18 +96,23 @@ int	ms_extract_quote(t_ms *ms, char **str)
 	return (TRUE);
 }
 
+/*
+	Gets the corresponding key after identifying a '$'in a string.
+	If '$' is directly followed by a separator, returns '$'.
+	Else, returns the key without the '$'. 
+*/
 char	*ms_get_key(t_ms *ms, char *str)
 {
 	char	*key;
 	int		i;
 
 	i = 0;
-	if (!str[i] || ft_isspace(str[i]) || is_quote(str[i]))
+	if (!str[i] || ft_isspace(str[i]) || ms_is_quote(str[i]))
 		key = ft_strdup("$");
 	else
 	{
 		while (str[i] != '$' && str[i]
-			&& !ft_isspace(str[i]) && !is_quote(str[i]))
+			&& !ft_isspace(str[i]) && !ms_is_quote(str[i]))
 			i++;
 		key = ft_substr(str, 0, i);
 	}

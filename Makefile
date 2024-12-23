@@ -55,17 +55,21 @@ SRC 		:= 	main/minishell.c 				\
 				parser/parser.c 				\
 				parser/parser_utils.c			\
 				parser/tokenizer.c 				\
-				parser/tokenizer_utils1.c	\
-				parser/tokenizer_utils2.c	\
+				parser/tokenizer_utils1.c		\
+				parser/tokenizer_utils2.c		\
+				parser/sort_toks.c				\
 				parser/syntax_checker.c 		\
 				parser/expand_variable.c		\
 				parser/redirection_checker.c	\
+				parser/wildcards.c				\
 				signals/signals.c 				\
 				env/env_manager.c 				\
 				env/env_utils.c 				\
 				utils/string_utils.c 			\
 				utils/error_handler.c 			\
-				utils/garbage_collector.c	
+				utils/garbage_collector.c		\
+				utils/token_utils1.c			\
+				utils/token_utils2.c
 
 SRCDIR		= src
 SRCS		= $(addprefix $(SRCDIR)/, $(SRC))

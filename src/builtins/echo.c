@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 12:25:46 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/20 15:49:33 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@ ECHO builtin command main handler.
 Right now, it manages -n flag and prints tokens.
 Tokens that need expansion are received already expanded.
 TODO: handle cases with multiple -n
-TODO: correctly echo arguments like (echo '"hola'$USER'$USER"') (without spaces)
-TODO: should echo this >>> "holanponchon$USER"
 */
 int	ms_echo(char **cmd_args)
 {
