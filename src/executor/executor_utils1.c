@@ -6,58 +6,90 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 10:07:50 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/20 15:29:19 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+This file contains helper/Flow-control functions for exec chunk handling:
+	-ms_is_pipe
+	-ms_count_chunks
+	-ms_process_chunk
+	-ms_extract_chunks
+*/
+
 #include "../../includes/minishell.h"
 
-/*
-Searches for commands using the env path.
-If command is not found, returns an error.
-*/
-void	ms_child_process(t_ms *ms, char **arr)
+int	ms_is_pipe(const char *token)
 {
-	char	*cmd_path;
-
-	cmd_path = ms_get_command_path(ms, ms->tokens->content);
-	if (!cmd_path)
-		ms_error_handler(ms, "Command not found or execve failed", 0);
-	if (execve(cmd_path, ms_make_argv(ms, ms->filtered_tokens), arr) == -1)
-		ms_error_handler(ms, "Command execution failed", 0);
-	gc_add(cmd_path, &ms->gc);
+	return (token && ft_strncmp(token, "|", 1) == 0);
 }
 
-/*
-Makes the parent process wait until child process ends.
-*/
-void	ms_parent_process(t_ms *ms, pid_t pid, int *status)
+int	ms_count_chunks(t_list *tokens)
 {
-	if (waitpid(pid, status, 0) == -1)
+	int		count;
+	t_list	*current;
+
+	count = 1;
+	current = tokens;
+	while (current)
 	{
-		ms_error_handler(ms, "Error: Waitpid failed", 0);
-		ms_get_set(1, 1);
-		return ;
+		if (ms_is_pipe(current->content))
+			count++;
+		current = current->next;
 	}
-	ms_get_set(1, WEXITSTATUS(*status));
+	return (count);
 }
 
-/*
-Control flow function that calls for child process execution.
-Rises the flag for the SIGINT handler to know if its in child or parent proc.
-*/
-void	execute_child(t_ms *ms, char **arr)
+char	*ms_process_chunk(t_ms *ms, t_list **current)
 {
-	ms_get_set(1, 0);
-	ms_child_process(ms, arr);
+	char	*chunk;
+	char	*tmp;
+
+	chunk = NULL;
+	while (*current && !ms_is_pipe((*current)->content))
+	{
+		tmp = chunk;
+		chunk = ft_strjoin3(chunk, " ", (*current)->content);
+		if (!chunk)
+		{
+			ms_error_handler(ms, "Error: Mem alloc failed", 1);
+			free(tmp);
+			return (NULL);
+		}
+		free(tmp);
+		*current = (*current)->next;
+	}
+	if (*current && ms_is_pipe((*current)->content))
+		*current = (*current)->next;
+	return (chunk);
 }
 
-/*
-Control flow function that calls for parent process execution.
-Rises the flag for the SIGINT handler to know if its in child or parent proc.
-*/
-void	execute_parent(t_ms *ms, pid_t pid, int *status)
+char	**ms_extract_chunks(t_ms *ms, t_list **tokens)
 {
-	ms_get_set(1, 1);
-	ms_parent_process(ms, pid, status);
+	t_list	*current;
+	char	**chunks;
+	int		count;
+	int		i;
+
+	if (!tokens || !*tokens)
+		return (NULL);
+	current = *tokens;
+	count = ms_count_chunks(current);
+	chunks = malloc(sizeof(char *) * (count + 1));
+	if (!chunks)
+		return (ms_error_handler(ms, "Error: Mem alloc failed", 1), NULL);
+	i = 0;
+	while (current && i < count)
+	{
+		chunks[i] = ms_process_chunk(ms, &current);
+		if (!chunks[i])
+		{
+			ft_free(chunks);
+			return (NULL);
+		}
+		i++;
+	}
+	chunks[i] = NULL;
+	return (chunks);
 }

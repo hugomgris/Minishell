@@ -39,15 +39,19 @@ SRC 		:= 	main/minishell.c 				\
 				builtins/export_utils1.c 		\
 				builtins/export_utils2.c 		\
 				builtins/export.c 				\
+				builtins/unset.c				\
 				executor/executor.c				\
 				executor/executor_utils1.c		\
 				executor/executor_utils2.c		\
 				executor/executor_utils3.c		\
 				executor/executor_utils4.c		\
+				executor/executor_utils5.c		\
 				executor/piping.c 				\
+				executor/piping_utils1.c		\
 				executor/redirection.c 			\
 				executor/redirection_utils1.c 	\
 				executor/redirection_utils2.c 	\
+				executor/rerouter.c				\
 				parser/parser.c 				\
 				parser/parser_utils.c			\
 				parser/tokenizer.c 				\

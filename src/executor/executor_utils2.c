@@ -6,95 +6,53 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/16 11:26:28 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/20 15:30:41 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+This file contains helper/Flow-control functions to build exec components:
+	-ms_env_to_aray
+	-ms_rebuild_env
+*/
+
 #include "../../includes/minishell.h"
 
-/*
-Helper function that creates the argument array to be sent to a cmd exec.
-*/
-char	**ms_make_argv(t_ms *ms, t_list *tokens)
+char	**ms_env_to_array(t_ms *ms, char **arr)
 {
-	int		count;
-	char	**argv;
-	int		i ;
-
-	count = ft_lstsize(tokens);
-	argv = malloc(sizeof(char *) * (count + 1));
-	if (!argv)
-	{
-		ms_error_handler(ms, "Error: Memory allocation failed", 1);
-		return (NULL);
-	}
-	i = 0;
-	while (tokens)
-	{
-		argv[i++] = ft_strdup(tokens->content);
-		tokens = tokens->next;
-	}
-	argv[i] = NULL;
-	return (argv);
-}
-
-char	*ms_get_env_path_or_def(t_ms *ms)
-{
-	char	*path;
-
-	path = ms_get_env_variable(ms, "PATH");
-	if (!path)
-	{
-		path = "/bin:/usr/local/sbin:/usr/local";
-		path = ft_strjoin(path, "/bin:/usr/sbin:/usr/bin:/sbin:/bin");
-		gc_add(path, &ms->gc);
-	}
-	return (path);
-}
-
-/*
-Flow control function that searches for commands in the system.
-If command exists, returns its path so it can be executed.
-*/
-char	*ms_get_command_path(t_ms *ms, char *cmd)
-{
-	char	*prepath;
-	char	**paths;
-	char	*full_path;
+	t_list	*current;
 	int		i;
 
-	if (ft_strchr(cmd, '/'))
-		return (ft_strdup(cmd));
-	prepath = ms_get_env_path_or_def(ms);
-	paths = ft_split(prepath, ':');
-	if (!paths)
-		return (NULL);
+	(void)ms;
+	current = ms->ms_env;
 	i = 0;
-	while (paths[i])
+	while (current)
 	{
-		full_path = ft_strjoin3(paths[i], "/", cmd);
-		if (access(full_path, X_OK) == 0)
+		if (ft_strchr(current->content, '='))
 		{
-			ft_free(paths);
-			return (full_path);
+			arr[i] = ft_strdup((char *)current->content);
+			if (!arr[i])
+			{
+				ft_free(arr);
+				return (NULL);
+			}
+			i++;
 		}
-		gc_add(full_path, &ms->gc);
-		i++;
+		current = current->next;
 	}
-	ft_free(paths);
-	return (NULL);
+	arr[i] = NULL;
+	return (arr);
 }
 
-/*
-Helper function to check if an input command exists. 
-It is used to end execution if an invalid command is input.
-*/
-char	*ms_validate_command(t_ms *ms)
+char	**ms_rebuild_env(t_ms *ms)
 {
-	char	*path;
+	char	**arr;
 
-	path = ms_get_command_path(ms, ms->tokens->content);
-	if (!path)
-		ms_error_handler(ms, "Command not found", 0);
-	return (path);
+	arr = (char **)malloc(sizeof(char *) * (ft_lstsize(ms->ms_env) + 1));
+	if (!arr)
+		return (ms_error_handler(ms, "Error: Mem alloc failed", 1), NULL);
+	arr = ms_env_to_array(ms, arr);
+	if (!arr)
+		return (ms_error_handler(ms, "Failed to prepare environment", 0), NULL);
+	return (arr);
 }
