@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 14:30:06 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 09:47:18 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 16:29:08 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ Special case handling function.
 It is called from ms_cd_parent if direct parent is unreachable.
 Searches for closest available parent directory and attempts to move there.
 */
-void	ms_cd_ascend(t_ms *ms)
+int	ms_cd_ascend(t_ms *ms)
 {
 	char	*cwd;
 
@@ -136,4 +136,5 @@ void	ms_cd_ascend(t_ms *ms)
 	}
 	if (ms_get_env_variable(ms, "PWD"))
 		ms_set_env_variable(ms, "PWD", cwd);
+	return (0);
 }

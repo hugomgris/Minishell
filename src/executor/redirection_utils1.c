@@ -6,93 +6,58 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 15:37:39 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 17:15:28 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-/*
-Helper function to filter non-redirection tokens from input string.
-*/
-t_list	*ms_filter_tokens(t_list *tokens)
+void	ms_filter_args(t_ms *ms)
 {
-	t_list	*filtered;
-	t_list	*current;
+	int	i;
+	int	count;
+	int	f_pos;
 
-	filtered = NULL;
-	current = tokens;
-	while (current)
+	count = 0;
+	i = -1;
+	while (ms->cmd_args[++i])
 	{
-		if (!ms_detect_redirector(current->content))
-			ft_lstadd_back(&filtered, ft_lstnew(ft_strdup(current->content)));
-		else
-			current = current->next;
-		current = current->next;
+		if (!ms_detect_redirector(ms->cmd_args[i]))
+			count++;
 	}
-	return (filtered);
-}
-
-/*
-Helper function to detect redirection types in the input tokens.
-Detects cases:
-	-Output append (>>)
-	-Output rewrite (>)
-	-Error output redirection (2>)
-	-Input file (<)
-	-Heredoc (<<)
-*/
-int	ms_detect_redirector(char *token)
-{
-	if (ft_strncmp(token, ">>", 2) == 0)
-		return (3);
-	else if (ft_strncmp(token, "2>", 2) == 0)
-		return (4);
-	else if (ft_strncmp(token, "<<", 2) == 0)
-		return (5);
-	else if (ft_strchr(token, '>'))
-		return (2);
-	else if (ft_strchr(token, '<'))
-		return (1);
-	return (0);
-}
-
-/*
-Helper function to check if input string contains redirection tokens.
-*/
-int	ms_has_redirection(t_ms *ms)
-{
-	t_list	*token;
-
-	token = ms->tokens;
-	while (token)
+	ms->filt_args = malloc(sizeof(char *) * (count + 1));
+	if (!ms->filt_args)
 	{
-		if (ms_detect_redirector(token->content))
-			return (1);
-		token = token->next;
+		ms_error_handler(ms, "Error: Mem alloc failed", 1);
+		return ;
 	}
-	return (0);
+	i = 0;
+	f_pos = 0;
+	while (ms->cmd_args[i])
+	{
+		if (ms_detect_redirector(ms->cmd_args[i]))
+		{
+			i += 2;
+			if (i > count)
+				break ;
+		}
+		if (!ms_detect_redirector(ms->cmd_args[i]))
+		{
+			ms->filt_args[f_pos] = ms->cmd_args[i];
+			i++;
+			f_pos++;
+		}
+	}
+	ms->filt_args[f_pos] = NULL;
 }
 
-/*
-Helper function to send specific redirection file errors to error handler.
-Used in case an input redirection file doesn't exist. 
-*/
 int	ms_handle_open_error(t_ms *ms, char *filename)
 {
 	(void)filename;
-	ms_error_handler(ms, "No such file or directory", 0);
+	ms_error_handler(ms, "Error: No such file or directory", 0);
 	return (-1);
 }
 
-/*
-Helper function to close redirection FDs.
-Handles 4 possible FD cases:
-	-Input file (<)
-	-Output file (>)
-	-Append file (>>)
-	-STDERR redirection (2>)
-*/
 void	ms_close_redirect_fds(int input, int output, int append, int stderr_fd)
 {
 	if (input != -1)

@@ -6,104 +6,107 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 14:52:48 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 17:00:17 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-/*
-Helper function to clear the execution tools (children's env array, tokens).
-Returns fd's to their initial values (default: stdin/stdout).
-*/
-void	ms_executor_cleanup(t_ms *ms, char **arr, int stdout_b, int stdin_b)
+int	ms_handle_system_cmd(t_ms *ms, char **env)
 {
-	ft_free(arr);
-	dup2(stdout_b, STDOUT_FILENO);
-	dup2(stdin_b, STDIN_FILENO);
-	close(stdout_b);
-	close(stdin_b);
-	ft_lstclear(&ms->tokens, free);
-	ft_lstclear(&ms->filtered_tokens, free);
+	if (ms->cmd_args[0][0] == '/' || ms->cmd_args[0][0] == '.')
+	{
+		if (ms_exec_direct_path(ms, ms->filt_args, env))
+		{
+			ft_free(ms->filt_args);
+			ft_free(ms->cmd_args);
+			return (1);
+		}
+	}
+	else if (ms_search_in_path(ms, ms->filt_args, env))
+	{
+		free(ms->filt_args);
+		ft_free(ms->cmd_args);
+		return (ms_error_handler(ms, "Error: Command not found", 0), 1);
+	}
+	ms_error_handler(ms, "Error: execve failed", 0);
+	ft_free(ms->filt_args);
+	ft_free(ms->cmd_args);
+	return (-1);
 }
 
-/*
-Helper function to filter tokens and rebuild env array.
-Token filtering is handled by secondary helper function.
-*/
-char	**ms_prepare_execution(t_ms *ms, char **arr)
+// Main execution function
+int	ms_exec_command(t_ms *ms, char **env)
 {
-	ms->filtered_tokens = ms_filter_tokens(ms->tokens);
-	arr = ms_env_to_array(ms, arr);
-	if (!arr)
+	if (!ms->cmd_args)
 	{
-		ms_error_handler(ms, "Failed to prepare environment", 0);
-		return (NULL);
+		ms_error_handler(ms, "Error: Mem alloc failed", 1);
+		return (1);
 	}
-	return (arr);
-}
-
-/*
-Flow control function that handles call to system commands.
-Calls helper functions to retrieve a cmd path.
-Forks processes and sets up the child and parent execution.
-*/
-int	ms_handle_system_command(t_ms *ms, char **arr)
-{
-	char	*path;
-	pid_t	pid;
-	int		status;
-
-	path = ms_validate_command(ms);
-	if (!path)
-		return (0);
-	gc_add(path, &ms->gc);
-	pid = fork();
-	if (pid == -1)
+	if (ms_has_redirection(ms))
 	{
-		ms_error_handler(ms, "Fork failed", 0);
-		return (0);
+		if (ms_redirection(ms) == -1)
+		{
+			free(ms->cmd_args);
+			return (1);
+		}
 	}
-	else if (pid == 0)
-		execute_child(ms, arr);
-	else
-		execute_parent(ms, pid, &status);
+	if (ms_is_builtin(ms->cmd_args[0]))
+	{
+		if (ms_reroute_builtins(ms, env))
+		{
+			free(ms->cmd_args);
+			free(ms->filt_args);
+			return (1);
+		}
+	}
+	else if (ms_handle_system_cmd(ms, env) == -1)
+	{
+		ft_free(ms->cmd_args);
+		ft_free(ms->filt_args);
+		return (1);
+	}
 	return (1);
 }
 
 /*
 Executor hub.
-Goes through different steps:
-	-Calls function to prepare exec (to divide redir from exec tokens).
-	-Checks if there's need for redirection handling
-	-Checks if input contains system or builtin comands.
-	-Calls the function that cleans the execution tools.
+TODO: handle builtins and system correctly and separatedly
 */
 void	ms_executor(t_ms *ms)
 {
-	int		stdout_b;
-	int		stdin_b;
-	char	**arr;
+	char	**env;
+	pid_t	pid;
+	int		i;
+	int		arg_count;
 
-	stdout_b = dup(STDOUT_FILENO);
-	stdin_b = dup(STDIN_FILENO);
-	arr = (char **)malloc(sizeof(char *) * (ft_lstsize(ms->ms_env) + 1));
-	if (!arr)
-		return ;
-	arr = ms_prepare_execution(ms, arr);
-	if (!arr)
-		return ;
-	if (ms_has_redirection(ms))
+	ms->exec_chunks = ms_extract_chunks(ms, &ms->tokens);
+	env = ms_rebuild_env(ms);
+	ms->pipe_count = ft_array_count(ms->exec_chunks) - 1;
+	ms_create_pipes(ms, &ms->pipe_fds, ms->pipe_count);
+	i = -1;
+	while (++i < ft_array_count(ms->exec_chunks))
 	{
-		if (ms_redirection(ms) == -1)
+		ms->cmd_args = ms_parse_args(ms->exec_chunks[i], &arg_count);
+		ms_filter_args(ms);
+		if (ms_is_builtin(ms->filt_args[0]))
+			ms_exec_command(ms, env);
+		else
 		{
-			ms_executor_cleanup(ms, arr, stdout_b, stdin_b);
-			return ;
+			pid = fork();
+			if (pid == 0)
+			{
+				ms_setup_child_pipes(ms->pipe_fds, i, ms->pipe_count);
+				ms_close_child_pipes(ms->pipe_fds, ms->pipe_count);
+				ms_exec_command(ms, env);
+				exit(EXIT_FAILURE);
+			}
 		}
+		free(ms->filt_args);
+		free(ms->cmd_args);
 	}
-	if (ms->filtered_tokens && ms_is_builtin(ms->filtered_tokens->content))
-		ms_execute_builtin(ms);
-	else if (ms->filtered_tokens)
-		ms_handle_system_command(ms, arr);
-	ms_executor_cleanup(ms, arr, stdout_b, stdin_b);
+	ms_close_parent_pipes(ms->pipe_fds, ms->pipe_count);
+	ms_wait_children(ft_array_count(ms->exec_chunks));
+	ms_executor_cleanup(ms, env);
+	ms_free_pipes(ms->pipe_fds, ms->pipe_count);
 }

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 15:49:43 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 09:47:19 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 16:24:05 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,9 @@ char	*ms_getcwd_or_error(t_ms *ms)
 /*
 Handles cding to root directory (case cd /).
 */
-void	ms_cd_root(t_ms *ms, char *path)
+int	ms_cd_root(t_ms *ms, char *path)
 {
 	if (ms_change_directory(ms, path) == -1)
-		return ;
+		return (1);
+	return (0);
 }

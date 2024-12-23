@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 15:51:35 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 09:42:48 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	ms_write_heredoc_lines(int tmp_fd, char *delimiter)
 
 	while (1)
 	{
-		line = readline("> ");
+		line = readline("heredoc> ");
 		if (line == NULL || ms_get_set(0, 0) == 3)
 			return (-1);
 		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter)))
