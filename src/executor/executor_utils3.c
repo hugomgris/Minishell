@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 19:02:40 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/21 13:05:53 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,5 @@ int	ms_search_in_path(t_ms *ms, char **cmd_args, char **env)
 			return (0);
 		dir = ms_process_directory(&path_copy, &dir);
 	}
-	free(path_copy);
 	return (1);
 }

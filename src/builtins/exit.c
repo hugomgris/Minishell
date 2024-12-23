@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 16:54:02 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/21 12:26:05 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,29 +33,26 @@ void	ms_exit_handler(t_ms *ms, const char *msg, int code)
 Exit builtin command intermediary.
 Checks arguments, handles the exit code, calls handler.
 */
-void	ms_exit(t_ms *ms)
+int	ms_exit(t_ms *ms, char **cmd_args)
 {
 	int		code;
-	t_list	*tokens;
 
-	tokens = ms->exec_tokens[0];
-	if (ft_lstsize(tokens) >= 3)
+	code = 0;
+	if (ft_array_count(cmd_args) >= 3)
 	{
 		ms_error_handler(ms, "exit: too many arguments", 0);
-		return ;
+		return (1);
 	}
-	else if (ft_lstsize(tokens) == 2)
+	if (cmd_args[1])
 	{
-		if (ft_isdigit_str(tokens->next->content))
-			code = ft_atoi(tokens->next->content) % 256;
+		if (ft_isdigit_str(cmd_args[1]))
+			code = ft_atoi(cmd_args[1]) % 256;
 		else
 		{
 			ms_error_handler(ms, "exit: numeric argument required", 0);
-			return ;
+			return (1);
 		}
 	}
-	else
-		code = 0;
 	ms_exit_handler(ms, "exit", code);
-	return ;
+	return (0);
 }

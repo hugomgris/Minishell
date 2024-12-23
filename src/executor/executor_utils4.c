@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 19:02:05 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/21 10:43:39 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,10 @@ char	*ms_duplicate_path(t_ms *ms)
 
 	path = ms_get_env_variable(ms, "PATH");
 	if (!path)
-		return (NULL);
+	{
+		path = "/bin:/usr/local/sbin:/usr/local";
+		path = ft_strjoin(path, "/bin:/usr/sbin:/usr/bin:/sbin:/bin");
+		gc_add(path, &ms->gc);
+	}
 	return (path);
 }

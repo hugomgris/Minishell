@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 16:53:50 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/21 12:25:24 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,31 +20,31 @@ TODO: handle cases with multiple -n
 TODO: correctly echo arguments like (echo '"hola'$USER'$USER"') (without spaces)
 TODO: should echo this >>> "holanponchon$USER"
 */
-void	ms_echo(t_ms *ms)
+int	ms_echo(char **cmd_args)
 {
 	int		n_flag;
-	t_list	*current;
+	int		i;
 
 	n_flag = 0;
-	current = ms->exec_tokens[0]->next;
-	if (current && !ft_strncmp(current->content, "-n", 2))
+	i = 1;
+	if (cmd_args[i] && !ft_strncmp(cmd_args[i], "-n", 2))
 	{
 		n_flag = 1;
-		current = current->next;
+		i++;
 	}
-	if (current && current->content
-		&& !ft_strncmp(current->content, "?", 1) && !current->next)
+	if (cmd_args[i] && !ft_strncmp(cmd_args[i], "?", 1) && !cmd_args[i + 1])
 	{
 		ft_printf("%d\n", ms_get_set(0, 0));
-		return ;
+		return (0);
 	}
-	while (current)
+	while (cmd_args[i])
 	{
-		ft_putstr_fd(current->content, 1);
-		if (current->next)
+		ft_putstr_fd(cmd_args[i], 1);
+		if (cmd_args[i + 1])
 			ft_putchar_fd(' ', 1);
-		current = current->next;
+		i++;
 	}
 	if (!n_flag)
 		ft_putchar_fd('\n', 1);
+	return (0);
 }

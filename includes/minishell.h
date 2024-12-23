@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 19:03:44 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 10:23:05 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ typedef struct s_ms
 	t_list	*redir_tokens;
 	t_list	**exec_tokens;
 	char	**exec_chunks;
+	char	**cmd_args;
+	char	**filt_args;
 	char	*home;
 	char	*user;
 	char	*prompt;
@@ -142,7 +144,7 @@ int		ms_checkinfile(t_ms *ms, char *str);
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);
 void	ms_exit_handler(t_ms *ms, const char *msg, int code);
-void	ms_exit(t_ms *ms);
+int		ms_exit(t_ms *ms, char **cmd_args);
 
 //SIGNAL HANDLER functions
 void	ms_signal_handler(int signal);
@@ -176,14 +178,15 @@ int		ms_is_pipe(const char *token);
 char	**ms_env_to_array(t_ms *ms, char **arr);
 char	**ms_rebuild_env(t_ms *ms);
 void	ms_executor_cleanup(t_ms *ms, char **env);
+void	ms_filter_args(t_ms *ms);
 
 //PIPING functions
 void	ms_free_pipes(int **pipe_fds, int pipe_count);
 void	ms_wait_children(int count);
+void	ms_create_pipes(t_ms *ms, int ***pipe_fds, int pipe_count);
 void	ms_close_parent_pipes(int **pipe_fds, int pipe_count);
 void	ms_close_child_pipes(int **pipe_fds, int pipe_count);
-void	ms_setup_child_pipes(int **pipe_fds, int i, int pipe_count);
-void	ms_create_pipes(int **pipe_fds, int pipe_count);
+void	ms_setup_child_pipes(int **pipe_fds, int cmd_index, int pipe_count);
 char	**ms_parse_args(char *exec_chunk, int *arg_count);
 int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);
 int		ms_try_path_execution(char *cmd_path, char **cmd_args, char **env);
@@ -193,6 +196,22 @@ char	*ms_duplicate_path(t_ms *ms);
 char	*ms_build_cmd_path(char *dir, char *cmd);
 int		ms_try_path_execution(char *cmd_path, char **cmd_args, char **env);
 int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);
+int		ms_is_builtin(const char *cmd);
+int		ms_reroute_builtins(t_ms *ms, char **cmd_args, char **env);
+
+//REDIRECTION functions
+int		ms_redirection(t_ms *ms);
+int		ms_has_redirection(t_ms *ms);
+int		ms_detect_redirector(char *arg);
+int		ms_setup_redirects(char **args, int i, int *fds, t_ms *ms);
+int		ms_open(char *file, int flags, int *fd);
+int		ms_handle_open_error(t_ms *ms, char *filename);
+void	ms_close_redirect_fds(int input, int output, int append, int stderr_fd);
+int		ms_handle_heredoc(char *delimiter, int *fd);
+int		ms_open_tmp_heredoc(void);
+int		ms_write_heredoc_lines(int tmp_fd, char *delimiter);
+int		ms_finalize_heredoc(int tmp_fd, int *fd);
+int		ms_handle_heredoc_signal(int tmp_fd, int *fd);
 
 /*
 //EXECUTOR functions
@@ -218,7 +237,6 @@ char	**ms_env_to_array(t_ms *ms, char **arr);
 void	ms_executor_restore_fds(int stdout_b, int stdin_b);
 void	ms_executor_cleanup(t_ms *ms, char **arr, t_exec_data *exec_data);
 void	ms_create_exec_tokens(t_ms *ms, int count);
-*/
 
 //REDIRECTION functions
 int		ms_redirection(t_ms *ms);
@@ -234,6 +252,7 @@ int		ms_finalize_heredoc(int tmp_fd, int *fd);
 int		ms_write_heredoc_lines(int tmp_fd, char *delimiter);
 int		ms_handle_heredoc_signal(int tmp_fd, int *fd);
 int		ms_open_tmp_heredoc(void);
+*/
 
 //BUILTIN CD functions
 void	ms_cd(t_ms *ms);
@@ -262,12 +281,12 @@ char	*ms_cd_initial_path(t_ms *ms);
 void	ms_env(t_ms *ms);
 void	ms_pwd(t_ms *ms);
 void	ms_unset(t_ms *ms);
-void	ms_echo(t_ms *ms);
-void	ms_export(t_ms *ms);
-void	ms_export_ex(t_ms *ms, char *key, char *value);
-void	ms_export_error(t_ms *ms, char *entry);
+int		ms_echo(char **cmd_args);
+int		ms_export(t_ms *ms, char **cmd_args, char **env);
+int		ms_export_ex(t_ms *ms, char *key, char *value);
+int		ms_export_error(t_ms *ms, char *entry);
 int		ms_export_check(const char *var);
-void	ms_export_print(t_ms *ms);
+int		ms_export_print(t_ms *ms, char **env);
 char	*ms_build_export_output(t_ms *ms, char *content, char *sym);
 void	ms_process_export_arg(t_ms *ms, char *arg);
 void	ms_export_with_value(t_ms *ms, char *arg, char *sign);

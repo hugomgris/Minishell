@@ -50,6 +50,7 @@ SRC 		:= 	main/minishell.c 				\
 				executor/redirection.c 			\
 				executor/redirection_utils1.c 	\
 				executor/redirection_utils2.c 	\
+				executor/rerouter.c				\
 				parser/parser.c 				\
 				parser/parser_utils.c			\
 				parser/tokenizer.c 				\
