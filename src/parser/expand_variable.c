@@ -147,7 +147,6 @@ void	ms_expand_variable(t_ms *ms)
 			ms_process_token_content(ms, tmp, &subtok);
 			free(tmp);
 			ms_expand_subtoken(ms, subtok);
-			ms_print_toks(subtok);
 			gc_add(aux->content, &ms->gc);
 			aux->content = ms_merge_subtoken(ms, subtok);
 		}

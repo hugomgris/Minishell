@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 18:14:34 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/23 16:34:49 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok);
 void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote);
 void	ms_expand_subtoken(t_ms *ms, t_token *lst);
 char	*ms_merge_subtoken(t_ms *ms, t_token *subtok);
+void	ms_tokinsert(t_token **lst, t_token *current, t_token *new);
 void	ms_remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *));
 
@@ -128,8 +129,8 @@ char	*ms_trim_quotes(char *str, char *new, int len);
 void	ms_sort_toks(t_token *toks);
 
 //WILDCARDS
-void	ms_expand_wildcards(t_ms *ms, t_token *subtok);
-void	ms_get_wildcards(t_ms *ms);
+void	ms_expand_wildcards(t_ms *ms);
+void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken);
 int		ms_match_count(char *pattern);
 
 //SYNTAX CHECK

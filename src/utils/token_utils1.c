@@ -1,16 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_utils.c                                      :+:      :+:    :+:   */
+/*   token_utils1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 16:25:37 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/18 16:55:20 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/23 15:57:31 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+/*
+    Inserts a new token into the list next to the specified current token.
+    If current is NULL, the token is added at the beginning of the list.
+*/
+void	ms_tokinsert(t_token **lst, t_token *current, t_token *new)
+{
+	if (!lst || !new)
+		return ;
+	if (current == NULL)
+	{
+		new->next = *lst;
+		*lst = new;
+		return ;
+	}
+	new->next = current->next;
+	current->next = new;
+}
 
 /*
 	Same as ms_print_list, but for tokens.
