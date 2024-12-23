@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 11:21:36 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 17:15:28 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	ms_filter_args(t_ms *ms)
 		if (ms_detect_redirector(ms->cmd_args[i]))
 		{
 			i += 2;
-			if (i >= count)
+			if (i > count)
 				break ;
 		}
 		if (!ms_detect_redirector(ms->cmd_args[i]))
@@ -54,7 +54,7 @@ void	ms_filter_args(t_ms *ms)
 int	ms_handle_open_error(t_ms *ms, char *filename)
 {
 	(void)filename;
-	ms_error_handler(ms, "Error: No suh file or directory", 0);
+	ms_error_handler(ms, "Error: No such file or directory", 0);
 	return (-1);
 }
 

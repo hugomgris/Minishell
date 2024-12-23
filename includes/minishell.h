@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 10:23:05 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 16:29:58 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ int		ms_checkinfile(t_ms *ms, char *str);
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);
 void	ms_exit_handler(t_ms *ms, const char *msg, int code);
-int		ms_exit(t_ms *ms, char **cmd_args);
+int		ms_exit(t_ms *ms);
 
 //SIGNAL HANDLER functions
 void	ms_signal_handler(int signal);
@@ -171,6 +171,7 @@ char	*ms_get_parent_path(t_ms *ms, char *cwd);
 
 //EXECUTOR functions
 void	ms_executor(t_ms *ms);
+int		ms_exec_command(t_ms *ms, char **env);
 char	**ms_extract_chunks(t_ms *ms, t_list **tokens);
 char	*ms_process_chunk(t_ms *ms, t_list **current);
 int		ms_count_chunks(t_list *tokens);
@@ -179,6 +180,9 @@ char	**ms_env_to_array(t_ms *ms, char **arr);
 char	**ms_rebuild_env(t_ms *ms);
 void	ms_executor_cleanup(t_ms *ms, char **env);
 void	ms_filter_args(t_ms *ms);
+int		ms_is_builtin(const char *cmd);
+int		ms_reroute_builtins(t_ms *ms, char **env);
+int		ms_handle_system_cmd(t_ms *ms, char **env);
 
 //PIPING functions
 void	ms_free_pipes(int **pipe_fds, int pipe_count);
@@ -196,8 +200,6 @@ char	*ms_duplicate_path(t_ms *ms);
 char	*ms_build_cmd_path(char *dir, char *cmd);
 int		ms_try_path_execution(char *cmd_path, char **cmd_args, char **env);
 int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);
-int		ms_is_builtin(const char *cmd);
-int		ms_reroute_builtins(t_ms *ms, char **cmd_args, char **env);
 
 //REDIRECTION functions
 int		ms_redirection(t_ms *ms);
@@ -255,21 +257,22 @@ int		ms_open_tmp_heredoc(void);
 */
 
 //BUILTIN CD functions
-void	ms_cd(t_ms *ms);
+int		ms_cd(t_ms *ms);
 int		ms_change_directory(t_ms *ms, char *new_path);
 int		ms_join_paths(t_ms *ms, char *cwd, char *path, char **new_path);
 void	ms_cd_absolute(t_ms *ms, char *path);
-void	ms_cd_home(t_ms *ms);
-void	ms_cd_back(t_ms *ms);
+int		ms_cd_parent(t_ms *ms);
+int		ms_cd_home(t_ms *ms);
+int		ms_cd_back(t_ms *ms);
 void	ms_cd_relative(t_ms *ms, char *path);
-void	ms_cd_root(t_ms *ms, char *path);
+int		ms_cd_root(t_ms *ms, char *path);
 void	ms_update_env_pwd(t_list **env, const char *new_cwd);
 char	*ms_getcwd_or_error(t_ms *ms);
 char	*ms_expand_tilde(t_ms *ms, char*path);
 char	*ms_normalize_path(t_ms *ms, char *path);
 char	*ms_pop_from_path(char *path);
-void	ms_cd_ascend(t_ms *ms);
-void	ms_cd_symlink(t_ms *ms, char *path);
+int		ms_cd_ascend(t_ms *ms);
+int		ms_cd_symlink(t_ms *ms, char *path);
 int		ms_is_symlink(char *path);
 char	*ms_resolve_symlink(t_ms *ms, char *symlink);
 int		ms_cd_isdirectory(t_ms *ms, char *path);
@@ -278,9 +281,12 @@ int		ms_update_oldpwd(t_ms *ms, char *current_pwd);
 char	*ms_cd_initial_path(t_ms *ms);
 
 //ENV, PWD, UNSET, ECHO and EXPORT builtin functions
-void	ms_env(t_ms *ms);
-void	ms_pwd(t_ms *ms);
-void	ms_unset(t_ms *ms);
+int		ms_env(t_ms *ms);
+int		ms_pwd(t_ms *ms);
+int		ms_unset(t_ms *ms);
+void	ms_unset_env_key(t_list **env, char *key);
+void	ms_unset_remove_node(t_list **head, t_list *prev, t_list *current);
+int		ms_unset_key_match(t_list *node, char *key);
 int		ms_echo(char **cmd_args);
 int		ms_export(t_ms *ms, char **cmd_args, char **env);
 int		ms_export_ex(t_ms *ms, char *key, char *value);

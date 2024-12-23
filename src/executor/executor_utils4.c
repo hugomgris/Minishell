@@ -6,13 +6,12 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/21 10:43:39 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 12:05:44 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
-This file contains helper/Flow-control functions for exec tools cleanup:
-	-ms_executor_cleanup
+This file contains 
 */
 
 #include "../../includes/minishell.h"

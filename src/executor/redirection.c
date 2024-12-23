@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 10:10:38 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 17:17:42 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,9 @@ int	ms_has_redirection(t_ms *ms)
 	return (0);
 }
 
+/*
+TODO: this could use a more granular error handling.
+*/
 int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
 {
 	int	type;

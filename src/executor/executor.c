@@ -6,32 +6,14 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 12:00:04 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 17:00:17 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-// Main execution function
-int	ms_exec_command(t_ms *ms, char *exec_chunk, char **env)
+int	ms_handle_system_cmd(t_ms *ms, char **env)
 {
-	int		arg_count;
-
-	ms->cmd_args = ms_parse_args(exec_chunk, &arg_count);
-	ms_filter_args(ms);
-	if (!ms->cmd_args)
-	{
-		ms_error_handler(ms, "Error: Mem alloc failed", 1);
-		return (1);
-	}
-	if (ms_has_redirection(ms))
-	{
-		if (ms_redirection(ms) == -1)
-		{
-			free(ms->cmd_args);
-			return (1);
-		}
-	}
 	if (ms->cmd_args[0][0] == '/' || ms->cmd_args[0][0] == '.')
 	{
 		if (ms_exec_direct_path(ms, ms->filt_args, env))
@@ -50,6 +32,40 @@ int	ms_exec_command(t_ms *ms, char *exec_chunk, char **env)
 	ms_error_handler(ms, "Error: execve failed", 0);
 	ft_free(ms->filt_args);
 	ft_free(ms->cmd_args);
+	return (-1);
+}
+
+// Main execution function
+int	ms_exec_command(t_ms *ms, char **env)
+{
+	if (!ms->cmd_args)
+	{
+		ms_error_handler(ms, "Error: Mem alloc failed", 1);
+		return (1);
+	}
+	if (ms_has_redirection(ms))
+	{
+		if (ms_redirection(ms) == -1)
+		{
+			free(ms->cmd_args);
+			return (1);
+		}
+	}
+	if (ms_is_builtin(ms->cmd_args[0]))
+	{
+		if (ms_reroute_builtins(ms, env))
+		{
+			free(ms->cmd_args);
+			free(ms->filt_args);
+			return (1);
+		}
+	}
+	else if (ms_handle_system_cmd(ms, env) == -1)
+	{
+		ft_free(ms->cmd_args);
+		ft_free(ms->filt_args);
+		return (1);
+	}
 	return (1);
 }
 
@@ -62,6 +78,7 @@ void	ms_executor(t_ms *ms)
 	char	**env;
 	pid_t	pid;
 	int		i;
+	int		arg_count;
 
 	ms->exec_chunks = ms_extract_chunks(ms, &ms->tokens);
 	env = ms_rebuild_env(ms);
@@ -70,14 +87,23 @@ void	ms_executor(t_ms *ms)
 	i = -1;
 	while (++i < ft_array_count(ms->exec_chunks))
 	{
-		pid = fork();
-		if (pid == 0)
+		ms->cmd_args = ms_parse_args(ms->exec_chunks[i], &arg_count);
+		ms_filter_args(ms);
+		if (ms_is_builtin(ms->filt_args[0]))
+			ms_exec_command(ms, env);
+		else
 		{
-			ms_setup_child_pipes(ms->pipe_fds, i, ms->pipe_count);
-			ms_close_child_pipes(ms->pipe_fds, ms->pipe_count);
-			ms_exec_command(ms, ms->exec_chunks[i], env);
-			exit(EXIT_FAILURE);
+			pid = fork();
+			if (pid == 0)
+			{
+				ms_setup_child_pipes(ms->pipe_fds, i, ms->pipe_count);
+				ms_close_child_pipes(ms->pipe_fds, ms->pipe_count);
+				ms_exec_command(ms, env);
+				exit(EXIT_FAILURE);
+			}
 		}
+		free(ms->filt_args);
+		free(ms->cmd_args);
 	}
 	ms_close_parent_pipes(ms->pipe_fds, ms->pipe_count);
 	ms_wait_children(ft_array_count(ms->exec_chunks));

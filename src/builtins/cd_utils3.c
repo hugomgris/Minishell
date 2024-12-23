@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 14:37:10 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 16:53:20 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/23 16:31:23 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,11 +107,10 @@ int	ms_cd_isdirectory(t_ms *ms, char *path)
 
 char	*ms_cd_initial_path(t_ms *ms)
 {
-	if (!ms->exec_tokens[0]->next
-		|| ((char *)(ms->exec_tokens[0]->next->content))[0] == ' ')
+	if (!ms->filt_args[1] || ms->filt_args[1][0] == ' ')
 		return (NULL);
-	else if (ms->exec_tokens[0]->next && !ms->exec_tokens[0]->next->next)
-		return (ms->exec_tokens[0]->next->content);
+	else if (ms->filt_args[1] && !ms->filt_args[2])
+		return (ms->filt_args[1]);
 	else
 	{
 		ms_error_handler(ms, "cd: invalid args", 0);

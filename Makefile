@@ -39,6 +39,7 @@ SRC 		:= 	main/minishell.c 				\
 				builtins/export_utils1.c 		\
 				builtins/export_utils2.c 		\
 				builtins/export.c 				\
+				builtins/unset.c				\
 				executor/executor.c				\
 				executor/executor_utils1.c		\
 				executor/executor_utils2.c		\
