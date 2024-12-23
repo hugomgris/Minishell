@@ -150,6 +150,7 @@ void	ms_expand_variable(t_ms *ms)
 			gc_add(aux->content, &ms->gc);
 			aux->content = ms_merge_subtoken(ms, subtok);
 		}
+		ms_tokclear(&subtok, free);
 		aux = aux->next;
 	}
 }

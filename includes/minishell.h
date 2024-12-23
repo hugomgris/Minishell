@@ -32,7 +32,7 @@
 # define S_QUOTE '\''
 # define D_QUOTE '\"'
 
-static int		g_var;
+//static int		g_var;
 
 typedef enum e_type_tokens
 {

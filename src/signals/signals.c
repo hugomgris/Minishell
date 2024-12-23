@@ -27,9 +27,11 @@ States:
 */
 int	ms_get_set(int action, int val)
 {
+	static int	var;
+
 	if (action == 1)
-		g_var = val;
-	return (g_var);
+		var = val;
+	return (var);
 }
 
 /*

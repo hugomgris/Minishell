@@ -1,0 +1,14 @@
+includes
+install_minishell.sh
+libs
+Makefile
+minishell
+outfile
+outfile.txt
+output.txt
+README.md
+script
+src
+tests
+test.txt
+typescript
