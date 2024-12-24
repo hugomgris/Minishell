@@ -77,7 +77,6 @@ void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote)
 	new = ms_new_token(str, T_ATOM);
 	if (!new)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
-	gc_add(new, &ms->gc);
 	ms_tokadd_back(subtok, new);
 	*tmp += i;
 }
@@ -102,7 +101,6 @@ void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok)
 	new = ms_new_token(str, T_ATOM);
 	if (!new)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
-	gc_add(new, &ms->gc);
 	ms_tokadd_back(subtok, new);
 	*tmp += i;
 }
