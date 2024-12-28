@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 17:17:42 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/28 12:24:22 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
 
 	type = ms_detect_redirector(args[i]);
 	if (type && (!args[i + 1] || ms_detect_redirector(args[i + 1])))
-		return (ms_error_handler(ms, "Error: Invalid redirection", 0), -1);
+		return (ms_error_handler(ms, "Error: Invalid redir syntax", 0), -1);
 	if ((type == 1 && ms_open(args[i + 1], O_RDONLY, &fds[0]))
 		|| (type == 2 && ms_open(args[i + 1], O_WRONLY
 				| O_CREAT | O_TRUNC, &fds[1]))
@@ -82,7 +82,7 @@ int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
 				| O_CREAT | O_APPEND, &fds[1]))
 		|| (type == 4 && ms_open(args[i + 1], O_WRONLY
 				| O_CREAT | O_TRUNC, &fds[2])))
-		return (ms_handle_open_error(ms, args[i + 1]), 0);
+		return (ms_handle_open_error(ms, args[i + 1]));
 	if (type == 5)
 	{
 		if (ms_handle_heredoc(args[i + 1], &fds[0]) == -1)
@@ -99,6 +99,7 @@ int	ms_redirection(t_ms *ms)
 {
 	int	i;
 	int	fds[3];
+	int	type;
 
 	fds[0] = -1;
 	fds[1] = -1;
@@ -106,15 +107,19 @@ int	ms_redirection(t_ms *ms)
 	i = -1;
 	while (ms->cmd_args[++i])
 	{
-		if (ms_setup_redirects(ms->cmd_args, i, fds, ms) == -1)
-			return (-1);
+		type = ms_detect_redirector(ms->cmd_args[i]);
+		if (type)
+		{
+			if (ms_setup_redirects(ms->cmd_args, i, fds, ms) == -1)
+				return (ms_close_redirect_fds(fds[0], fds[1], fds[2], -1), -1);
+			i++;
+		}
 	}
 	if (fds[0] != -1 && dup2(fds[0], STDIN_FILENO) == -1)
-		return (-1);
+		return (ms_error_handler(ms, "Error: Failed to redir input", 0), -1);
 	if (fds[1] != -1 && dup2(fds[1], STDOUT_FILENO) == -1)
-		return (-1);
+		return (ms_error_handler(ms, "Error: Failed to redir output", 0), -1);
 	if (fds[2] != -1 && dup2(fds[2], STDERR_FILENO) == -1)
-		return (-1);
-	ms_close_redirect_fds(fds[0], fds[1], fds[2], -1);
-	return (0);
+		return (ms_error_handler(ms, "Error: Failed to redirect error", 0), -1);
+	return (ms_close_redirect_fds(fds[0], fds[1], fds[2], -1));
 }

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:20:34 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/21 12:31:22 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/24 10:25:54 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	ms_export_print(t_ms *ms, char **env)
 	int		i;
 
 	i = 0;
+	env = ms_sort(env, ft_memcmp);
 	while (env[i])
 	{
 		sym = ft_strchr(env[i], '=');
@@ -85,33 +86,15 @@ int	ms_export_ex(t_ms *ms, char *key, char *value)
 
 int	ms_export(t_ms *ms, char **cmd_args, char **env)
 {
-	int		i;
-	char	*key;
-	char	*value;
+	int	i;
 
 	if (!cmd_args[1])
 		return (ms_export_print(ms, env));
-	i = 0;
-	while (cmd_args[++i])
+	i = 1;
+	while (cmd_args[i])
 	{
-		if (ms_export_check(cmd_args[i]))
-		{
-			key = cmd_args[i];
-			value = ft_strchr(key, '=');
-			if (value)
-			{
-				*value = '\0';
-				if (ms_export_ex(ms, key, value + 1) != 0)
-					return (1);
-			}
-			else
-			{
-				if (ms_export_ex(ms, key, NULL) != 0)
-					return (1);
-			}
-		}
-		else
-			return (ms_export_error(ms, cmd_args[i]));
+		ms_process_export_arg(ms, cmd_args[i]);
+		i++;
 	}
 	return (0);
 }

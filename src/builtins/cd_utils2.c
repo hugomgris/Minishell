@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 14:30:06 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 16:29:08 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/24 09:22:06 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ int	ms_cd_ascend(t_ms *ms)
 	if (!ft_strncmp(cwd, "?", 1))
 	{
 		ms_error_handler(ms, \
-			"cd: cannot find current nor parent directory: Moving to root", 0);
+			"cd: Cannot find closest parent directory: Moving to root", 0);
 		cwd = ft_strdup("/");
 		gc_add(cwd, &ms->gc);
 	}
@@ -128,7 +128,6 @@ int	ms_cd_ascend(t_ms *ms)
 		cwd = ft_strchr(cwd, '~');
 		cwd = ms_expand_tilde(ms, cwd);
 	}
-	gc_add(cwd, &ms->gc);
 	while (chdir(cwd) == -1)
 	{
 		cwd = ft_substr(cwd, 0, ft_strrchr(cwd, '/') - cwd);

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 17:59:38 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 10:49:18 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/24 10:28:04 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,36 +63,34 @@ void	ms_export_without_value(t_ms *ms, char *arg)
 }
 
 /*
-Helper function to alphabetically sort a list.
+Helper function to alphabetically sort an array.
 Needed for export because the printed list must be alphabetically sorted.
 */
-t_list	*ms_sort(t_list *lst, int (*cmp)(const void *, const void *, size_t))
+char	**ms_sort(char **array, int (*cmp)(const void *, const void *, size_t))
 {
-	char	*aux;
-	int		len[2];
+	int		i;
+	int		j;
 	size_t	min_len;
-	t_list	*start;
+	char	*temp;
 
-	start = lst;
-	while (lst && lst->next)
+	i = 0;
+	while (array[i])
 	{
-		len[0] = ft_strlen(lst->content) + 1;
-		len[1] = ft_strlen(lst->next->content) + 1;
-		if (len[0] < len[1])
-			min_len = len[0];
-		else
-			min_len = len[1];
-		if ((*cmp)(lst->content, lst->next->content, min_len) > 0)
+		j = i + 1;
+		while (array[j])
 		{
-			aux = lst->content;
-			lst->content = lst->next->content;
-			lst->next->content = aux;
-			lst = start;
+			min_len = ft_min_strlen(array[i], array[j]);
+			if (cmp(array[i], array[j], min_len) > 0)
+			{
+				temp = array[i];
+				array[i] = array[j];
+				array[j] = temp;
+			}
+			j++;
 		}
-		else
-			lst = lst->next;
+		i++;
 	}
-	return (start);
+	return (array);
 }
 
 /*

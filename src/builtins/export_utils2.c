@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 17:59:38 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/12 10:47:51 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/24 10:29:14 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,4 +27,17 @@ int	ms_key_exists(t_ms *ms, char *key)
 		current = current->next;
 	}
 	return (0);
+}
+
+size_t	ft_min_strlen(const char *s1, const char *s2)
+{
+	size_t	len1;
+	size_t	len2;
+
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	if (len1 < len2)
+		return (len1);
+	else
+		return (len2);
 }
