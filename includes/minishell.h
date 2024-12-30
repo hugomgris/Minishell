@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 17:56:35 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 19:31:00 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,7 +203,7 @@ char	*ms_make_home_ref(t_ms *ms, char **env);
 char	*ms_get_parent_path(t_ms *ms, char *cwd);
 
 //EXECUTOR functions
-void	ms_executor(t_ms *ms);
+int		ms_executor(t_ms *ms);
 void	ms_initialize_execution(t_ms *ms, char ***env);
 void	ms_execute_chunk(t_ms *ms, char **env, int i);
 void	ms_process_command(t_ms *ms, char **env, int i);

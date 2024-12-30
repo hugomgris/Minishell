@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/27 13:02:24 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 18:28:37 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ char	**ms_extract_chunks(t_ms *ms, t_list **tokens)
 
 void	ms_initialize_execution(t_ms *ms, char ***env)
 {
-	ms->exec_chunks = ms_extract_chunks(ms, &ms->tokens);
+	ms->exec_chunks = ms_extract_chunks(ms, &ms->chain_tokens);
 	*env = ms_rebuild_env(ms);
 	ms->pipe_count = ft_array_count(ms->exec_chunks) - 1;
 	ms_create_pipes(ms, &ms->pipe_fds, ms->pipe_count);

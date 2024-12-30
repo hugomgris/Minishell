@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 17:57:55 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 19:34:31 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,26 @@ void	ms_count_chains(t_ms *ms)
 	}
 }
 
-int	ms_get_chain_count(t_list **tokens)
+int	ms_get_chain_count(t_ms *ms, int iter)
 {
 	t_list	*current;
 	int		count;
 
-	current = *tokens;
+	current = ms->tokens;
 	count = 0;
-	while (current && (!ft_strncmp(current->content, "&&", 2)
-			|| !ft_strncmp(current->content, "||", 2)))
+	while (current && iter)
+	{
+		if (!ft_strncmp(current->content, "&&", 2)
+			|| !ft_strncmp(current->content, "||", 2))
+			iter--;
+		current = current->next;
+	}
+	while (current && ft_strncmp(current->content, "&&", 2)
+		&& ft_strncmp(current->content, "||", 2))
 	{
 		count++;
 		current = current->next;
 	}
-	*tokens = current->next;
 	return (count);
 }
 
@@ -49,19 +55,21 @@ void	ms_pre_executor(t_ms *ms)
 	int		i;
 	int		start;
 	int		count;
-	t_list	*current;
+	int		iter;
 
 	ms_count_chains(ms);
 	i = -1;
 	count = 0;
-	current = ms->tokens;
+	start = 0;
+	iter = 0;
 	while (++i < ms->chains)
 	{
-		start = count;
-		count = ms_get_chain_count(&current);
+		count = ms_get_chain_count(ms, iter);
 		ms->chain_tokens = ft_lstsub(ms->tokens, start, count);
 		ms_executor(ms);
-		count++;
+		start += (count + 1);
+		iter++;
 		ft_lstclear(&ms->chain_tokens, free);
 	}
+	ft_lstclear(&ms->tokens, free);
 }

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 17:20:38 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 19:31:20 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,13 +78,13 @@ void	ms_execute_chunk(t_ms *ms, char **env, int i)
 	ms_cleanup_args(ms);
 }
 
-void	ms_executor(t_ms *ms)
+int	ms_executor(t_ms *ms)
 {
 	char	**env;
 	int		i;
 
 	if (!ft_lstsize(ms->tokens))
-		return ;
+		return (1);
 	ms_initialize_execution(ms, &env);
 	i = -1;
 	while (++i < ft_array_count(ms->exec_chunks))
@@ -97,4 +97,5 @@ void	ms_executor(t_ms *ms)
 	ms_wait_children(ft_array_count(ms->exec_chunks));
 	ms_executor_cleanup(ms, env);
 	ms_free_pipes(ms->pipe_fds, ms->pipe_count);
+	return (0);
 }
