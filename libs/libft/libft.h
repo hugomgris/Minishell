@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 12:45:35 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 19:51:20 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 16:18:32 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,5 +115,6 @@ size_t	ft_strcspn(const char *s, const char *reject);
 size_t	ft_strspn(const char *s, const char *accept);
 int		ft_isdigit_str(char *str);
 t_list	*ft_lstsub(t_list *lst, int start, int count);
+char	*ft_strndup(const char *s, size_t n);
 
 #endif

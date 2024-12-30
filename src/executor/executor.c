@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 13:15:06 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 17:20:38 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,30 +36,36 @@ int	ms_handle_system_cmd(t_ms *ms, char **env)
 	return (-1);
 }
 
+void	ms_handle_builtin(t_ms *ms, char **env, int saved_fds[3])
+{
+	ms_save_std_fds(saved_fds);
+	if (ms_has_redirection(ms))
+		ms_redirection(ms);
+	ms_exec_command(ms, env);
+	ms_restore_std_fds(saved_fds);
+	ms_cleanup_heredoc(ms);
+}
+
 void	ms_process_command(t_ms *ms, char **env, int i)
 {
 	pid_t	pid;
 	int		saved_fds[3];
 
 	if (ms_has_heredoc(ms) && ms_handle_heredoc_setup(ms) == -1)
-		return (ms_error_handler(ms, "Error: Failed to redir input", 0));
+	{
+		if (ms_get_set(0, 0) == 2)
+			ms_error_handler(ms, "Error: Failed to redir input", 0);
+		return ;
+	}
 	if (ms->filt_args[0] && ms_is_builtin(ms->filt_args[0]) && !ms->pipe_count)
-	{
-		ms_save_std_fds(saved_fds);
-		if (ms_has_redirection(ms))
-			ms_redirection(ms);
-		ms_exec_command(ms, env);
-		ms_restore_std_fds(saved_fds);
-		ms_cleanup_heredoc(ms);
-	}
-	else
-	{
-		pid = fork();
-		if (pid == 0)
-			ms_handle_child_process(ms, env, i);
-		else if (pid > 0)
-			ms_handle_parent_process(ms);
-	}
+		return (ms_handle_builtin(ms, env, saved_fds));
+	if (!ft_array_count(ms->filt_args))
+		return ;
+	pid = fork();
+	if (pid == 0)
+		ms_handle_child_process(ms, env, i);
+	else if (pid > 0)
+		ms_handle_parent_process(ms);
 }
 
 void	ms_execute_chunk(t_ms *ms, char **env, int i)

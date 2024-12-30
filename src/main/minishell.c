@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 12:41:38 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 17:42:23 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,14 @@
 	Check for possible limitation of FDs: what happens if minishell is limited
 	to using only 2 fds? 1? 0?
 */
+
+void	ms_set_custom_colors(t_ms *ms)
+{
+	ms_set_env_variable(ms, "LS_COLORS", \
+		"di=1;36:fi=0:ex=1;38;5;214:" \
+		"ln=35:so=0:pi=0:bd=0:cd=0:" \
+		"or=0:mi=0:su=0:sg=0");
+}
 
 void	ms_set_shlvl(t_ms *ms)
 {
@@ -55,6 +63,7 @@ void	ms_init(t_ms *ms, char **env)
 	ms->home = ms_make_home_ref(ms, env);
 	ms->user = ms_get_prompt_user(ms);
 	ms_set_shlvl(ms);
+	ms_set_custom_colors(ms);
 	read_history(0);
 }
 

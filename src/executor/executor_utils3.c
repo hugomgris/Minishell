@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 13:13:05 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 15:36:21 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,18 @@ int	ms_process_heredoc(t_ms *ms)
 	int		fd;
 	char	*delimiter;
 	int		i;
+	int		result;
 
 	i = -1;
+	delimiter = NULL;
 	while (ms->cmd_args[++i])
-	{
 		if (!ft_strncmp(ms->cmd_args[i], "<<", 2))
 			delimiter = ms->cmd_args[i + 1];
-	}
-	if (ms_handle_heredoc(delimiter, &fd) == -1)
-		return (ms_error_handler(ms, "Heredoc processing failed", 0), -1);
+	if (!delimiter)
+		return (ms_handle_heredoc_error(ms, "Heredoc delimiter missing"));
+	result = ms_handle_heredoc(delimiter, &fd);
+	if (result == -1)
+		return (ms_handle_heredoc_error(ms, "Heredoc processing failed"));
 	ms->heredoc_fd = fd;
 	return (0);
 }
@@ -71,4 +74,11 @@ int	ms_handle_heredoc_setup(t_ms *ms)
 	close(orig_stdin);
 	close(orig_stdout);
 	return (result);
+}
+
+int	ms_handle_heredoc_error(t_ms *ms, char *error_msg)
+{
+	if (ms_get_set(0, 0) == 2)
+		ms_error_handler(ms, error_msg, 0);
+	return (-1);
 }

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 13:17:18 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 17:56:35 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ typedef struct s_ms
 	t_list	*gc;
 	t_token	*tok;
 	t_list	*tokens;
+	t_list	*chain_tokens;
 	t_list	*filtered_tokens;
 	t_list	*redir_tokens;
 	t_list	**exec_tokens;
@@ -80,6 +81,7 @@ typedef struct s_ms
 	int		heredoc_fd;
 	int		**pipe_fds;
 	int		pipe_count;
+	int		chains;
 }	t_ms;
 
 typedef void	(*t_builtin_func)(t_ms *);
@@ -114,6 +116,7 @@ void	ms_main_loop(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
 void	ms_set_shlvl(t_ms *ms);
+void	ms_set_custom_colors(t_ms *ms);
 
 //TOKENIZER and UTILS
 int		ms_tokenizer(t_ms *ms, char *str);
@@ -215,6 +218,7 @@ void	ms_handle_parent_process(t_ms *ms);
 void	ms_handle_child_process(t_ms *ms, char **env, int i);
 int		ms_is_builtin(const char *cmd);
 int		ms_reroute_builtins(t_ms *ms, char **env);
+void	ms_handle_builtin(t_ms *ms, char **env, int saved_fds[3]);
 int		ms_handle_system_cmd(t_ms *ms, char **env);
 void	ms_save_std_fds(int *saved_fds);
 void	ms_restore_std_fds(int *saved_fds);
@@ -257,9 +261,10 @@ int		ms_handle_heredoc_setup(t_ms *ms);
 int		ms_manage_heredoc(t_ms *ms, int *fds);
 int		ms_handle_heredoc(const char *delimiter, int *fd);
 int		ms_open_tmp_heredoc(void);
-int		ms_write_heredoc_lines(int tmp_fd, char *delimiter);
+int		ms_write_heredoc_lines(int tmp_fd, const char *delimiter);
 int		ms_finalize_heredoc(int tmp_fd, int *fd);
 int		ms_handle_heredoc_signal(int tmp_fd, int *fd);
+int		ms_handle_heredoc_error(t_ms *ms, char *error_msg);
 
 //BUILTIN CD functions
 int		ms_cd(t_ms *ms);
@@ -310,5 +315,8 @@ size_t	ft_min_strlen(const char *s1, const char *s2);
 void	gc_add(void *ptr, t_list **gc);
 void	ms_print_list(t_list *list);
 void	ms_print_toks(t_token *list);
+
+//EXECUTOR BONUS function
+void	ms_pre_executor(t_ms *ms);
 
 #endif
