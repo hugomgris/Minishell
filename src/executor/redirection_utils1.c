@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/27 12:19:40 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 09:22:17 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	ms_count_non_redirectors(char **cmd_args)
 	count = 0;
 	while (cmd_args[i])
 	{
-		if (!ms_detect_redirector(cmd_args[i]))
+		if (!ms_detect_redirector(cmd_args[i]) && cmd_args[i][0] != '<')
 			count++;
 		i++;
 	}
@@ -58,7 +58,7 @@ void	ms_populate_filtered_args(t_ms *ms, int count)
 	f_pos = 0;
 	while (ms->cmd_args[i] && f_pos < count)
 	{
-		if (ms_detect_redirector(ms->cmd_args[i]))
+		if (ms_detect_redirector(ms->cmd_args[i]) || ms->cmd_args[i][0] == '<')
 			i += 2;
 		else
 		{
@@ -74,6 +74,7 @@ int	ms_handle_open_error(t_ms *ms, char *filename)
 {
 	char	*output;
 
+	cucufu(1);
 	output = ft_strjoin(filename, ": No such file or directory");
 	gc_add(output, &ms->gc);
 	ms_error_handler(ms, output, 0);

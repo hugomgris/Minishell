@@ -6,91 +6,99 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/28 12:24:19 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 13:04:06 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Helper function to open a temporary heredoc and assign an FD to it.
+Helper function to detect redirection types in the input tokens.
+Detects cases:
+	-Output append (>>)
+	-Output rewrite (>)
+	-Error output redirection (2>)
+	-Input file (<)
+	-Heredoc (<<)
 */
-int	ms_open_tmp_heredoc(void)
+int	ms_detect_redirector(char *arg)
 {
-	int	fd;
-
-	fd = open("/tmp/heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	return (fd);
+	if (ft_strncmp(arg, ">>", 2) == 0)
+		return (3);
+	else if (ft_strncmp(arg, "2>", 2) == 0)
+		return (4);
+	else if (ft_strncmp(arg, "<<", 2) == 0)
+		return (5);
+	else if (ft_strncmp(arg, ">", 1) == 0)
+		return (2);
+	else if (ft_strncmp(arg, "<", 1) == 0 && !arg[1])
+		return (1);
+	return (0);
 }
 
 /*
-Helper function to syncronize heredoc and signal handling.
-It is needed to be able to go out from heredoc input when sending
-	the SIGINT signal (i.e., CTRL+C)
+Helper function to check if input string contains redirection tokens.
 */
-int	ms_handle_heredoc_signal(int tmp_fd, int *fd)
+int	ms_has_redirection(t_ms *ms)
 {
-	close(tmp_fd);
-	unlink("/tmp/heredoc_tmp");
-	ms_get_set(1, 0);
-	*fd = -1;
-	return (-1);
-}
+	int	i;
 
-/*
-Flow control function with the heredoc input loop.
-Prints the heredoc prompt (>) and takes user input until 
-	preset delimiter is detected.
-*/
-int	ms_write_heredoc_lines(int tmp_fd, char *delimiter)
-{
-	char	*line;
-
-	while (1)
+	i = -1;
+	while (ms->cmd_args[++i])
 	{
-		line = readline("heredoc> ");
-		if (line == NULL || ms_get_set(0, 0) == 3)
-			return (-1);
-		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter)))
-			break ;
-		ft_putstr_fd(line, tmp_fd);
-		ft_putchar_fd('\n', tmp_fd);
-		free(line);
+		if (ms_detect_redirector(ms->cmd_args[i]))
+			return (1);
 	}
-	free(line);
 	return (0);
 }
 
 /*
-Flow control function to clear heredoc redirection.
-Closes the tmp file FD.
-Redirects input stream to the heredoc file contents.
-Unlinks the heredoc file. 
+TODO: this could use a more granular error handling.
 */
-int	ms_finalize_heredoc(int tmp_fd, int *fd)
+int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
 {
-	close(tmp_fd);
-	*fd = open("/tmp/heredoc_tmp", O_RDONLY);
-	if (*fd == -1)
-		return (-1);
-	unlink("/tmp/heredoc_tmp");
+	int	type;
+
+	type = ms_detect_redirector(args[i]);
+	if (type && (!args[i + 1] || ms_detect_redirector(args[i + 1])))
+		return (ms_error_handler(ms, "Error: Invalid redir syntax", 0), -1);
+	if (fds[0] == -1)
+	{
+		if (type == 1 && ms_open(args[i + 1], O_RDONLY, &fds[0]))
+			return (ms_handle_open_error(ms, args[i + 1]));
+	}
+	if (type == 2 && ms_open(args[i + 1], O_WRONLY
+			| O_CREAT | O_TRUNC, &fds[1]))
+		return (ms_handle_open_error(ms, args[i + 1]));
+	if (type == 3 && ms_open(args[i + 1], O_WRONLY
+			| O_CREAT | O_APPEND, &fds[1]))
+		return (ms_handle_open_error(ms, args[i + 1]));
+	if (type == 4 && ms_open(args[i + 1], O_WRONLY
+			| O_CREAT | O_TRUNC, &fds[2]))
+		return (ms_handle_open_error(ms, args[i + 1]));
 	return (0);
 }
 
-/*
-Main heredoc handling function.
-Sends the signal to indicate "inside heredoc" state.
-Calls different heredoc manage helper functions.
-*/
-int	ms_handle_heredoc(char *delimiter, int *fd)
+int	ms_manage_heredoc(t_ms *ms, int *fds)
 {
-	int	tmp_fd;
+	if (ms->heredoc_fd != -1)
+	{
+		if (fds[0] != -1)
+			close(fds[0]);
+		fds[0] = ms->heredoc_fd;
+	}
+	return (0);
+}
 
-	ms_get_set(1, 2);
-	tmp_fd = ms_open_tmp_heredoc();
-	if (tmp_fd == -1)
-		return (-1);
-	if (ms_write_heredoc_lines(tmp_fd, delimiter) == -1)
-		return (ms_handle_heredoc_signal(tmp_fd, fd));
-	return (ms_finalize_heredoc(tmp_fd, fd));
+int	ms_close_redirect_fds(int input, int output, int append, int stderr_fd)
+{
+	if (input != -1)
+		close(input);
+	if (output != -1)
+		close(output);
+	if (append != -1)
+		close(append);
+	if (stderr_fd != -1)
+		close(stderr_fd);
+	return (0);
 }

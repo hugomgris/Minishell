@@ -6,84 +6,69 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/24 13:32:14 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 13:13:05 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
-This file contains helper/Flow-control functions for execution handling:
-	-ms_parse_args
-	-ms_exec_direct_path
-	-ms_try_path_execution
-	-ms_build_cmd_path
-	-ms_search_in_path
+This file contains helper/Flow-control functions to build exec components:
+	-ms_env_to_aray
+	-ms_rebuild_env
 */
 
 #include "../../includes/minishell.h"
 
-char	**ms_parse_args(char *exec_chunk, int *arg_count)
+int	ms_has_heredoc(t_ms *ms)
 {
-	char	**cmd_args;
-	char	*token;
+	int	i;
 
-	*arg_count = 0;
-	cmd_args = malloc(sizeof(char *) * (strlen(exec_chunk) + 1));
-	if (!cmd_args)
-		return (NULL);
-	token = ft_strtok(exec_chunk, " ");
-	while (token)
+	i = -1;
+	while (ms->cmd_args[++i])
 	{
-		cmd_args[(*arg_count)++] = token;
-		token = ft_strtok(NULL, " ");
-	}
-	cmd_args[*arg_count] = NULL;
-	return (cmd_args);
-}
-
-char	*ms_process_directory(char **path_copy, char **dir)
-{
-	if (!*dir)
-	{
-		free(*path_copy);
-		return (NULL);
-	}
-	return (ft_strtok(NULL, ":"));
-}
-
-int	ms_try_and_execute(char *cmd_path, char **cmd_args, char **env, char *path)
-{
-	if (ms_try_path_execution(cmd_path, cmd_args, env))
-	{
-		free(cmd_path);
-		free(path);
-		return (0);
-	}
-	free(cmd_path);
-	return (1);
-}
-
-// Helper function to search command in PATH
-int	ms_search_in_path(t_ms *ms, char **cmd_args, char **env)
-{
-	char	*path_copy;
-	char	*dir;
-	char	*cmd_path;
-
-	path_copy = ms_duplicate_path(ms);
-	if (!path_copy)
-		return (1);
-	dir = ft_strtok(path_copy, ":");
-	while (dir)
-	{
-		cmd_path = ms_build_cmd_path(dir, cmd_args[0]);
-		if (!cmd_path)
-		{
-			free(path_copy);
+		if (!ft_strncmp(ms->cmd_args[i], "<<", 2))
 			return (1);
-		}
-		if (!ms_try_and_execute(cmd_path, cmd_args, env, path_copy))
-			return (0);
-		dir = ms_process_directory(&path_copy, &dir);
 	}
-	return (1);
+	return (0);
+}
+
+int	ms_process_heredoc(t_ms *ms)
+{
+	int		fd;
+	char	*delimiter;
+	int		i;
+
+	i = -1;
+	while (ms->cmd_args[++i])
+	{
+		if (!ft_strncmp(ms->cmd_args[i], "<<", 2))
+			delimiter = ms->cmd_args[i + 1];
+	}
+	if (ms_handle_heredoc(delimiter, &fd) == -1)
+		return (ms_error_handler(ms, "Heredoc processing failed", 0), -1);
+	ms->heredoc_fd = fd;
+	return (0);
+}
+
+int	ms_handle_heredoc_setup(t_ms *ms)
+{
+	int	orig_stdin;
+	int	orig_stdout;
+	int	result;
+	int	tty;
+
+	orig_stdin = dup(STDIN_FILENO);
+	orig_stdout = dup(STDOUT_FILENO);
+	tty = open("/dev/tty", O_RDWR);
+	if (tty != -1)
+	{
+		dup2(tty, STDIN_FILENO);
+		dup2(tty, STDOUT_FILENO);
+		close(tty);
+	}
+	result = ms_process_heredoc(ms);
+	dup2(orig_stdin, STDIN_FILENO);
+	dup2(orig_stdout, STDOUT_FILENO);
+	close(orig_stdin);
+	close(orig_stdout);
+	return (result);
 }

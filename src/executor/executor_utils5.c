@@ -1,59 +1,89 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_utils5.c                                  :+:      :+:    :+:   */
+/*   executor_utils3.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/28 11:29:52 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/24 13:32:14 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
-This file contains helper/Flow-control functions for exec tools cleanup:
-	-ms_executor_cleanup
-	-ms_cleanup_args
-	-ms_save_std_fds
-	-ms_restore_std_fds
+This file contains helper/Flow-control functions for execution handling:
+	-ms_parse_args
+	-ms_exec_direct_path
+	-ms_try_path_execution
+	-ms_build_cmd_path
+	-ms_search_in_path
 */
 
 #include "../../includes/minishell.h"
 
-void	ms_executor_cleanup(t_ms *ms, char	**env)
+char	**ms_parse_args(char *exec_chunk, int *arg_count)
 {
-	ft_lstclear(&ms->tokens, free);
-	ft_free(ms->exec_chunks);
-	ft_free(env);
-}
+	char	**cmd_args;
+	char	*token;
 
-void	ms_cleanup_args(t_ms *ms)
-{
-	if (ms->filt_args[0] != NULL)
+	*arg_count = 0;
+	cmd_args = malloc(sizeof(char *) * (strlen(exec_chunk) + 1));
+	if (!cmd_args)
+		return (NULL);
+	token = ft_strtok(exec_chunk, " ");
+	while (token)
 	{
-		free(ms->filt_args);
-		ms->filt_args = NULL;
+		cmd_args[(*arg_count)++] = token;
+		token = ft_strtok(NULL, " ");
 	}
-	if (ms->cmd_args[0] != NULL)
+	cmd_args[*arg_count] = NULL;
+	return (cmd_args);
+}
+
+char	*ms_process_directory(char **path_copy, char **dir)
+{
+	if (!*dir)
 	{
-		free(ms->cmd_args);
-		ms->cmd_args = NULL;
+		free(*path_copy);
+		return (NULL);
 	}
+	return (ft_strtok(NULL, ":"));
 }
 
-void	ms_save_std_fds(int *saved_fds)
+int	ms_try_and_execute(char *cmd_path, char **cmd_args, char **env, char *path)
 {
-	saved_fds[0] = dup(STDIN_FILENO);
-	saved_fds[1] = dup(STDOUT_FILENO);
-	saved_fds[2] = dup(STDERR_FILENO);
+	if (ms_try_path_execution(cmd_path, cmd_args, env))
+	{
+		free(cmd_path);
+		free(path);
+		return (0);
+	}
+	free(cmd_path);
+	return (1);
 }
 
-void	ms_restore_std_fds(int *saved_fds)
+// Helper function to search command in PATH
+int	ms_search_in_path(t_ms *ms, char **cmd_args, char **env)
 {
-	dup2(saved_fds[0], STDIN_FILENO);
-	dup2(saved_fds[1], STDOUT_FILENO);
-	dup2(saved_fds[2], STDERR_FILENO);
-	close(saved_fds[0]);
-	close(saved_fds[1]);
-	close(saved_fds[2]);
+	char	*path_copy;
+	char	*dir;
+	char	*cmd_path;
+
+	path_copy = ms_duplicate_path(ms);
+	if (!path_copy)
+		return (1);
+	dir = ft_strtok(path_copy, ":");
+	while (dir)
+	{
+		cmd_path = ms_build_cmd_path(dir, cmd_args[0]);
+		if (!cmd_path)
+		{
+			free(path_copy);
+			return (1);
+		}
+		if (!ms_try_and_execute(cmd_path, cmd_args, env, path_copy))
+			return (0);
+		dir = ms_process_directory(&path_copy, &dir);
+	}
+	return (1);
 }

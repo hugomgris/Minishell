@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/27 11:24:40 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 12:37:48 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,19 +42,29 @@ void	ms_create_pipes(t_ms *ms, int ***pipe_fds, int pipe_count)
 	}
 }
 
-void	ms_setup_child_pipes(int **pipe_fds, int cmd_index, int pipe_count)
+void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count)
 {
 	int	i;
 
-	if (cmd_index > 0)
-		dup2(pipe_fds[cmd_index - 1][0], STDIN_FILENO);
+	if (ms->heredoc_fd != -1 && cmd_index == 0)
+	{
+		if (dup2(ms->heredoc_fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2 heredoc failed");
+			exit(1);
+		}
+		close(ms->heredoc_fd);
+		ms->heredoc_fd = -1;
+	}
+	else if (cmd_index > 0)
+		dup2(ms->pipe_fds[cmd_index - 1][0], STDIN_FILENO);
 	if (cmd_index < pipe_count)
-		dup2(pipe_fds[cmd_index][1], STDOUT_FILENO);
+		dup2(ms->pipe_fds[cmd_index][1], STDOUT_FILENO);
 	i = -1;
 	while (++i < pipe_count)
 	{
-		close(pipe_fds[i][0]);
-		close(pipe_fds[i][1]);
+		close(ms->pipe_fds[i][0]);
+		close(ms->pipe_fds[i][1]);
 	}
 }
 

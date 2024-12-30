@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 15:57:27 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/30 12:41:38 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	ms_init(t_ms *ms, char **env)
 	ms->redir_tokens = NULL;
 	ms->filtered_tokens = NULL;
 	ms->exit_status = 0;
-	ms->heredoc = 0;
+	ms->heredoc_fd = -1;
 	ms->ms_env = ms_copy_env(ms, env);
 	ms->home = ms_make_home_ref(ms, env);
 	ms->user = ms_get_prompt_user(ms);

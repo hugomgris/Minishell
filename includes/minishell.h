@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/27 11:10:47 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/30 13:17:18 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ typedef struct s_ms
 	char	*input;
 	char	**cmd_table;
 	int		exit_status;
-	int		heredoc;
+	int		heredoc_fd;
 	int		**pipe_fds;
 	int		pipe_count;
 }	t_ms;
@@ -211,13 +211,17 @@ int		ms_count_chunks(t_list *tokens);
 int		ms_is_pipe(const char *token);
 char	**ms_env_to_array(t_ms *ms, char **arr);
 char	**ms_rebuild_env(t_ms *ms);
+void	ms_handle_parent_process(t_ms *ms);
+void	ms_handle_child_process(t_ms *ms, char **env, int i);
 int		ms_is_builtin(const char *cmd);
 int		ms_reroute_builtins(t_ms *ms, char **env);
 int		ms_handle_system_cmd(t_ms *ms, char **env);
 void	ms_save_std_fds(int *saved_fds);
 void	ms_restore_std_fds(int *saved_fds);
 void	ms_executor_cleanup(t_ms *ms, char **env);
+void	ms_close_used_pipes(int **pipe_fds, int i);
 void	ms_cleanup_args(t_ms *ms);
+void	ms_cleanup_heredoc(t_ms *ms);
 
 //PIPING functions
 void	ms_free_pipes(int **pipe_fds, int pipe_count);
@@ -225,7 +229,7 @@ void	ms_wait_children(int count);
 void	ms_create_pipes(t_ms *ms, int ***pipe_fds, int pipe_count);
 void	ms_close_parent_pipes(int **pipe_fds, int pipe_count);
 void	ms_close_child_pipes(int **pipe_fds, int pipe_count);
-void	ms_setup_child_pipes(int **pipe_fds, int cmd_index, int pipe_count);
+void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count);
 char	**ms_parse_args(char *exec_chunk, int *arg_count);
 int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);
 int		ms_try_path_execution(char *cmd_path, char **cmd_args, char **env);
@@ -248,7 +252,10 @@ void	ms_populate_filtered_args(t_ms *ms, int count);
 int		ms_open(char *file, int flags, int *fd);
 int		ms_handle_open_error(t_ms *ms, char *filename);
 int		ms_close_redirect_fds(int input, int output, int append, int stderr_fd);
-int		ms_handle_heredoc(char *delimiter, int *fd);
+int		ms_has_heredoc(t_ms *ms);
+int		ms_handle_heredoc_setup(t_ms *ms);
+int		ms_manage_heredoc(t_ms *ms, int *fds);
+int		ms_handle_heredoc(const char *delimiter, int *fd);
 int		ms_open_tmp_heredoc(void);
 int		ms_write_heredoc_lines(int tmp_fd, char *delimiter);
 int		ms_finalize_heredoc(int tmp_fd, int *fd);
