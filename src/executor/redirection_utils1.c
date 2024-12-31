@@ -6,12 +6,19 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 09:22:17 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:32:47 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Filters the arguments from the command line, excluding redirection operators
+	and special characters.
+Allocates memory for the filtered arguments and populates it
+	with valid command arguments.
+If memory allocation fails, returns to avoid minishell crash/hang.
+*/
 void	ms_filter_args(t_ms *ms)
 {
 	int	count;
@@ -23,6 +30,11 @@ void	ms_filter_args(t_ms *ms)
 	ms_populate_filtered_args(ms, count);
 }
 
+/*
+Counts the number of arguments in the command line that are
+	not redirection operators or special characters.
+This is used to determine how many valid command arguments are present.
+*/
 int	ms_count_non_redirectors(char **cmd_args)
 {
 	int	i;
@@ -39,6 +51,11 @@ int	ms_count_non_redirectors(char **cmd_args)
 	return (count);
 }
 
+/*
+Allocates memory for an array of filtered arguments based on the given count.
+Returns the allocated memory or handles memory allocation failure
+	by calling the error handler.
+*/
 char	**ms_allocate_filtered_args(t_ms *ms, int count)
 {
 	char	**filtered;
@@ -49,6 +66,13 @@ char	**ms_allocate_filtered_args(t_ms *ms, int count)
 	return (filtered);
 }
 
+/*
+Populates the filtered arguments array by iterating
+	through the original command arguments.
+Redirection operators and special characters are skipped,
+	while valid command arguments are added to the filtered list.
+The final position is marked with a NULL terminator.
+*/
 void	ms_populate_filtered_args(t_ms *ms, int count)
 {
 	int	i;
@@ -70,6 +94,13 @@ void	ms_populate_filtered_args(t_ms *ms, int count)
 	ms->filt_args[f_pos] = NULL;
 }
 
+/*
+Handles errors when attempting to open a file by generating an error message
+	indicating the specific file does not exist.
+If the error occurs in a pipe or non-builtin command context, the program exits.
+Returns -1 after handling the error.
+TODO: Again, check return values for consistency (0-1 vs 0-(-1))
+*/
 int	ms_handle_open_error(t_ms *ms, char *filename)
 {
 	char	*output;

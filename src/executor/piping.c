@@ -6,19 +6,17 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 12:37:48 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:39:26 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-This file contains helper/Flow-control functions for piping setup:
-	-ms_create_pipes
-	-ms_setup_child_pipes
-	-ms_wait_children
-*/
-
 #include "../../includes/minishell.h"
 
+/*
+Allocates memory for the pipes based on the number of pipes needed.
+Each pipe gets its own file descriptors.
+Memory is freed if allocation fails.
+*/
 void	ms_create_pipes(t_ms *ms, int ***pipe_fds, int pipe_count)
 {
 	int	i;
@@ -42,6 +40,11 @@ void	ms_create_pipes(t_ms *ms, int ***pipe_fds, int pipe_count)
 	}
 }
 
+/*
+Sets up the file descriptors for pipes in a child process.
+Redirects the input and output to the appropriate pipes based on the cmd index.
+Closes all pipe file descriptors after setup.
+*/
 void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count)
 {
 	int	i;
@@ -68,6 +71,10 @@ void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count)
 	}
 }
 
+/*
+Waits for all child processes to finish execution.
+Keeps track of the child processes and their exit statuses.
+*/
 void	ms_wait_children(int count)
 {
 	int	i;

@@ -6,12 +6,22 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 19:31:20 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 11:59:21 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Handles execution of system commands.
+Checks whether the command is provided as an absolute/relative path
+	or needs to be searched in the PATH.
+If the command is not found or fails execution, outputs an appropriate error.
+Frees allocated argument arrays upon failure or success.
+Returns:
+  - 1 on error (e.g., command not found).
+  - -1 if execve fails.
+*/
 int	ms_handle_system_cmd(t_ms *ms, char **env)
 {
 	if (ms->input[0] != '$' && (ms->cmd_args[0][0] == '/'
@@ -36,6 +46,13 @@ int	ms_handle_system_cmd(t_ms *ms, char **env)
 	return (-1);
 }
 
+/*
+Handles the execution of built-in commands.
+Saves the current state of standard FDs before applying redirections.
+Executes the built-in command with its arguments.
+Restores standard file descriptors after execution.
+Performs cleanup for any heredoc state set during execution.
+*/
 void	ms_handle_builtin(t_ms *ms, char **env, int saved_fds[3])
 {
 	ms_save_std_fds(saved_fds);
@@ -46,6 +63,14 @@ void	ms_handle_builtin(t_ms *ms, char **env, int saved_fds[3])
 	ms_cleanup_heredoc(ms);
 }
 
+/*
+Processes individual commands within a pipeline or as standalone.
+Handles heredoc input setup if required.
+Checks for built-in cmds (executed directly) or forks to execute other cmds.
+Manages child and parent process behavior during forking:
+  - Child: Executes the command.
+  - Parent: Waits or manages pipes.
+*/
 void	ms_process_command(t_ms *ms, char **env, int i)
 {
 	pid_t	pid;
@@ -68,6 +93,12 @@ void	ms_process_command(t_ms *ms, char **env, int i)
 		ms_handle_parent_process(ms);
 }
 
+/*
+Executes a single chunk of commands parsed from input.
+Parses arguments and applies filtering to handle special tokens.
+Delegates execution to ms_process_command.
+Cleans up parsed arguments and filtered states after execution.
+*/
 void	ms_execute_chunk(t_ms *ms, char **env, int i)
 {
 	int	arg_count;
@@ -78,6 +109,14 @@ void	ms_execute_chunk(t_ms *ms, char **env, int i)
 	ms_cleanup_args(ms);
 }
 
+/*
+Manages the overall execution flow of the Minishell.
+Initializes the environment and prepares execution chunks.
+Iterates through each execution chunk, managing pipes and redirections.
+Waits for all child processes to finish execution.
+Performs cleanup for pipes, environment, and other resources after execution.
+Returns 0 on successful execution.
+*/
 int	ms_executor(t_ms *ms)
 {
 	char	**env;

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 17:42:23 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 11:41:27 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@
 	to using only 2 fds? 1? 0?
 */
 
+/*
+Helper function to set custom colors for colored cmd calls.
+When a command is called with "--color=auto", enhances output.
+Uses minishell specific pallette (cyan, orange, red).
+*/
 void	ms_set_custom_colors(t_ms *ms)
 {
 	ms_set_env_variable(ms, "LS_COLORS", \

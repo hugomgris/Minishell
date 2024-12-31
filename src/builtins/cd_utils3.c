@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 14:37:10 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 16:31:23 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 11:18:24 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,10 @@ int	ms_cd_isdirectory(t_ms *ms, char *path)
 		return (-1);
 }
 
+/*
+Flow control function to check arguments sent to cd builtin cmd.
+It is the first check that a cd call needs to pass.
+*/
 char	*ms_cd_initial_path(t_ms *ms)
 {
 	if (!ms->filt_args[1] || ms->filt_args[1][0] == ' ')

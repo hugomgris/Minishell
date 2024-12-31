@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_utils2.c                                  :+:      :+:    :+:   */
+/*   executor_utils4.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 15:30:41 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:14:05 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-This file contains helper/Flow-control functions to build exec components:
-	-ms_env_to_aray
-	-ms_rebuild_env
-*/
-
 #include "../../includes/minishell.h"
 
+/*
+Converts the Minishell's internal environment linked list to an array of strings.
+Steps:
+  1. Iterates through the ms_env linked list, which stores environment variables.
+  2. For each node containing an '=' character, dups content into the array.
+  3. Handles memory allocation failures (ft_free and NULL return).
+  4. Null-terminates the array.
+  5. Returns pointer to array on success.
+*/
 char	**ms_env_to_array(t_ms *ms, char **arr)
 {
 	t_list	*current;
@@ -44,6 +47,14 @@ char	**ms_env_to_array(t_ms *ms, char **arr)
 	return (arr);
 }
 
+/*
+Rebuilds the env array from the Minishell's internal linked list representation.
+Steps:
+  1. Allocates memory, accounting for one extra slot for null termination.
+  2. Converts the ms_env linked list into the array using ms_env_to_array.
+  3. Handles memory allocation or conversion failures.
+  4. Returns pointer to the rebuilt env array on success.
+*/
 char	**ms_rebuild_env(t_ms *ms)
 {
 	char	**arr;

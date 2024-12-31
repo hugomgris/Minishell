@@ -6,14 +6,17 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 13:01:59 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:29:22 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Helper function to open files and assign FDs to them.
+Opens a file with the specified flags and assigns its FD to the provided var.
+If an FD is already open, it is closed before opening the new file. 
+Returns 0 on success or -1 if the file could not be opened.
+TODO: Again, check return values for consistency (0-1 vs 0-(-1))
 */
 int	ms_open(char *file, int flags, int *fd)
 {
@@ -25,6 +28,13 @@ int	ms_open(char *file, int flags, int *fd)
 	return (0);
 }
 
+/*
+Redirects a given file descriptor to a new one using dup2. 
+Handles different types of redirections by checking the code value
+	and reports errors via ms_error_handler. 
+Returns 0 on success or -1 if redirection fails.
+TODO: Again, check return values for consistency (0-1 vs 0-(-1))
+*/
 int	ms_redirect_fd(int old_fd, int new_fd, t_ms *ms, int code)
 {
 	char	*msg;
@@ -50,6 +60,13 @@ int	ms_redirect_fd(int old_fd, int new_fd, t_ms *ms, int code)
 	return (0);
 }
 
+/*
+Handles the setup and management of file redirections based on command args. 
+Also handles heredoc management and ensures that the appropriate redirections
+	are applied to standard file descriptors. 
+If any step fails, it returns -1. Otherwise, it returns 0.
+TODO: Again, check return values for consistency (0-1 vs 0-(-1))
+*/
 int	ms_redirection(t_ms *ms)
 {
 	int	i;

@@ -6,13 +6,17 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/27 11:05:32 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:26:36 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-// Check if the command is a builtin
+/*
+Determines if the given command is a built-in.
+If the command matches any of the built-in names, the function returns 1. 
+Otherwise, it returns 0.
+*/
 int	ms_is_builtin(const char *cmd)
 {
 	return ((!ft_strncmp(cmd, "cd", 2) && ft_strlen(cmd) == 2)
@@ -24,7 +28,12 @@ int	ms_is_builtin(const char *cmd)
 		|| (!ft_strncmp(cmd, "export", 6) && ft_strlen(cmd) == 6));
 }
 
-// Reroute to the correct builtin function
+/*
+Routes the execution flow to the appropriate built-in command handler.
+The corresponding handler function is called and its return value is returned. 
+If the command is not a built-in, the function returns 0, indicating
+	the command should be handled elsewhere.
+*/
 int	ms_reroute_builtins(t_ms *ms, char **env)
 {
 	char	*arg;

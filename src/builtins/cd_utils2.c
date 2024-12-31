@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 14:30:06 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/24 09:22:06 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 11:15:54 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ char	*ms_normalize_path(t_ms *ms, char *path)
 /*
 Special case handling function.
 It is called from ms_cd_parent if direct parent is unreachable.
-Searches for closest available parent directory and attempts to move there.
+Searches for closest available parent directory and attempts to chdir().
 */
 int	ms_cd_ascend(t_ms *ms)
 {

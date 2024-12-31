@@ -6,18 +6,19 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 15:36:21 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:10:43 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-This file contains helper/Flow-control functions to build exec components:
-	-ms_env_to_aray
-	-ms_rebuild_env
-*/
-
 #include "../../includes/minishell.h"
 
+/*
+Checks if the current command includes a heredoc ('<<').
+Steps:
+  1. Iterates through the cmd_args array to find the '<<' token.
+  2. Returns 1 if a heredoc is present, 0 otherwise.
+TODO: check return values for consistency, may need to be switched.
+*/
 int	ms_has_heredoc(t_ms *ms)
 {
 	int	i;
@@ -31,6 +32,15 @@ int	ms_has_heredoc(t_ms *ms)
 	return (0);
 }
 
+/*
+Processes the heredoc setup for a command.
+Steps:
+  1. Searches for the '<<' token in cmd_args to identify the delimiter.
+  2. If no delimiter is found, handles the error and returns -1.
+  3. Calls ms_handle_heredoc to process the heredoc and obtain the FD.
+  4. Updates heredoc_fd in the Minishell state if successful.
+  5. Returns 0 on success, -1 on failure.
+*/
 int	ms_process_heredoc(t_ms *ms)
 {
 	int		fd;
@@ -52,6 +62,16 @@ int	ms_process_heredoc(t_ms *ms)
 	return (0);
 }
 
+/*
+Sets up the environment for heredoc processing.
+Steps:
+  1. Saves the current stdin and stdout file descriptors.
+  2. Redirects stdin and stdout to /dev/tty for interactive input.
+  3. Calls ms_process_heredoc to handle the heredoc processing.
+  4. Restores the original stdin and stdout file descriptors.
+  5. Cleans up resources and returns the result of heredoc processing.
+  6. Returns 0 on success, -1 on failure.
+*/
 int	ms_handle_heredoc_setup(t_ms *ms)
 {
 	int	orig_stdin;
@@ -76,6 +96,13 @@ int	ms_handle_heredoc_setup(t_ms *ms)
 	return (result);
 }
 
+/*
+Handles errors encountered during heredoc setup or processing.
+Steps:
+  1. Checks the current shell state using ms_get_set.
+  2. Logs the provided error message if the shell state is 2 (heredoc input).
+  3. Returns -1 to indicate failure.
+*/
 int	ms_handle_heredoc_error(t_ms *ms, char *error_msg)
 {
 	if (ms_get_set(0, 0) == 2)

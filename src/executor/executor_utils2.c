@@ -6,17 +6,28 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 13:16:48 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:06:54 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-This file contains 
-*/
-
 #include "../../includes/minishell.h"
 
-// Main execution function
+/*
+Executes a single command in the Minishell.
+Steps:
+  1. Validates the cmd_args array for memory allocation.
+  2. Handles redirection if required:
+      - If redirection fails, exits for non-builtin commands.
+  3. Checks if the command is a builtin:
+      - Executes the builtin and handles rerouting if necessary.
+  4. For non-builtin commands:
+      - Delegates execution to ms_handle_system_cmd.
+      - Cleans up memory if system command handling fails.
+Returns:
+  - 1 on success or handled error.
+  - Exits the process on fatal errors during redirection or command execution.
+TODO: return on sucess might be wrong and may need to change to 0 (||)
+*/
 int	ms_exec_command(t_ms *ms, char **env)
 {
 	if (!ms->cmd_args)
@@ -45,7 +56,14 @@ int	ms_exec_command(t_ms *ms, char **env)
 }
 
 /*
-Executor hub.
+Handles the child process execution logic for a Minishell command.
+Received int i is the current exec chunk index in the exec pipeline.
+Steps:
+  1. If a heredoc is present, duplicates its file descriptor to STDIN_FILENO.
+  2. Sets up the appropriate pipes for the child process.
+  3. Handles redirection unless a heredoc is present.
+  4. Executes the command (builtin or system).
+  5. Exits the child process with a failure status if any error occurs.
 */
 void	ms_handle_child_process(t_ms *ms, char **env, int i)
 {
@@ -63,6 +81,12 @@ void	ms_handle_child_process(t_ms *ms, char **env, int i)
 	exit(0);
 }
 
+/*
+Handles the parent process logic for Minishell.
+Steps:
+  1. Closes the heredoc file descriptor if it was used.
+  2. Resets the heredoc_fd in the Minishell state to indicate closure.
+*/
 void	ms_handle_parent_process(t_ms *ms)
 {
 	if (ms->heredoc_fd != -1)
@@ -72,6 +96,12 @@ void	ms_handle_parent_process(t_ms *ms)
 	}
 }
 
+/*
+Closes the appropriate pipe file descriptors after use.
+Steps:
+  1. Closes the read end of the previous pipe (if applicable).
+  2. Closes the write end of the current pipe.
+*/
 void	ms_close_used_pipes(int **pipe_fds, int i)
 {
 	if (i > 0)

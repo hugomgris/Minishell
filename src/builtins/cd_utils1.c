@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 15:49:43 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 16:24:05 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 11:14:56 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ char	*ms_expand_tilde(t_ms *ms, char *path)
 }
 
 /*
-Bypass function to join paths in case of inserted '..' or '.' in argument path.
+Flow control function to join paths in case of '..' or '.' in argument path.
 */
 int	ms_join_paths(t_ms *ms, char *cwd, char *path, char **new_path)
 {
@@ -56,7 +56,6 @@ int	ms_join_paths(t_ms *ms, char *cwd, char *path, char **new_path)
 }
 
 /*
-The heart of the cd builtin command.
 Attempts to change directory to path received as argument.
 Handles change attempt error both with output and int return.
 Handles the necessary changes to PWD and OLDPWD ms_env entries, if set.

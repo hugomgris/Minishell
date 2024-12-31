@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/24 11:01:50 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 11:20:56 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 /*
 Exit handler.
-Only non-error exit point for minishell, reached by exit input or ctrl+D.
+Only non-error exit point for minishell, reached by "exit" input or ctrl+D.
 Prints exit string ("exit"), cleans structs and memory.
 Sets an exit code if provided (checkable with echo $?)
 */
@@ -31,7 +31,7 @@ void	ms_exit_handler(t_ms *ms, const char *msg, int code)
 }
 
 /*
-Exit builtin command intermediary.
+Exit builtin command intermediary function.
 Checks arguments, handles the exit code, calls handler.
 */
 int	ms_exit(t_ms *ms)

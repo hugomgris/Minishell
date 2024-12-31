@@ -6,12 +6,18 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 19:38:29 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:42:35 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Counts the number of chains of commands separated by '&&' or '||'.
+It iterates through the tokens, and for each occurrence of '&&' or '||',
+	the chain count is incremented.
+The total number of chains is stored in the chains field inside ms struct.
+*/
 void	ms_count_chains(t_ms *ms)
 {
 	t_list	*current;
@@ -27,6 +33,11 @@ void	ms_count_chains(t_ms *ms)
 	}
 }
 
+/*
+Gets the count of tokens in the current chain, based on it's iteration index.
+The function iterates through the tokens until the specified index is reached,
+then counts how many tokens exist in the chain before finding another separator.
+*/
 int	ms_get_chain_count(t_ms *ms, int iter)
 {
 	t_list	*current;
@@ -50,6 +61,13 @@ int	ms_get_chain_count(t_ms *ms, int iter)
 	return (count);
 }
 
+/*
+Prepares and executes each chain of commands.
+It first counts the number of chains, then iterates over each chain,
+	executing the commands in the chain using ms_executor. 
+The status of each chain is checked to determine if the next chain
+	should be executed based on the logic of '&&' and '||'.
+*/
 void	ms_pre_executor(t_ms *ms)
 {
 	int		i;

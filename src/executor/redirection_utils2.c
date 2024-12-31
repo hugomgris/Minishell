@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 13:04:06 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:34:46 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,9 @@ int	ms_detect_redirector(char *arg)
 }
 
 /*
-Helper function to check if input string contains redirection tokens.
+Checks if there are any redirection operators in the given command arguments.
+Returns 1 if a redirection operator is found, otherwise 0.
+TODO: Again, check return values for consistency (might need to swap 1-0)
 */
 int	ms_has_redirection(t_ms *ms)
 {
@@ -53,6 +55,11 @@ int	ms_has_redirection(t_ms *ms)
 }
 
 /*
+Sets up the file descriptors for input/output redirection.
+Checks for valid syntax and handles the redirection by opening
+	the appropriate files.
+If the redirection syntax is invalid or there is an error opening a file,
+	it returns an error message.
 TODO: this could use a more granular error handling.
 */
 int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
@@ -79,6 +86,12 @@ int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
 	return (0);
 }
 
+/*
+Manages the file descriptors for heredoc input redirection.
+If there is an open heredoc file descriptor, it updates
+	the input file descriptor array to use it.
+This is used for managing multiple redirections in a command chain.
+*/
 int	ms_manage_heredoc(t_ms *ms, int *fds)
 {
 	if (ms->heredoc_fd != -1)
@@ -90,6 +103,10 @@ int	ms_manage_heredoc(t_ms *ms, int *fds)
 	return (0);
 }
 
+/*
+Closes the given file descriptors for input, output, append, and error streams.
+This is used to clean up file descriptors after redirections are completed.
+*/
 int	ms_close_redirect_fds(int input, int output, int append, int stderr_fd)
 {
 	if (input != -1)

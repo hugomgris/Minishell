@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 15:22:49 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 11:43:03 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ int	ms_get_set(int action, int val)
 
 /*
 SIGINT handler.
-Reprints the prompt in a new line, interrumpting a process.
+Interrupts a process and returns control to user.
+(prints minishell prompt and waits for new user input).
 */
 void	ms_sigint_handler(void)
 {

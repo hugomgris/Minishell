@@ -6,20 +6,18 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 18:25:02 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:23:51 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-This file contains helper/Flow-control functions for exec tools cleanup:
-	-ms_executor_cleanup
-	-ms_cleanup_args
-	-ms_save_std_fds
-	-ms_restore_std_fds
-*/
-
 #include "../../includes/minishell.h"
 
+/*
+Cleans up the executor env by clearing lists and freeing allocated memory.
+Steps:
+  1. Clears the list of `chain_tokens`, freeing each element.
+  2. Frees the `exec_chunks` array and the environment array.
+*/
 void	ms_executor_cleanup(t_ms *ms, char	**env)
 {
 	ft_lstclear(&ms->chain_tokens, free);
@@ -27,6 +25,12 @@ void	ms_executor_cleanup(t_ms *ms, char	**env)
 	ft_free(env);
 }
 
+/*
+Cleans up arguments by freeing allocated memory.
+Steps:
+  1. Checks if `filt_args` is not NULL, then frees it.
+  2. Checks if `cmd_args` is not NULL, then frees it.
+*/
 void	ms_cleanup_args(t_ms *ms)
 {
 	if (ms->filt_args[0] != NULL)
@@ -41,6 +45,12 @@ void	ms_cleanup_args(t_ms *ms)
 	}
 }
 
+/*
+Cleans up heredoc file descriptor.
+Steps:
+  1. Checks if the heredoc file descriptor (heredoc_fd) is valid (not -1).
+  2. If valid, closes the file descriptor and resets it to -1.
+*/
 void	ms_cleanup_heredoc(t_ms *ms)
 {
 	if (ms->heredoc_fd != -1)
@@ -50,6 +60,12 @@ void	ms_cleanup_heredoc(t_ms *ms)
 	}
 }
 
+/*
+Saves the current standard input, output, and error file descriptors.
+Steps:
+  1. Duplicates the current standard file descriptors.
+  2. Saves STD FDS in the saved_fds array.
+*/
 void	ms_save_std_fds(int *saved_fds)
 {
 	saved_fds[0] = dup(STDIN_FILENO);
@@ -57,6 +73,12 @@ void	ms_save_std_fds(int *saved_fds)
 	saved_fds[2] = dup(STDERR_FILENO);
 }
 
+/*
+Restores the previously saved standard input, output, and error file descriptors.
+Steps:
+  1. Restores the file descriptors from the saved_fds array using dup2().
+  2. Closes the saved file descriptors.
+*/
 void	ms_restore_std_fds(int *saved_fds)
 {
 	dup2(saved_fds[0], STDIN_FILENO);

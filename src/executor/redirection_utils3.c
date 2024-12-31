@@ -6,14 +6,15 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 15:42:16 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:37:35 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Helper function to open a temporary heredoc and assign an FD to it.
+Creates a temporary file for the heredoc feature.
+Returns the file descriptor for the temporary file.
 */
 int	ms_open_tmp_heredoc(void)
 {
@@ -24,9 +25,9 @@ int	ms_open_tmp_heredoc(void)
 }
 
 /*
-Helper function to syncronize heredoc and signal handling.
-It is needed to be able to go out from heredoc input when sending
-	the SIGINT signal (i.e., CTRL+C)
+Handles the cleanup process for a heredoc signal.
+Closes the temporary heredoc file, removes it from the filesystem,
+	and updates the heredoc state.
 */
 int	ms_handle_heredoc_signal(int tmp_fd, int *fd)
 {
@@ -38,9 +39,10 @@ int	ms_handle_heredoc_signal(int tmp_fd, int *fd)
 }
 
 /*
-Flow control function with the heredoc input loop.
-Prints the heredoc prompt (>) and takes user input until 
-	preset delimiter is detected.
+Writes the lines of a heredoc to the temporary file.
+Prompts the user for input until the delimiter is entered,
+	then writes each line to the file.
+The writing process ends when the delimiter is matched or an error occurs.
 */
 int	ms_write_heredoc_lines(int tmp_fd, const char *delimiter)
 {
@@ -56,7 +58,8 @@ int	ms_write_heredoc_lines(int tmp_fd, const char *delimiter)
 			close(tmp_fd);
 			return (0);
 		}
-		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter)))
+		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter))
+			&& !line[ft_strlen(delimiter)])
 			break ;
 		ft_putstr_fd(line, tmp_fd);
 		ft_putchar_fd('\n', tmp_fd);
@@ -67,10 +70,9 @@ int	ms_write_heredoc_lines(int tmp_fd, const char *delimiter)
 }
 
 /*
-Flow control function to clear heredoc redirection.
-Closes the tmp file FD.
-Redirects input stream to the heredoc file contents.
-Unlinks the heredoc file. 
+Finalizes the heredoc process by closing the temporary file
+	and reopening it for reading.
+The file is removed after it is reopened to clean up.
 */
 int	ms_finalize_heredoc(int tmp_fd, int *fd)
 {
@@ -83,9 +85,10 @@ int	ms_finalize_heredoc(int tmp_fd, int *fd)
 }
 
 /*
-Main heredoc handling function.
-Sends the signal to indicate "inside heredoc" state.
-Calls different heredoc manage helper functions.
+Handles the full heredoc process: creating the temporary file,
+	writing the heredoc lines,
+and setting up the file descriptor for reading the heredoc content.
+If an error occurs, it handles the cleanup and returns an error.
 */
 int	ms_handle_heredoc(const char *delimiter, int *fd)
 {

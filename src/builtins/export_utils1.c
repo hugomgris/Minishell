@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 17:59:38 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/24 10:28:04 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 11:35:46 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	ms_export_without_value(t_ms *ms, char *arg)
 
 /*
 Helper function to alphabetically sort an array.
-Needed for export because the printed list must be alphabetically sorted.
+(Needed to mimic bash's behaviour when calling export w/o args).
 */
 char	**ms_sort(char **array, int (*cmp)(const void *, const void *, size_t))
 {
@@ -95,7 +95,7 @@ char	**ms_sort(char **array, int (*cmp)(const void *, const void *, size_t))
 
 /*
 Flow control function that builds the export output.
-It builds said output mimicking bash, enclosing value in between "".
+It builds said output mimicking bash, enclosing values in between "".
 */
 char	*ms_build_export_output(t_ms *ms, char *content, char *sym)
 {
