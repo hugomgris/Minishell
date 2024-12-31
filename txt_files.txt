@@ -1,0 +1,1 @@
+-rw-r--r-- 1 hmunoz-g 2024_barcelona       0 Dec 31 08:56 txt_files.txt
