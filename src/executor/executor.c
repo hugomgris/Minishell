@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 11:11:11 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 11:50:17 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,14 @@ int	ms_execute_chunk(t_ms *ms, char **env, int i)
 
 	ms->cmd_args = ms_parse_args(ms->exec_chunks[i], &arg_count);
 	ms_filter_args(ms);
+	if (ft_array_count(ms->filt_args) == 0)
+	{
+		if (ms_detect_redirector(ms->cmd_args[0]))
+			ms_error_handler(ms, "redirection: command needed", 0);
+		ft_free(ms->filt_args);
+		free(ms->cmd_args);
+		return (0);
+	}
 	code = ms_process_command(ms, env, i);
 	ms_cleanup_args(ms);
 	return (code);

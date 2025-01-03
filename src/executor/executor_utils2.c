@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 09:55:43 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 12:07:04 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ Steps:
   3. Handles redirection unless a heredoc is present.
   4. Executes the command (builtin or system).
   5. Exits the child process with a failure status if any error occurs.
-  TODO: maybe here is where I can make heredocs work, by checking if the chunk has heredoc.
 */
 int	ms_handle_child_process(t_ms *ms, char **env, int i)
 {

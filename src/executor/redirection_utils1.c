@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 11:19:57 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 11:39:23 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ char	**ms_allocate_filtered_args(t_ms *ms, int count)
 {
 	char	**filtered;
 
-	ft_printf("count:%d\n", count);
 	if (count)
 	{
 		filtered = malloc(sizeof(char *) * (count + 1));
