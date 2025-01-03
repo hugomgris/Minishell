@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 15:49:43 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 11:14:56 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/02 19:08:48 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	ms_change_directory(t_ms *ms, char *new_path)
 	char	*current_pwd;
 
 	if (ms_check_directory_access(ms, new_path) == -1)
-		return (-1);
+		return (1);
 	current_pwd = ms_get_env_variable(ms, "PWD");
 	if (!current_pwd)
 	{

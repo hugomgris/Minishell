@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 17:59:38 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 11:35:46 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/02 19:27:29 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,19 @@
 /*
 Flow control function to differentiate export cases with and w/o value.
 */
-void	ms_process_export_arg(t_ms *ms, char *arg)
+int	ms_process_export_arg(t_ms *ms, char *arg)
 {
 	char	*sign;
+	int		code;
 
 	sign = ft_strchr(arg, '=');
 	if (sign)
 	{
-		ms_export_with_value(ms, arg, sign);
+		code = ms_export_with_value(ms, arg, sign);
 	}
 	else
-		ms_export_without_value(ms, arg);
+		code = ms_export_without_value(ms, arg);
+	return (code);
 }
 
 /*
@@ -33,7 +35,7 @@ Helper to export (set or create) variables with set values.
 Calls export check function, and if passed goes to export executor.
 If key doesn't pass the checks, the export error function is called.
 */
-void	ms_export_with_value(t_ms *ms, char *arg, char *sign)
+int	ms_export_with_value(t_ms *ms, char *arg, char *sign)
 {
 	char	*key;
 	char	*value;
@@ -43,9 +45,9 @@ void	ms_export_with_value(t_ms *ms, char *arg, char *sign)
 	gc_add(key, &ms->gc);
 	gc_add(value, &ms->gc);
 	if (ms_export_check(key))
-		ms_export_ex(ms, key, value);
+		return (ms_export_ex(ms, key, value));
 	else
-		ms_export_error(ms, arg);
+		return (ms_export_error(ms, arg));
 }
 
 /*
@@ -54,12 +56,12 @@ Key is checked to comply with export rules.
 If checks are passed, export execution is called.
 Else, export error is called. 
 */
-void	ms_export_without_value(t_ms *ms, char *arg)
+int	ms_export_without_value(t_ms *ms, char *arg)
 {
 	if (ms_export_check(arg))
-		ms_export_ex(ms, arg, NULL);
+		return (ms_export_ex(ms, arg, NULL));
 	else
-		ms_export_error(ms, arg);
+		return (ms_export_error(ms, arg));
 }
 
 /*

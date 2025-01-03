@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 12:32:47 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 11:19:57 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,15 @@ char	**ms_allocate_filtered_args(t_ms *ms, int count)
 {
 	char	**filtered;
 
-	filtered = malloc(sizeof(char *) * (count + 1));
-	if (!filtered)
-		ms_error_handler(ms, "Error: Mem alloc failed", 1);
-	return (filtered);
+	ft_printf("count:%d\n", count);
+	if (count)
+	{
+		filtered = malloc(sizeof(char *) * (count + 1));
+		if (!filtered)
+			ms_error_handler(ms, "Error: Mem alloc failed", 1);
+		return (filtered);
+	}
+	return (NULL);
 }
 
 /*
@@ -105,7 +110,6 @@ int	ms_handle_open_error(t_ms *ms, char *filename)
 {
 	char	*output;
 
-	cucufu(1);
 	output = ft_strjoin(filename, ": No such file or directory");
 	gc_add(output, &ms->gc);
 	ms_error_handler(ms, output, 0);

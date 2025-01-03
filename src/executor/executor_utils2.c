@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 12:06:54 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 09:55:43 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ Steps:
 Returns:
   - 1 on success or handled error.
   - Exits the process on fatal errors during redirection or command execution.
-TODO: return on sucess might be wrong and may need to change to 0 (||)
 */
 int	ms_exec_command(t_ms *ms, char **env)
 {
@@ -52,7 +51,7 @@ int	ms_exec_command(t_ms *ms, char **env)
 		ft_free(ms->filt_args);
 		return (1);
 	}
-	return (1);
+	return (0);
 }
 
 /*
@@ -64,8 +63,9 @@ Steps:
   3. Handles redirection unless a heredoc is present.
   4. Executes the command (builtin or system).
   5. Exits the child process with a failure status if any error occurs.
+  TODO: maybe here is where I can make heredocs work, by checking if the chunk has heredoc.
 */
-void	ms_handle_child_process(t_ms *ms, char **env, int i)
+int	ms_handle_child_process(t_ms *ms, char **env, int i)
 {
 	if (ms->heredoc_fd != -1 && dup2(ms->heredoc_fd, STDIN_FILENO) == -1)
 	{
@@ -78,7 +78,8 @@ void	ms_handle_child_process(t_ms *ms, char **env, int i)
 		exit(1);
 	if (ms_exec_command(ms, env) != 0)
 		exit(1);
-	exit(0);
+	exit(127);
+	return (0);
 }
 
 /*
@@ -87,13 +88,14 @@ Steps:
   1. Closes the heredoc file descriptor if it was used.
   2. Resets the heredoc_fd in the Minishell state to indicate closure.
 */
-void	ms_handle_parent_process(t_ms *ms)
+int	ms_handle_parent_process(t_ms *ms)
 {
 	if (ms->heredoc_fd != -1)
 	{
 		close(ms->heredoc_fd);
 		ms->heredoc_fd = -1;
 	}
+	return (0);
 }
 
 /*

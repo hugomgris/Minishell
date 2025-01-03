@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 11:20:56 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/02 18:23:36 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ int	ms_exit(t_ms *ms)
 			return (1);
 		}
 	}
-	cucufu(6);
 	ms_exit_handler(ms, "exit", code);
 	return (0);
 }

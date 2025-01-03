@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/30 19:31:00 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 10:07:34 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 # define FALSE 0
 # define S_QUOTE '\''
 # define D_QUOTE '\"'
+# define GET 0
+# define SET 1
 
 static int		g_var;
 
@@ -51,6 +53,14 @@ typedef enum e_type_tokens
 	T_SUBPRO,
 	T_SQUOTE
 }	t_token_type;
+
+enum e_shell_state
+{
+	SHELL_NORMAL = 0,
+	SHELL_CHILD_PROCESS = 1,
+	SHELL_HEREDOC = 2,
+	SHELL_HEREDOC_INTERRUPTED = 3
+};
 
 typedef struct s_token
 {
@@ -83,32 +93,6 @@ typedef struct s_ms
 	int		pipe_count;
 	int		chains;
 }	t_ms;
-
-typedef void	(*t_builtin_func)(t_ms *);
-
-typedef struct s_builtin_map
-{
-	const char		*name;
-	t_builtin_func	func;
-}	t_builtin_map;
-
-typedef struct s_exec_data
-{
-	int		stdout_b;
-	int		stdin_b;
-	int		**pipes;
-	int		chunks;
-	int		index;
-}	t_exec_data;
-
-typedef struct s_job
-{
-	int				job_id;
-	pid_t			pgid; // Process group ID
-	char			*command;
-	char			status; // 'R' for running, 'S' for stopped
-	struct s_job	*next;
-}	t_job;
 
 //MAIN and LOOP functions
 void	ms_initialise_minishell(t_ms *ms, char **env);
@@ -181,7 +165,6 @@ int		ms_exit(t_ms *ms);
 
 //SIGNAL HANDLER functions
 void	ms_signal_handler(int signal);
-void	ms_sigtstp_handler(void);
 void	ms_sigint_handler(void);
 void	ms_sigquit_handler(void);
 int		ms_get_set(int flag, int val);
@@ -205,8 +188,8 @@ char	*ms_get_parent_path(t_ms *ms, char *cwd);
 //EXECUTOR functions
 int		ms_executor(t_ms *ms);
 void	ms_initialize_execution(t_ms *ms, char ***env);
-void	ms_execute_chunk(t_ms *ms, char **env, int i);
-void	ms_process_command(t_ms *ms, char **env, int i);
+int		ms_execute_chunk(t_ms *ms, char **env, int i);
+int		ms_process_command(t_ms *ms, char **env, int i);
 int		ms_exec_command(t_ms *ms, char **env);
 char	**ms_extract_chunks(t_ms *ms, t_list **tokens);
 char	*ms_process_chunk(t_ms *ms, t_list **current);
@@ -214,11 +197,11 @@ int		ms_count_chunks(t_list *tokens);
 int		ms_is_pipe(const char *token);
 char	**ms_env_to_array(t_ms *ms, char **arr);
 char	**ms_rebuild_env(t_ms *ms);
-void	ms_handle_parent_process(t_ms *ms);
-void	ms_handle_child_process(t_ms *ms, char **env, int i);
+int		ms_handle_parent_process(t_ms *ms);
+int		ms_handle_child_process(t_ms *ms, char **env, int i);
 int		ms_is_builtin(const char *cmd);
 int		ms_reroute_builtins(t_ms *ms, char **env);
-void	ms_handle_builtin(t_ms *ms, char **env, int saved_fds[3]);
+int		ms_handle_builtin(t_ms *ms, char **env, int saved_fds[3]);
 int		ms_handle_system_cmd(t_ms *ms, char **env);
 void	ms_save_std_fds(int *saved_fds);
 void	ms_restore_std_fds(int *saved_fds);
@@ -229,7 +212,7 @@ void	ms_cleanup_heredoc(t_ms *ms);
 
 //PIPING functions
 void	ms_free_pipes(int **pipe_fds, int pipe_count);
-void	ms_wait_children(int count);
+int		ms_wait_children(t_ms *ms, int count);
 void	ms_create_pipes(t_ms *ms, int ***pipe_fds, int pipe_count);
 void	ms_close_parent_pipes(int **pipe_fds, int pipe_count);
 void	ms_close_child_pipes(int **pipe_fds, int pipe_count);
@@ -237,10 +220,9 @@ void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count);
 char	**ms_parse_args(char *exec_chunk, int *arg_count);
 int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);
 int		ms_try_path_execution(char *cmd_path, char **cmd_args, char **env);
-char	*ms_build_cmd_path(char *dir, char *cmd);
+char	*ms_build_cmd_path(t_ms *ms, char *dir, char *cmd);
 int		ms_search_in_path(t_ms *ms, char **cmd_args, char **env);
 char	*ms_duplicate_path(t_ms *ms);
-char	*ms_build_cmd_path(char *dir, char *cmd);
 int		ms_try_path_execution(char *cmd_path, char **cmd_args, char **env);
 int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);
 
@@ -298,6 +280,8 @@ void	ms_unset_env_key(t_list **env, char *key);
 void	ms_unset_remove_node(t_list **head, t_list *prev, t_list *current);
 int		ms_unset_key_match(t_list *node, char *key);
 int		ms_echo(char **cmd_args);
+int		ms_echo_check_n_flag(char **args, int *i);
+void	ms_echo_print_args(char **args, int i);
 int		ms_export(t_ms *ms, char **cmd_args, char **env);
 int		ms_export_ex(t_ms *ms, char *key, char *value);
 int		ms_export_error(t_ms *ms, char *entry);
@@ -305,9 +289,9 @@ int		ms_export_check(const char *var);
 int		ms_export_print(t_ms *ms, char **env);
 int		ms_key_exists(t_ms *ms, char *key);
 char	*ms_build_export_output(t_ms *ms, char *content, char *sym);
-void	ms_process_export_arg(t_ms *ms, char *arg);
-void	ms_export_with_value(t_ms *ms, char *arg, char *sign);
-void	ms_export_without_value(t_ms *ms, char *arg);
+int		ms_process_export_arg(t_ms *ms, char *arg);
+int		ms_export_with_value(t_ms *ms, char *arg, char *sign);
+int		ms_export_without_value(t_ms *ms, char *arg);
 char	**ms_sort(char **array, int (*cmp)(const void *, const void *, size_t));
 size_t	ft_min_strlen(const char *s1, const char *s2);
 

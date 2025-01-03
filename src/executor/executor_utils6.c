@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 12:21:40 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 09:58:50 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	ms_try_path_execution(char *cmd_path, char **cmd_args, char **env)
 
 	if (stat(cmd_path, &stat_buf) == 0 && (stat_buf.st_mode & S_IXUSR))
 		execve(cmd_path, cmd_args, env);
-	return (0);
+	return (1);
 }
 
 /*
@@ -54,16 +54,20 @@ Steps:
   2. Concatenates the directory and command name with a "/" separator.
   3. Returns a pointer to the full command path on success.
 */
-char	*ms_build_cmd_path(char *dir, char *cmd)
+char	*ms_build_cmd_path(t_ms *ms, char *dir, char *cmd)
 {
 	char	*cmd_path;
 
 	cmd_path = malloc(strlen(dir) + strlen(cmd) + 2);
 	if (!cmd_path)
 		return (NULL);
+	gc_add(cmd_path, &ms->gc);
 	ft_strlcpy(cmd_path, dir, PATH_MAX);
+	gc_add(cmd_path, &ms->gc);
 	ft_strlcat(cmd_path, "/", PATH_MAX);
+	gc_add(cmd_path, &ms->gc);
 	ft_strlcat(cmd_path, cmd, PATH_MAX);
+	gc_add(cmd_path, &ms->gc);
 	return (cmd_path);
 }
 

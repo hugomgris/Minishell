@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 12:39:26 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 10:17:57 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,15 +75,30 @@ void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count)
 Waits for all child processes to finish execution.
 Keeps track of the child processes and their exit statuses.
 */
-void	ms_wait_children(int count)
+int	ms_wait_children(t_ms *ms, int count)
 {
-	int	i;
-	int	status;
+	int		i;
+	int		status;
+	pid_t	pid;
 
+	ms_get_set(SET, SHELL_CHILD_PROCESS);
+	if (count <= 0)
+		return (0);
 	i = 0;
 	while (i < count)
 	{
-		waitpid(-1, &status, 0);
+		pid = waitpid(-1, &status, 0);
+		if (pid == -1)
+		{
+			if (errno != ECHILD)
+				ms_error_handler(ms, "minishell: waitpid", 0);
+			break ;
+		}
+		if (WIFEXITED(status))
+			return (WEXITSTATUS(status));
+		else if (WIFSIGNALED(status))
+			return (128 + WTERMSIG(status));
 		i++;
 	}
+	return (0);
 }

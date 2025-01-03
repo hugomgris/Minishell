@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 10:35:11 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/02 19:11:05 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,10 @@ int	ms_cd_symlink(t_ms *ms, char *path)
 		}
 	}
 	else
-		if (ms_change_directory(ms, path) == -1)
+	{
+		if (ms_change_directory(ms, path))
 			return (1);
+	}
 	return (0);
 }
 

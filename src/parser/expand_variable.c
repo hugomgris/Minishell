@@ -118,7 +118,7 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	key = ms_get_key(ms, str + start + 1);
 	if (*key == '?')
 	{
-		status = ft_itoa(ms_get_set(0, 0));
+		status = ft_itoa(ms_get_set(GET, 0));
 		gc_add(status, &ms->gc);
 		return (ms_replace_exit_status(ms, str, status));
 	}

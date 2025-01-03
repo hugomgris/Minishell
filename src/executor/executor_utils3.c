@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 12:10:43 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 09:41:40 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ Steps:
 */
 int	ms_handle_heredoc_error(t_ms *ms, char *error_msg)
 {
-	if (ms_get_set(0, 0) == 2)
+	if (ms_get_set(GET, 0) == 2)
 		ms_error_handler(ms, error_msg, 0);
 	return (-1);
 }

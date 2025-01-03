@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 12:18:14 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 09:57:06 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,14 +66,8 @@ Steps:
 */
 int	ms_try_and_execute(char *cmd_path, char **cmd_args, char **env, char *path)
 {
-	if (ms_try_path_execution(cmd_path, cmd_args, env))
-	{
-		free(cmd_path);
-		free(path);
-		return (0);
-	}
-	free(cmd_path);
-	return (1);
+	(void)path;
+	return (ms_try_path_execution(cmd_path, cmd_args, env));
 }
 
 /*
@@ -96,7 +90,7 @@ int	ms_search_in_path(t_ms *ms, char **cmd_args, char **env)
 	dir = ft_strtok(path_copy, ":");
 	while (dir)
 	{
-		cmd_path = ms_build_cmd_path(dir, cmd_args[0]);
+		cmd_path = ms_build_cmd_path(ms, dir, cmd_args[0]);
 		if (!cmd_path)
 		{
 			free(path_copy);

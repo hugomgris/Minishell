@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 12:37:35 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/03 10:25:24 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	ms_handle_heredoc_signal(int tmp_fd, int *fd)
 {
 	close(tmp_fd);
 	unlink("/tmp/heredoc_tmp");
-	ms_get_set(1, 0);
+	ms_get_set(GET, 0);
 	*fd = -1;
 	return (-1);
 }
@@ -53,7 +53,7 @@ int	ms_write_heredoc_lines(int tmp_fd, const char *delimiter)
 		line = readline("heredoc> ");
 		if (!line)
 		{
-			if (ms_get_set(0, 0) == 3)
+			if (ms_get_set(GET, 0) == 3)
 				return (-1);
 			close(tmp_fd);
 			return (0);
@@ -95,7 +95,7 @@ int	ms_handle_heredoc(const char *delimiter, int *fd)
 	int		tmp_fd;
 	char	*tmp_file;
 
-	ms_get_set(1, 2);
+	ms_get_set(SET, 2);
 	tmp_file = "/tmp/.minishell_heredoc";
 	tmp_fd = open(tmp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (tmp_fd == -1)
@@ -105,7 +105,7 @@ int	ms_handle_heredoc(const char *delimiter, int *fd)
 	close(tmp_fd);
 	*fd = open(tmp_file, O_RDONLY);
 	unlink(tmp_file);
-	ms_get_set(1, 0);
+	ms_get_set(GET, 0);
 	if (*fd == -1)
 		return (-1);
 	return (0);
