@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 09:58:50 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/04 11:57:37 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ int	ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env)
 	struct stat	stat_buf;
 
 	if (stat(cmd_args[0], &stat_buf) == 0)
+	{
 		execve(cmd_args[0], cmd_args, env);
+	}
 	ms_error_handler(ms, "Error: execve: invalid file", 0);
 	return (1);
 }
@@ -43,7 +45,9 @@ int	ms_try_path_execution(char *cmd_path, char **cmd_args, char **env)
 	struct stat	stat_buf;
 
 	if (stat(cmd_path, &stat_buf) == 0 && (stat_buf.st_mode & S_IXUSR))
+	{
 		execve(cmd_path, cmd_args, env);
+	}
 	return (1);
 }
 

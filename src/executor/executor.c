@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 11:50:17 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/04 11:54:21 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,8 +157,8 @@ int	ms_executor(t_ms *ms)
 	ms_executor_cleanup(ms, env);
 	ms_free_pipes(ms->pipe_fds, ms->pipe_count);
 	if (ms_get_set(GET, 0) != 3)
-		ms_get_set(SET, code);
+		ms->exit_status = code;
 	else
-		ms_get_set(SET, 130);
+		ms->exit_status = 130;
 	return (code);
 }

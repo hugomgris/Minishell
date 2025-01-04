@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 10:07:34 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/04 11:53:13 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,11 @@ typedef struct s_token
 
 typedef struct s_ms
 {
+	char	*home;
+	char	*user;
+	char	*prompt;
+	char	*input;
+	int		exit_status;
 	t_list	*ms_env;
 	t_list	*gc;
 	t_token	*tok;
@@ -82,12 +87,7 @@ typedef struct s_ms
 	char	**exec_chunks;
 	char	**cmd_args;
 	char	**filt_args;
-	char	*home;
-	char	*user;
-	char	*prompt;
-	char	*input;
 	char	**cmd_table;
-	int		exit_status;
 	int		heredoc_fd;
 	int		**pipe_fds;
 	int		pipe_count;
