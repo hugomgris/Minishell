@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 10:17:57 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/06 09:54:50 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,25 +49,21 @@ void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count)
 {
 	int	i;
 
-	if (ms->heredoc_fd != -1 && cmd_index == 0)
+	if (cmd_index > 0)
 	{
-		if (dup2(ms->heredoc_fd, STDIN_FILENO) == -1)
-		{
-			perror("dup2 heredoc failed");
-			exit(1);
-		}
-		close(ms->heredoc_fd);
-		ms->heredoc_fd = -1;
-	}
-	else if (cmd_index > 0)
 		dup2(ms->pipe_fds[cmd_index - 1][0], STDIN_FILENO);
+	}
 	if (cmd_index < pipe_count)
+	{
 		dup2(ms->pipe_fds[cmd_index][1], STDOUT_FILENO);
+	}
 	i = -1;
 	while (++i < pipe_count)
 	{
-		close(ms->pipe_fds[i][0]);
-		close(ms->pipe_fds[i][1]);
+		if (ms->pipe_fds[i][0] != -1)
+			close(ms->pipe_fds[i][0]);
+		if (ms->pipe_fds[i][1] != -1)
+			close(ms->pipe_fds[i][1]);
 	}
 }
 
@@ -82,6 +78,7 @@ int	ms_wait_children(t_ms *ms, int count)
 	pid_t	pid;
 
 	ms_get_set(SET, SHELL_CHILD_PROCESS);
+	ms_cleanup_heredoc(ms);
 	if (count <= 0)
 		return (0);
 	i = 0;

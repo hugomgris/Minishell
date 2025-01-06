@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/04 11:54:21 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/06 09:54:39 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,7 @@ int	ms_executor(t_ms *ms)
 		code = ms_wait_children(ms, ft_array_count(ms->exec_chunks));
 	ms_executor_cleanup(ms, env);
 	ms_free_pipes(ms->pipe_fds, ms->pipe_count);
+	ms_cleanup_heredoc(ms);
 	if (ms_get_set(GET, 0) != 3)
 		ms->exit_status = code;
 	else

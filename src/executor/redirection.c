@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 12:29:22 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/04 13:34:58 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,12 @@ int	ms_redirection(t_ms *ms)
 		if (ms_detect_redirector(ms->cmd_args[i])
 			&& ms_setup_redirects(ms->cmd_args, i++, fds, ms) == -1)
 			return (ms_close_redirect_fds(fds[0], fds[1], fds[2], -1), -1);
-	if (ms_manage_heredoc(ms, fds) == -1)
-		return (-1);
-	if (ms_redirect_fd(fds[0], STDIN_FILENO, ms, 1) == -1
-		|| ms_redirect_fd(fds[1], STDOUT_FILENO, ms, 2) == -1
+	if (!ms->pipe_count || (ms->pipe_count && fds[0] != -1))
+	{
+		if (ms_redirect_fd(fds[0], STDIN_FILENO, ms, 1) == -1)
+			return (-1);
+	}
+	if (ms_redirect_fd(fds[1], STDOUT_FILENO, ms, 2) == -1
 		|| ms_redirect_fd(fds[2], STDERR_FILENO, ms, 3) == -1)
 		return (-1);
 	return (ms_close_redirect_fds(fds[0], fds[1], fds[2], -1));

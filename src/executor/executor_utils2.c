@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 12:07:04 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/04 13:36:02 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,15 +66,24 @@ Steps:
 */
 int	ms_handle_child_process(t_ms *ms, char **env, int i)
 {
-	if (ms->heredoc_fd != -1 && dup2(ms->heredoc_fd, STDIN_FILENO) == -1)
-	{
-		ms_error_handler(ms, "Heredoc dup2 failed", 0);
-		exit(1);
-	}
 	ms_setup_child_pipes(ms, i, ms->pipe_count);
-	if (ms_has_redirection(ms) && !ms_has_heredoc(ms)
-		&& ms_redirection(ms) == -1)
-		exit(1);
+	if (i == 0 && ms->heredoc_fd != -1)
+	{
+		if (dup2(ms->heredoc_fd, STDIN_FILENO) == -1)
+		{
+			perror("heredoc dup2 failed");
+			ms_error_handler(ms, "Heredoc dup2 failed", 0);
+			exit(1);
+		}
+		close(ms->heredoc_fd);
+	}
+	else if (i > 0)
+		ms->heredoc_fd = -1;
+	if (ms_has_redirection(ms))
+	{
+		if (ms_redirection(ms) == -1)
+			exit(1);
+	}
 	if (ms_exec_command(ms, env) != 0)
 		exit(1);
 	exit(127);

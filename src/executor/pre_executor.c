@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pre_executor_bonus.c                               :+:      :+:    :+:   */
+/*   pre_executor.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 12:42:35 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/06 10:04:04 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,8 @@ void	ms_pre_executor(t_ms *ms)
 	{
 		count = ms_get_chain_count(ms, i);
 		ms->chain_tokens = ft_lstsub(ms->tokens, start, count);
-		status = ms_executor(ms);
+		ms_executor(ms);
+		status = ms->exit_status;
 		if (!status && !ft_strncmp(ms->tokens->content, "&&", 2))
 			start += (count + 1);
 		else if (status && !ft_strncmp(ms->tokens->content, "||", 2))
