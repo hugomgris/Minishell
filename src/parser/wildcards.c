@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 13:25:44 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 15:06:10 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@ int	ms_match_pattern(char *pattern, char *entry)
 {
 	int		len;
 
+	if (*entry == '.')
+		return (FALSE);
+	if (*pattern == '*' && pattern[1] == '\0')
+		return (TRUE);
 	while (*pattern == '*')
 		pattern++;
 	if (*pattern)
@@ -46,7 +50,7 @@ int	ms_process_dir_entry(t_ms *ms, char *pat, t_token *sub, struct dirent *ent)
 	return (flag);
 }
 
-void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken)
+void	ms_get_wildcards(t_ms *ms, t_token *wc, char *pat, t_token *sub)
 {
 	DIR				*dir;
 	struct dirent	*entry;
@@ -57,15 +61,15 @@ void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken)
 	entry = readdir(dir);
 	while (entry)
 	{
-		ms_process_dir_entry(ms, pattern, subtoken, entry);
+		ms_process_dir_entry(ms, pat, wc, entry);
 		entry = readdir(dir);
 	}
-	if (ms_toksize(subtoken) > 1)
+	if (ms_toksize(sub) > 1)
 	{
-		free(subtoken->content);
-		subtoken->content = ft_strdup("");
+		free(sub->content);
+		sub->content = ft_strdup("");
 	}
-	if (!subtoken->content)
+	if (!sub->content)
 		ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
 	closedir(dir);
 }
@@ -73,15 +77,19 @@ void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken)
 void	ms_expand_wildcards(t_ms *ms)
 {
 	t_token	*aux;
+	t_token	*wc;
 	char	*tmp;
 
 	aux = ms->tok;
+	wc = NULL;
 	while (aux)
 	{
 		if (aux->type == 0 && ft_strchr((char *)aux->content, '*'))
 		{
 			tmp = ft_strdup((char *)aux->content);
-			ms_get_wildcards(ms, tmp, aux);
+			ms_get_wildcards(ms, wc, tmp, aux);
+			ms_sort_wildcards();
+			ms_insert_wildcards();
 			free(tmp);
 		}
 		aux = aux->next;
