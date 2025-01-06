@@ -6,24 +6,11 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 16:25:37 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 13:14:00 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 13:26:45 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-int	ms_toksize(t_token *lst)
-{
-	int	i;
-
-	i = 0;
-	while (lst)
-	{
-		lst = lst->next;
-		i++;
-	}
-	return (i);
-}
 
 void	ms_expand_subtoken(t_ms *ms, t_token *lst)
 {

@@ -74,6 +74,7 @@ SRC 		:= 	main/minishell.c 				\
 				utils/garbage_collector.c		\
 				utils/token_utils1.c			\
 				utils/token_utils2.c			\
+				utils/token_utils3.c			\
 				executor/pre_executor.c
 
 SRCDIR		= src

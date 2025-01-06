@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 13:24:18 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 13:25:44 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,6 @@ int	ms_process_dir_entry(t_ms *ms, char *pat, t_token *sub, struct dirent *ent)
 		ms_tokinsert(&ms->tok, sub, new);
 	}
 	return (flag);
-}
-
-void	ms_wildcard_unmatched(t_ms *ms, char *pattern)
-{
-	char	*tmp;
-
-	tmp = ft_strjoin("no matches found: ", pattern);
-	gc_add(tmp, &ms->gc);
-	ms_error_handler(ms, tmp, 0);
 }
 
 void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken)
