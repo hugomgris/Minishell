@@ -6,53 +6,116 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 15:30:41 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/04 13:36:02 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-This file contains helper/Flow-control functions to build exec components:
-	-ms_env_to_aray
-	-ms_rebuild_env
-*/
-
 #include "../../includes/minishell.h"
 
-char	**ms_env_to_array(t_ms *ms, char **arr)
+/*
+Executes a single command in the Minishell.
+Steps:
+  1. Validates the cmd_args array for memory allocation.
+  2. Handles redirection if required:
+      - If redirection fails, exits for non-builtin commands.
+  3. Checks if the command is a builtin:
+      - Executes the builtin and handles rerouting if necessary.
+  4. For non-builtin commands:
+      - Delegates execution to ms_handle_system_cmd.
+      - Cleans up memory if system command handling fails.
+Returns:
+  - 1 on success or handled error.
+  - Exits the process on fatal errors during redirection or command execution.
+*/
+int	ms_exec_command(t_ms *ms, char **env)
 {
-	t_list	*current;
-	int		i;
-
-	(void)ms;
-	current = ms->ms_env;
-	i = 0;
-	while (current)
+	if (!ms->cmd_args)
+		return (ms_error_handler(ms, "Error: Mem alloc failed", 1), 1);
+	if (ms_has_redirection(ms))
 	{
-		if (ft_strchr(current->content, '='))
+		if (ms_redirection(ms) == -1)
 		{
-			arr[i] = ft_strdup((char *)current->content);
-			if (!arr[i])
-			{
-				ft_free(arr);
-				return (NULL);
-			}
-			i++;
+			if (ms_is_builtin(ms->filt_args[0]))
+				return (1);
+			exit(1);
 		}
-		current = current->next;
 	}
-	arr[i] = NULL;
-	return (arr);
+	if (ms_is_builtin(ms->cmd_args[0]))
+	{
+		if (ms_reroute_builtins(ms, env))
+			return (1);
+	}
+	else if (ms_handle_system_cmd(ms, env) == -1)
+	{
+		ft_free(ms->cmd_args);
+		ft_free(ms->filt_args);
+		return (1);
+	}
+	return (0);
 }
 
-char	**ms_rebuild_env(t_ms *ms)
+/*
+Handles the child process execution logic for a Minishell command.
+Received int i is the current exec chunk index in the exec pipeline.
+Steps:
+  1. If a heredoc is present, duplicates its file descriptor to STDIN_FILENO.
+  2. Sets up the appropriate pipes for the child process.
+  3. Handles redirection unless a heredoc is present.
+  4. Executes the command (builtin or system).
+  5. Exits the child process with a failure status if any error occurs.
+*/
+int	ms_handle_child_process(t_ms *ms, char **env, int i)
 {
-	char	**arr;
+	ms_setup_child_pipes(ms, i, ms->pipe_count);
+	if (i == 0 && ms->heredoc_fd != -1)
+	{
+		if (dup2(ms->heredoc_fd, STDIN_FILENO) == -1)
+		{
+			perror("heredoc dup2 failed");
+			ms_error_handler(ms, "Heredoc dup2 failed", 0);
+			exit(1);
+		}
+		close(ms->heredoc_fd);
+	}
+	else if (i > 0)
+		ms->heredoc_fd = -1;
+	if (ms_has_redirection(ms))
+	{
+		if (ms_redirection(ms) == -1)
+			exit(1);
+	}
+	if (ms_exec_command(ms, env) != 0)
+		exit(1);
+	exit(127);
+	return (0);
+}
 
-	arr = (char **)malloc(sizeof(char *) * (ft_lstsize(ms->ms_env) + 1));
-	if (!arr)
-		return (ms_error_handler(ms, "Error: Mem alloc failed", 1), NULL);
-	arr = ms_env_to_array(ms, arr);
-	if (!arr)
-		return (ms_error_handler(ms, "Failed to prepare environment", 0), NULL);
-	return (arr);
+/*
+Handles the parent process logic for Minishell.
+Steps:
+  1. Closes the heredoc file descriptor if it was used.
+  2. Resets the heredoc_fd in the Minishell state to indicate closure.
+*/
+int	ms_handle_parent_process(t_ms *ms)
+{
+	if (ms->heredoc_fd != -1)
+	{
+		close(ms->heredoc_fd);
+		ms->heredoc_fd = -1;
+	}
+	return (0);
+}
+
+/*
+Closes the appropriate pipe file descriptors after use.
+Steps:
+  1. Closes the read end of the previous pipe (if applicable).
+  2. Closes the write end of the current pipe.
+*/
+void	ms_close_used_pipes(int **pipe_fds, int i)
+{
+	if (i > 0)
+		close(pipe_fds[i - 1][0]);
+	if (pipe_fds[i])
+		close(pipe_fds[i][1]);
 }

@@ -6,19 +6,17 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/21 10:59:09 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:40:19 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-This file contains helper/Flow-control functions for piping closing and cleanup:
-	-ms_free_pipes
-	-ms_close_child_pipes
-	-ms_close_parent_pipes
-*/
-
 #include "../../includes/minishell.h"
 
+/*
+Frees the allocated memory for pipe file descriptors.
+It iterates through each pipe and frees the allocated memory for both ends,
+	and then frees the memory holding the array of pipe file descriptors.
+*/
 void	ms_free_pipes(int **pipe_fds, int pipe_count)
 {
 	int	i;
@@ -29,6 +27,11 @@ void	ms_free_pipes(int **pipe_fds, int pipe_count)
 	free(pipe_fds);
 }
 
+/*
+Closes all the pipe file descriptors for child processes.
+This is done after the pipes have been used for redirection
+	to prevent resource leakage.
+*/
 void	ms_close_child_pipes(int **pipe_fds, int pipe_count)
 {
 	int	j;
@@ -42,6 +45,11 @@ void	ms_close_child_pipes(int **pipe_fds, int pipe_count)
 	}
 }
 
+/*
+Closes all the pipe file descriptors for the parent process.
+After the pipes are no longer needed, this function ensures that
+	the pipe file descriptors are closed.
+*/
 void	ms_close_parent_pipes(int **pipe_fds, int pipe_count)
 {
 	int	i;

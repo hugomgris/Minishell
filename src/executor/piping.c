@@ -6,19 +6,17 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/21 10:59:54 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/06 09:54:50 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-This file contains helper/Flow-control functions for piping setup:
-	-ms_create_pipes
-	-ms_setup_child_pipes
-	-ms_wait_children
-*/
-
 #include "../../includes/minishell.h"
 
+/*
+Allocates memory for the pipes based on the number of pipes needed.
+Each pipe gets its own file descriptors.
+Memory is freed if allocation fails.
+*/
 void	ms_create_pipes(t_ms *ms, int ***pipe_fds, int pipe_count)
 {
 	int	i;
@@ -42,30 +40,62 @@ void	ms_create_pipes(t_ms *ms, int ***pipe_fds, int pipe_count)
 	}
 }
 
-void	ms_setup_child_pipes(int **pipe_fds, int cmd_index, int pipe_count)
+/*
+Sets up the file descriptors for pipes in a child process.
+Redirects the input and output to the appropriate pipes based on the cmd index.
+Closes all pipe file descriptors after setup.
+*/
+void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count)
 {
 	int	i;
 
 	if (cmd_index > 0)
-		dup2(pipe_fds[cmd_index - 1][0], STDIN_FILENO);
+	{
+		dup2(ms->pipe_fds[cmd_index - 1][0], STDIN_FILENO);
+	}
 	if (cmd_index < pipe_count)
-		dup2(pipe_fds[cmd_index][1], STDOUT_FILENO);
+	{
+		dup2(ms->pipe_fds[cmd_index][1], STDOUT_FILENO);
+	}
 	i = -1;
 	while (++i < pipe_count)
 	{
-		close(pipe_fds[i][0]);
-		close(pipe_fds[i][1]);
+		if (ms->pipe_fds[i][0] != -1)
+			close(ms->pipe_fds[i][0]);
+		if (ms->pipe_fds[i][1] != -1)
+			close(ms->pipe_fds[i][1]);
 	}
 }
 
-void	ms_wait_children(int count)
+/*
+Waits for all child processes to finish execution.
+Keeps track of the child processes and their exit statuses.
+*/
+int	ms_wait_children(t_ms *ms, int count)
 {
-	int	i;
+	int		i;
+	int		status;
+	pid_t	pid;
 
+	ms_get_set(SET, SHELL_CHILD_PROCESS);
+	ms_cleanup_heredoc(ms);
+	if (count <= 0)
+		return (0);
 	i = 0;
 	while (i < count)
 	{
-		wait(NULL);
+		pid = waitpid(-1, &status, 0);
+		if (pid == -1)
+		{
+			if (errno != ECHILD)
+				ms_error_handler(ms, "minishell: waitpid", 0);
+			break ;
+		}
+		if (WIFEXITED(status))
+			return (WEXITSTATUS(status));
+		else if (WIFSIGNALED(status))
+			return (128 + WTERMSIG(status));
 		i++;
 	}
+	return (0);
 }

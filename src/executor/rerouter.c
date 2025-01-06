@@ -6,40 +6,52 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 16:10:50 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:26:36 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-// Check if the command is a builtin
+/*
+Determines if the given command is a built-in.
+If the command matches any of the built-in names, the function returns 1. 
+Otherwise, it returns 0.
+*/
 int	ms_is_builtin(const char *cmd)
 {
-	return (ft_strncmp(cmd, "cd", 2) == 0
-		|| ft_strncmp(cmd, "echo", 4) == 0
-		|| ft_strncmp(cmd, "env", 3) == 0
-		|| ft_strncmp(cmd, "pwd", 3) == 0
-		|| ft_strncmp(cmd, "unset", 5) == 0
-		|| ft_strncmp(cmd, "exit", 4) == 0
-		|| ft_strncmp(cmd, "export", 6) == 0);
+	return ((!ft_strncmp(cmd, "cd", 2) && ft_strlen(cmd) == 2)
+		|| (!ft_strncmp(cmd, "echo", 4) && ft_strlen(cmd) == 4)
+		|| (!ft_strncmp(cmd, "env", 3) && ft_strlen(cmd) == 3)
+		|| (!ft_strncmp(cmd, "pwd", 3) && ft_strlen(cmd) == 3)
+		|| (!ft_strncmp(cmd, "unset", 5) && ft_strlen(cmd) == 5)
+		|| (!ft_strncmp(cmd, "exit", 4) && ft_strlen(cmd) == 4)
+		|| (!ft_strncmp(cmd, "export", 6) && ft_strlen(cmd) == 6));
 }
 
-// Reroute to the correct builtin function
+/*
+Routes the execution flow to the appropriate built-in command handler.
+The corresponding handler function is called and its return value is returned. 
+If the command is not a built-in, the function returns 0, indicating
+	the command should be handled elsewhere.
+*/
 int	ms_reroute_builtins(t_ms *ms, char **env)
 {
-	if (ft_strncmp(ms->filt_args[0], "cd", 2) == 0)
+	char	*arg;
+
+	arg = ms->filt_args[0];
+	if (!ft_strncmp(arg, "cd", 2) && ft_strlen(arg) == 2)
 		return (ms_cd(ms));
-	if (ft_strncmp(ms->filt_args[0], "echo", 4) == 0)
+	else if (!ft_strncmp(arg, "echo", 4) && ft_strlen(arg) == 4)
 		return (ms_echo(ms->filt_args));
-	else if (ft_strncmp(ms->filt_args[0], "env", 3) == 0)
+	else if (!ft_strncmp(arg, "env", 3) && ft_strlen(arg) == 3)
 		return (ms_env(ms));
-	if (ft_strncmp(ms->filt_args[0], "pwd", 3) == 0)
+	else if (!ft_strncmp(arg, "pwd", 3) && ft_strlen(arg) == 3)
 		return (ms_pwd(ms));
-	else if (ft_strncmp(ms->filt_args[0], "unset", 5) == 0)
+	else if (!ft_strncmp(arg, "unset", 5) && ft_strlen(arg) == 5)
 		return (ms_unset(ms));
-	else if (ft_strncmp(ms->filt_args[0], "exit", 4) == 0)
+	else if (!ft_strncmp(arg, "exit", 4) && ft_strlen(arg) == 4)
 		return (ms_exit(ms));
-	else if (ft_strncmp(ms->filt_args[0], "export", 6) == 0)
+	else if (!ft_strncmp(arg, "export", 6) && ft_strlen(arg) == 6)
 		return (ms_export(ms, ms->filt_args, env));
 	return (0);
 }

@@ -1,30 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export_utils2.c                                    :+:      :+:    :+:   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/10 17:59:38 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 11:24:22 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/09/16 09:13:41 by hmunoz-g          #+#    #+#             */
+/*   Updated: 2024/12/30 16:18:21 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "libft.h"
 
-/*
-Helper function that cheks if ms_env has an entry with argument key.
-*/
-int	ms_key_exists(t_ms *ms, char *key)
+char	*ft_strndup(const char *s, size_t n)
 {
-	t_list	*current;
+	char	*dup;
+	size_t	len;
+	size_t	copy_len;
 
-	current = ms->ms_env;
-	while (current)
-	{
-		if (!ft_strncmp(current->content, key, ft_strlen(key)))
-			return (1);
-		current = current->next;
-	}
-	return (0);
+	len = ft_strlen(s);
+	if (n < len)
+		copy_len = n;
+	else
+		copy_len = len;
+	dup = (char *)malloc(copy_len + 1);
+	if (!dup)
+		return (NULL);
+	strncpy(dup, s, copy_len);
+	dup[copy_len] = '\0';
+	return (dup);
 }

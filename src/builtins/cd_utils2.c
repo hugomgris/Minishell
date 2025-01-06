@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 14:30:06 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 16:29:08 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 11:15:54 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ char	*ms_normalize_path(t_ms *ms, char *path)
 /*
 Special case handling function.
 It is called from ms_cd_parent if direct parent is unreachable.
-Searches for closest available parent directory and attempts to move there.
+Searches for closest available parent directory and attempts to chdir().
 */
 int	ms_cd_ascend(t_ms *ms)
 {
@@ -117,7 +117,7 @@ int	ms_cd_ascend(t_ms *ms)
 	if (!ft_strncmp(cwd, "?", 1))
 	{
 		ms_error_handler(ms, \
-			"cd: cannot find current nor parent directory: Moving to root", 0);
+			"cd: Cannot find closest parent directory: Moving to root", 0);
 		cwd = ft_strdup("/");
 		gc_add(cwd, &ms->gc);
 	}
@@ -128,7 +128,6 @@ int	ms_cd_ascend(t_ms *ms)
 		cwd = ft_strchr(cwd, '~');
 		cwd = ms_expand_tilde(ms, cwd);
 	}
-	gc_add(cwd, &ms->gc);
 	while (chdir(cwd) == -1)
 	{
 		cwd = ft_substr(cwd, 0, ft_strrchr(cwd, '/') - cwd);
