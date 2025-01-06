@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 15:03:47 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 18:11:16 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ typedef struct s_ms
 	t_list	*ms_env;
 	t_list	*gc;
 	t_token	*tok;
+	t_token	*wc;
 	t_list	*tokens;
 	t_list	*chain_tokens;
 	t_list	*filtered_tokens;
@@ -127,6 +128,7 @@ void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote);
 void	ms_expand_subtoken(t_ms *ms, t_token *lst);
 char	*ms_merge_subtoken(t_ms *ms, t_token *subtok);
 void	ms_tokinsert(t_token **lst, t_token *current, t_token *new);
+void	ms_tokinsert_list(t_token **lst, t_token *current, t_token *new);
 void	ms_remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *));
 
@@ -147,7 +149,7 @@ void	ms_sort_toks(t_token *toks);
 
 //WILDCARDS
 void	ms_expand_wildcards(t_ms *ms);
-void	ms_get_wildcards(t_ms *ms, t_token *wc, char *pat, t_token *sub);
+void	ms_get_wildcards(t_ms *ms, char *pat, t_token *sub);
 int		ms_match_count(char *pattern);
 int		ms_match_pattern(char *pattern, char *entry);
 void	ms_wildcard_unmatched(t_ms *ms, char *pattern);

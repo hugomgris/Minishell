@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 13:06:53 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 15:16:31 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 17:07:11 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,9 @@ int	ms_compare_wildcards(t_token *first, t_token *second)
 	return (ft_strcmp(first->content, second->content));
 }
 
+/*
 void	ms_sort_wildcards(t_token *wc, int ms_compare_wildcards())
 {
-	;
+	return ;
 }
+*/

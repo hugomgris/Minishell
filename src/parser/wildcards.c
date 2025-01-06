@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 15:06:10 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 17:53:25 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,12 @@ int	ms_process_dir_entry(t_ms *ms, char *pat, t_token *sub, struct dirent *ent)
 		new = ms_new_token(tmp, T_ATOM);
 		if (!new || !tmp)
 			ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
-		ms_tokinsert(&ms->tok, sub, new);
+		ms_tokinsert(&ms->wc, sub, new);
 	}
 	return (flag);
 }
 
-void	ms_get_wildcards(t_ms *ms, t_token *wc, char *pat, t_token *sub)
+void	ms_get_wildcards(t_ms *ms, char *pat, t_token *sub)
 {
 	DIR				*dir;
 	struct dirent	*entry;
@@ -61,7 +61,7 @@ void	ms_get_wildcards(t_ms *ms, t_token *wc, char *pat, t_token *sub)
 	entry = readdir(dir);
 	while (entry)
 	{
-		ms_process_dir_entry(ms, pat, wc, entry);
+		ms_process_dir_entry(ms, pat, sub, entry);
 		entry = readdir(dir);
 	}
 	if (ms_toksize(sub) > 1)
@@ -77,19 +77,15 @@ void	ms_get_wildcards(t_ms *ms, t_token *wc, char *pat, t_token *sub)
 void	ms_expand_wildcards(t_ms *ms)
 {
 	t_token	*aux;
-	t_token	*wc;
 	char	*tmp;
 
 	aux = ms->tok;
-	wc = NULL;
 	while (aux)
 	{
 		if (aux->type == 0 && ft_strchr((char *)aux->content, '*'))
 		{
 			tmp = ft_strdup((char *)aux->content);
-			ms_get_wildcards(ms, wc, tmp, aux);
-			ms_sort_wildcards();
-			ms_insert_wildcards();
+			ms_get_wildcards(ms, tmp, aux);
 			free(tmp);
 		}
 		aux = aux->next;

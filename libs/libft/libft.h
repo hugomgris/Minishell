@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 12:45:35 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 11:23:09 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/06 17:05:04 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,5 +117,6 @@ int		ft_isdigit_str(char *str);
 t_list	*ft_lstsub(t_list *lst, int start, int count);
 char	*ft_strndup(const char *s, size_t n);
 size_t	ft_min_strlen(const char *s1, const char *s2);
+int		ft_strcmp(char *s1, char *s2);
 
 #endif
