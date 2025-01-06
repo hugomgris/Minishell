@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 12:52:32 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 13:24:18 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,7 @@ void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken)
 		ms_process_dir_entry(ms, pattern, subtoken, entry);
 		entry = readdir(dir);
 	}
-	if (!ms_toksize(subtoken))
-		ms_wildcard_unmatched(ms, pattern);
-	else
+	if (ms_toksize(subtoken) > 1)
 	{
 		free(subtoken->content);
 		subtoken->content = ft_strdup("");
@@ -79,25 +77,6 @@ void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken)
 	if (!subtoken->content)
 		ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
 	closedir(dir);
-}
-
-int	ms_match_count(char *pattern)
-{
-	DIR				*dir;
-	int				match_count;
-	struct dirent	*entry;
-
-	match_count = 0;
-	dir = opendir(".");
-	entry = readdir(dir);
-	while (entry)
-	{
-		if (ms_match_pattern(pattern, entry->d_name))
-			match_count++;
-		entry = readdir(dir);
-	}
-	closedir(dir);
-	return (match_count);
 }
 
 void	ms_expand_wildcards(t_ms *ms)

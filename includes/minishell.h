@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 12:52:53 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 13:09:51 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,7 @@ void	ms_sort_toks(t_token *toks);
 void	ms_expand_wildcards(t_ms *ms);
 void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken);
 int		ms_match_count(char *pattern);
+int		ms_match_pattern(char *pattern, char *entry);
 void	ms_wildcard_unmatched(t_ms *ms, char *pattern);
 int		ms_process_dir_entry(t_ms *ms, char *pat, \
 t_token *sub, struct dirent *ent);

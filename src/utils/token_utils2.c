@@ -6,11 +6,24 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 16:25:37 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 13:04:16 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 13:14:00 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+int	ms_toksize(t_token *lst)
+{
+	int	i;
+
+	i = 0;
+	while (lst)
+	{
+		lst = lst->next;
+		i++;
+	}
+	return (i);
+}
 
 void	ms_expand_subtoken(t_ms *ms, t_token *lst)
 {
@@ -80,10 +93,6 @@ void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote)
 	*tmp += i;
 }
 
-/*
-!Hugo: I commented the gc_add because it was causing a double free if the input was just "echo $"
-!Without that gc_add I haven't found any leaks so I guess it was unnecessary. I'll keep checking
-*/
 void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok)
 {
 	t_token	*new;

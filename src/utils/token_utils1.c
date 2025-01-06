@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 16:25:37 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 12:37:36 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 13:11:57 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,6 @@ void	ms_tokinsert(t_token **lst, t_token *current, t_token *new)
 	}
 	new->next = current->next;
 	current->next = new;
-}
-
-/*
-	Same as ms_print_list, but for tokens.
-*/
-void	ms_print_toks(t_token *list)
-{
-	while (list)
-	{
-		ft_printf("%s, %i\n", (char *)list->content, list->type);
-		list = list->next;
-	}
 }
 
 void	ms_tokclear(t_token **lst, void (*del)(void *))
@@ -66,21 +54,6 @@ t_token	*ms_toklast(t_token *lst)
 	while (lst->next)
 		lst = lst->next;
 	return (lst);
-}
-
-int	ms_toksize(t_token *lst)
-{
-	int	i;
-
-	i = 0;
-	if (!lst)
-		return (i);
-	while (lst->next)
-	{
-		i++;
-		lst = lst->next;
-	}
-	return (i);
 }
 
 void	ms_tokadd_back(t_token **lst, t_token *new)
