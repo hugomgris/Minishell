@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 09:53:43 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 10:35:11 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	ms_process_dir_entry(t_ms *ms, char *pat, t_token *sub, struct dirent *ent)
 		tmp = ft_strdup(ent->d_name);
 		new = ms_new_token(tmp, T_ATOM);
 		if (!new || !tmp)
-			ms_exit_handler(ms, "Malloc failed creating a wildcard\n", 1);
+			ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
 		ms_tokinsert(&ms->tok, sub, new);
 	}
 	return (flag);
@@ -67,6 +67,8 @@ void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken)
 			ft_strjoin("no matches found: ", pattern), 0);
 	else
 		subtoken->content = ft_strdup("");
+	if (!subtoken->content)
+		ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
 	closedir(dir);
 }
 
