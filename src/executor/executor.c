@@ -3,18 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 13:11:31 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 09:54:39 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Handles execution of system commands.
+Checks whether the command is provided as an absolute/relative path
+	or needs to be searched in the PATH.
+If the command is not found or fails execution, outputs an appropriate error.
+Frees allocated argument arrays upon failure or success.
+Returns:
+  - 1 on error (e.g., command not found).
+  - -1 if execve fails.
+*/
 int	ms_handle_system_cmd(t_ms *ms, char **env)
 {
-	if (ms->cmd_args[0][0] == '/' || ms->cmd_args[0][0] == '.')
+	if (ms->input[0] != '$' && (ms->cmd_args[0][0] == '/'
+		|| ms->cmd_args[0][0] == '.'))
 	{
 		if (ms_exec_direct_path(ms, ms->filt_args, env))
 		{
@@ -26,87 +37,129 @@ int	ms_handle_system_cmd(t_ms *ms, char **env)
 	else if (ms_search_in_path(ms, ms->filt_args, env))
 	{
 		free(ms->filt_args);
-		ft_free(ms->cmd_args);
+		free(ms->cmd_args);
 		return (ms_error_handler(ms, "Error: Command not found", 0), 1);
 	}
 	ms_error_handler(ms, "Error: execve failed", 0);
-	ft_free(ms->filt_args);
-	ft_free(ms->cmd_args);
+	free(ms->filt_args);
+	free(ms->cmd_args);
 	return (-1);
 }
 
-// Main execution function
-int	ms_exec_command(t_ms *ms, char **env)
+/*
+Handles the execution of built-in commands.
+Saves the current state of standard FDs before applying redirections.
+Executes the built-in command with its arguments.
+Restores standard file descriptors after execution.
+Performs cleanup for any heredoc state set during execution.
+*/
+int	ms_handle_builtin(t_ms *ms, char **env, int saved_fds[3])
 {
-	if (!ms->cmd_args)
-	{
-		ms_error_handler(ms, "Error: Mem alloc failed", 1);
-		return (1);
-	}
+	int	code;
+
+	ms_save_std_fds(saved_fds);
 	if (ms_has_redirection(ms))
-	{
-		if (ms_redirection(ms) == -1)
-		{
-			free(ms->cmd_args);
-			return (1);
-		}
-	}
-	if (ms_is_builtin(ms->cmd_args[0]))
-	{
-		if (ms_reroute_builtins(ms, env))
-		{
-			free(ms->cmd_args);
-			free(ms->filt_args);
-			return (1);
-		}
-	}
-	else if (ms_handle_system_cmd(ms, env) == -1)
-	{
-		ft_free(ms->cmd_args);
-		ft_free(ms->filt_args);
-		return (1);
-	}
-	return (1);
+		ms_redirection(ms);
+	code = ms_exec_command(ms, env);
+	ms_restore_std_fds(saved_fds);
+	ms_cleanup_heredoc(ms);
+	return (code);
 }
 
 /*
-Executor hub.
-TODO: handle builtins and system correctly and separatedly
+Processes individual commands within a pipeline or as standalone.
+Handles heredoc input setup if required.
+Checks for built-in cmds (executed directly) or forks to execute other cmds.
+Manages child and parent process behavior during forking:
+  - Child: Executes the command.
+  - Parent: Waits or manages pipes.
 */
-void	ms_executor(t_ms *ms)
+int	ms_process_command(t_ms *ms, char **env, int i)
+{
+	pid_t	pid;
+	int		saved_fds[3];
+
+	if (ms_has_heredoc(ms) && ms_handle_heredoc_setup(ms) == -1)
+	{
+		if (ms_get_set(GET, 0) == 2)
+			ms_error_handler(ms, "Error: Failed to redir input", 0);
+		return (1);
+	}
+	if (ms->filt_args[0] && ms_is_builtin(ms->filt_args[0]) && !ms->pipe_count)
+		return (ms_handle_builtin(ms, env, saved_fds));
+	if (!ft_array_count(ms->filt_args))
+		return (0);
+	pid = fork();
+	if (pid == 0)
+	{
+		ms_handle_child_process(ms, env, i);
+		exit(0);
+	}
+	else if (pid > 0)
+		return (ms_wait_children(ms, 1));
+	else
+		return (ms_error_handler(ms, "minishell: fork failed", 0), 1);
+}
+
+/*
+Executes a single chunk of commands parsed from input.
+Parses arguments and applies filtering to handle special tokens.
+Delegates execution to ms_process_command.
+Cleans up parsed arguments and filtered states after execution.
+*/
+int	ms_execute_chunk(t_ms *ms, char **env, int i)
+{
+	int	arg_count;
+	int	code;
+
+	ms->cmd_args = ms_parse_args(ms->exec_chunks[i], &arg_count);
+	ms_filter_args(ms);
+	if (ft_array_count(ms->filt_args) == 0)
+	{
+		if (ms_detect_redirector(ms->cmd_args[0]))
+			ms_error_handler(ms, "redirection: command needed", 0);
+		ft_free(ms->filt_args);
+		free(ms->cmd_args);
+		return (0);
+	}
+	code = ms_process_command(ms, env, i);
+	ms_cleanup_args(ms);
+	return (code);
+}
+
+/*
+Manages the overall execution flow of the Minishell.
+Initializes the environment and prepares execution chunks.
+Iterates through each execution chunk, managing pipes and redirections.
+Waits for all child processes to finish execution.
+Performs cleanup for pipes, environment, and other resources after execution.
+Returns 0 on successful execution.
+*/
+int	ms_executor(t_ms *ms)
 {
 	char	**env;
-	pid_t	pid;
 	int		i;
-	int		arg_count;
+	int		code;
 
-	ms->exec_chunks = ms_extract_chunks(ms, &ms->tokens);
-	env = ms_rebuild_env(ms);
-	ms->pipe_count = ft_array_count(ms->exec_chunks) - 1;
-	ms_create_pipes(ms, &ms->pipe_fds, ms->pipe_count);
+	if (!ft_lstsize(ms->tokens))
+		return (1);
+	ms_initialize_execution(ms, &env);
 	i = -1;
 	while (++i < ft_array_count(ms->exec_chunks))
 	{
-		ms->cmd_args = ms_parse_args(ms->exec_chunks[i], &arg_count);
-		ms_filter_args(ms);
-		if (ms_is_builtin(ms->filt_args[0]))
-			ms_exec_command(ms, env);
-		else
-		{
-			pid = fork();
-			if (pid == 0)
-			{
-				ms_setup_child_pipes(ms->pipe_fds, i, ms->pipe_count);
-				ms_close_child_pipes(ms->pipe_fds, ms->pipe_count);
-				ms_exec_command(ms, env);
-				exit(EXIT_FAILURE);
-			}
-		}
-		free(ms->filt_args);
-		free(ms->cmd_args);
+		code = ms_execute_chunk(ms, env, i);
+		if (i < ft_array_count(ms->exec_chunks) - 1)
+			ms_close_used_pipes(ms->pipe_fds, i);
 	}
 	ms_close_parent_pipes(ms->pipe_fds, ms->pipe_count);
-	ms_wait_children(ft_array_count(ms->exec_chunks));
+	if (ft_array_count(ms->exec_chunks) > 1)
+		code = ms_wait_children(ms, ft_array_count(ms->exec_chunks));
 	ms_executor_cleanup(ms, env);
 	ms_free_pipes(ms->pipe_fds, ms->pipe_count);
+	ms_cleanup_heredoc(ms);
+	if (ms_get_set(GET, 0) != 3)
+		ms->exit_status = code;
+	else
+		ms->exit_status = 130;
+	return (code);
 }

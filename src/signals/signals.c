@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 15:54:58 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/03 10:29:28 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,28 +27,29 @@ States:
 */
 int	ms_get_set(int action, int val)
 {
-	if (action == 1)
+	if (action == SET)
 		g_var = val;
 	return (g_var);
 }
 
 /*
 SIGINT handler.
-Reprints the prompt in a new line, interrumpting a process.
+Interrupts a process and returns control to user.
+(prints minishell prompt and waits for new user input).
 */
 void	ms_sigint_handler(void)
 {
 	int	state;
 
-	state = ms_get_set(0, 0);
-	if (state == 1)
+	state = ms_get_set(GET, 0);
+	if (state == SHELL_CHILD_PROCESS)
 	{
 		ft_putstr_fd("\n", STDERR_FILENO);
 		return ;
 	}
-	else if (state == 2)
+	else if (state == SHELL_HEREDOC)
 	{
-		ms_get_set(1, 3);
+		ms_get_set(SET, SHELL_HEREDOC_INTERRUPTED);
 		ft_putstr_fd("\n", STDERR_FILENO);
 		close(STDIN_FILENO);
 		rl_replace_line("", 0);
@@ -57,22 +58,11 @@ void	ms_sigint_handler(void)
 		rl_on_new_line();
 		return ;
 	}
-	ms_get_set(1, 0);
+	ms_get_set(SET, SHELL_NORMAL);
 	ft_putstr_fd("\n", STDERR_FILENO);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
-}
-
-/*
-SIGTSTP handler.
-TODO: when jobs and processes are implemented, come back to build this.
-*/
-void	ms_sigtstp_handler(void)
-{
-	write(STDOUT_FILENO, "\nProcess suspended. Type 'fg' to resume.\n", 41);
-	signal(SIGTSTP, SIG_DFL);
-	kill(getpid(), SIGTSTP);
 }
 
 /*
@@ -83,6 +73,4 @@ void	ms_signal_handler(int signal)
 {
 	if (signal == SIGINT)
 		ms_sigint_handler();
-	else if (signal == SIGTSTP)
-		ms_sigtstp_handler();
 }

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/23 16:30:57 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/02 19:11:05 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 Makes cd able to handle symlinks.
 All cding with normalized paths go through here to check if symlink.
 If argument is a non-working symlink, outputs error.
-Else, calls change director function.
+Else, calls change directory function.
 */
 int	ms_cd_symlink(t_ms *ms, char *path)
 {
@@ -38,16 +38,16 @@ int	ms_cd_symlink(t_ms *ms, char *path)
 		}
 	}
 	else
-		if (ms_change_directory(ms, path) == -1)
+	{
+		if (ms_change_directory(ms, path))
 			return (1);
+	}
 	return (0);
 }
 
 /*
-Handles cding to home dir.
-Just in case, if there is no HOME ref in ms struct, outputs error.
-(This is an extreme edge case that happens if minishell is launched
-	with unset env from a non-existing dir)
+Handles cding to home dir (~ or !path).
+If there is no HOME ref in ms struct, outputs error.
 */
 int	ms_cd_home(t_ms *ms)
 {

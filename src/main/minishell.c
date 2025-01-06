@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 15:57:27 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/03 09:25:31 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,19 @@
 	Check for possible limitation of FDs: what happens if minishell is limited
 	to using only 2 fds? 1? 0?
 */
+
+/*
+Helper function to set custom colors for colored cmd calls.
+When a command is called with "--color=auto", enhances output.
+Uses minishell specific pallette (cyan, orange, red).
+*/
+void	ms_set_custom_colors(t_ms *ms)
+{
+	ms_set_env_variable(ms, "LS_COLORS", \
+		"di=1;36:fi=0:ex=1;38;5;214:" \
+		"ln=35:so=0:pi=0:bd=0:cd=0:" \
+		"or=0:mi=0:su=0:sg=0");
+}
 
 void	ms_set_shlvl(t_ms *ms)
 {
@@ -50,11 +63,14 @@ void	ms_init(t_ms *ms, char **env)
 	ms->redir_tokens = NULL;
 	ms->filtered_tokens = NULL;
 	ms->exit_status = 0;
-	ms->heredoc = 0;
+	ms->heredoc_fd = -1;
 	ms->ms_env = ms_copy_env(ms, env);
 	ms->home = ms_make_home_ref(ms, env);
 	ms->user = ms_get_prompt_user(ms);
 	ms_set_shlvl(ms);
+	ms_set_custom_colors(ms);
+	signal(SIGTSTP, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	read_history(0);
 }
 
@@ -67,7 +83,6 @@ Launches the minishell loop.
 int	main(int argc, char **argv, char *env[])
 {
 	struct sigaction	action;
-	struct sigaction	quit_action;
 	t_ms				ms;
 
 	(void)argc;
@@ -77,10 +92,5 @@ int	main(int argc, char **argv, char *env[])
 	action.sa_handler = ms_signal_handler;
 	if (sigaction(SIGINT, &action, NULL) == -1)
 		ms_error_handler(&ms, "SIGINT sigaction error", 0);
-	if (sigaction(SIGTSTP, &action, NULL) == -1)
-		ms_error_handler(&ms, "SIGTSTP sigaction error", 0);
-	quit_action.sa_handler = SIG_IGN;
-	if (sigaction(SIGQUIT, &quit_action, NULL) == -1)
-		ms_error_handler(&ms, "SIGQUIT sigaction error", 0);
 	ms_main_loop(&ms);
 }

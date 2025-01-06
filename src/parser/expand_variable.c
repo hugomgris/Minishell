@@ -118,7 +118,7 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	key = ms_get_key(ms, str + start + 1);
 	if (*key == '?')
 	{
-		status = ft_itoa(ms_get_set(0, 0));
+		status = ft_itoa(ms->exit_status);
 		gc_add(status, &ms->gc);
 		return (ms_replace_exit_status(ms, str, status));
 	}
@@ -149,6 +149,7 @@ void	ms_expand_variable(t_ms *ms)
 			ms_expand_subtoken(ms, subtok);
 			gc_add(aux->content, &ms->gc);
 			aux->content = ms_merge_subtoken(ms, subtok);
+			ms_tokclear(&subtok, free);
 		}
 		aux = aux->next;
 	}

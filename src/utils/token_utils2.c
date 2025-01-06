@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 16:25:37 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/23 15:53:36 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/24 11:13:48 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,14 @@ void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote)
 	new = ms_new_token(str, T_ATOM);
 	if (!new)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
-	gc_add(new, &ms->gc);
 	ms_tokadd_back(subtok, new);
 	*tmp += i;
 }
 
+/*
+!Hugo: I commented the gc_add because it was causing a double free if the input was just "echo $"
+!Without that gc_add I haven't found any leaks so I guess it was unnecessary. I'll keep checking
+*/
 void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok)
 {
 	t_token	*new;
@@ -98,14 +101,14 @@ void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok)
 	str = ft_substr(*tmp, 0, i);
 	if (!str)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
-	gc_add(str, &ms->gc);
+	//gc_add(str, &ms->gc);
 	new = ms_new_token(str, T_ATOM);
 	if (!new)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
-	gc_add(new, &ms->gc);
 	ms_tokadd_back(subtok, new);
 	*tmp += i;
 }
+
 
 void	ms_process_token_content(t_ms *ms, char *tmp, t_token **subtok)
 {

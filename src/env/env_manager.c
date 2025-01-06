@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_manager.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 11:59:11 by nponchon         ###   ########.fr       */
+/*   Updated: 2024/12/30 16:16:19 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,19 +101,26 @@ List is stored in the ms_env t_list inside the ms minishell struct.
 t_list	*ms_copy_env(t_ms *ms, char **env)
 {
 	int		i;
-	char	**key_value;
+	char	*key;
+	char	*value;
 
 	if (!env || !*env)
 		return (NULL);
 	i = 0;
 	while (env[i])
 	{
-		key_value = ft_split(env[i], '=');
-		if (key_value)
+		key = ft_strndup(env[i], ft_strchr(env[i], '=') - env[i]);
+		if (!key)
+			return (NULL);
+		value = ft_strdup(ft_strchr(env[i], '=') + 1);
+		if (!value)
 		{
-			ms_add_env_variable(ms, key_value[0], key_value[1]);
-			ft_free(key_value);
+			free(key);
+			return (NULL);
 		}
+		ms_add_env_variable(ms, key, value);
+		free(key);
+		free(value);
 		i++;
 	}
 	return (ms->ms_env);
