@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checker.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/17 15:32:25 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 10:04:30 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ int	ms_check_empty_pipe(t_ms *ms, char *str)
 		str++;
 	if (*str == '|')
 	{
-		ms_error_handler(ms, "Wrong pipe: empty pipe \"|\"", 0);
+		ms_error_handler(ms, "syntax error near unexpected token \"|\"", 0);
 		return (TRUE);
 	}
 	else if (*str == '\0')
 	{
-		ms_error_handler(ms, "Wrong pipe: no command after \"|\"", 0);
+		ms_error_handler(ms, "syntax error near unexpected token \"|\"", 0);
 		return (TRUE);
 	}
 	else
@@ -68,12 +68,14 @@ int	ms_checkpipes(t_ms *ms, char *str)
 		;
 	if (str[i] == '|')
 	{
-		ms_error_handler(ms, "Wrong pipe: no command before \"|\"", 0);
+		ms_error_handler(ms, "syntax error near unexpected token \"|\"", 0);
 		return (FALSE);
 	}
 	while (str[i++])
 	{
-		if (str[i] == '|')
+		if (str[i] == '|' && str[i + 1] == '|')
+			i++;
+		else if (str[i] == '|')
 		{
 			if (ms_check_empty_pipe(ms, str + i))
 				return (FALSE);
