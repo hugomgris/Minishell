@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 16:25:37 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/31 11:43:43 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/06 12:37:36 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,21 @@ t_token	*ms_toklast(t_token *lst)
 	while (lst->next)
 		lst = lst->next;
 	return (lst);
+}
+
+int	ms_toksize(t_token *lst)
+{
+	int	i;
+
+	i = 0;
+	if (!lst)
+		return (i);
+	while (lst->next)
+	{
+		i++;
+		lst = lst->next;
+	}
+	return (i);
 }
 
 void	ms_tokadd_back(t_token **lst, t_token *new)

@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 10:35:11 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 12:52:32 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,27 +46,36 @@ int	ms_process_dir_entry(t_ms *ms, char *pat, t_token *sub, struct dirent *ent)
 	return (flag);
 }
 
+void	ms_wildcard_unmatched(t_ms *ms, char *pattern)
+{
+	char	*tmp;
+
+	tmp = ft_strjoin("no matches found: ", pattern);
+	gc_add(tmp, &ms->gc);
+	ms_error_handler(ms, tmp, 0);
+}
+
 void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken)
 {
 	DIR				*dir;
 	struct dirent	*entry;
-	int				flag;
 
-	flag = 0;
 	dir = opendir(".");
 	if (!dir)
 		ms_exit_handler(ms, "Error opening a DIR", 1);
 	entry = readdir(dir);
 	while (entry)
 	{
-		flag = ms_process_dir_entry(ms, pattern, subtoken, entry);
+		ms_process_dir_entry(ms, pattern, subtoken, entry);
 		entry = readdir(dir);
 	}
-	if (!flag)
-		ms_error_handler(ms, \
-			ft_strjoin("no matches found: ", pattern), 0);
+	if (!ms_toksize(subtoken))
+		ms_wildcard_unmatched(ms, pattern);
 	else
+	{
+		free(subtoken->content);
 		subtoken->content = ft_strdup("");
+	}
 	if (!subtoken->content)
 		ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
 	closedir(dir);
@@ -103,7 +112,7 @@ void	ms_expand_wildcards(t_ms *ms)
 		{
 			tmp = ft_strdup((char *)aux->content);
 			ms_get_wildcards(ms, tmp, aux);
-			gc_add(aux->content, &ms->gc);
+			free(tmp);
 		}
 		aux = aux->next;
 	}

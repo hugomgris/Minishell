@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 09:28:39 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 12:52:53 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ t_token	*ms_new_token(void *content, t_token_type type);
 t_token	*ms_toklast(t_token *lst);
 void	ms_tokadd_back(t_token **lst, t_token *new);
 void	ms_tokclear(t_token **lst, void (*del)(void *));
+int		ms_toksize(t_token *lst);
 void	ms_process_token_content(t_ms *ms, char *tmp, t_token **subtok);
 void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok);
 void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote);
@@ -148,6 +149,7 @@ void	ms_sort_toks(t_token *toks);
 void	ms_expand_wildcards(t_ms *ms);
 void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken);
 int		ms_match_count(char *pattern);
+void	ms_wildcard_unmatched(t_ms *ms, char *pattern);
 int		ms_process_dir_entry(t_ms *ms, char *pat, \
 t_token *sub, struct dirent *ent);
 
