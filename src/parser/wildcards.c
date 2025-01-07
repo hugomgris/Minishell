@@ -6,13 +6,13 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/07 15:43:41 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/07 16:51:13 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	ms_match_pattern(char *pattern, char *entry, int m, int n)
+int	ms_match_pattern(char *pattern, char *entry, int p, int s)
 {
 	int	i;
 	int	j;
@@ -23,16 +23,16 @@ int	ms_match_pattern(char *pattern, char *entry, int m, int n)
 	j = 0;
 	start = -1;
 	match = 0;
-	if (*entry == '.')
+	if (entry[0] == '.')
 		return (FALSE);
-	while (i < n)
+	while (i < s)
 	{
-		if (j < m && pattern[j] == entry[i])
+		if (j < p && pattern[j] == entry[i])
 		{
 			i++;
 			j++;
 		}
-		if (j < m && pattern[j] == '*')
+		else if (j < p && pattern[j] == '*')
 		{
 			start = j;
 			match = i;
@@ -47,11 +47,9 @@ int	ms_match_pattern(char *pattern, char *entry, int m, int n)
 		else
 			return (FALSE);
 	}
-	while (j < m && pattern[j] == '*')
+	while (j < p && pattern[j] == '*')
 		j++;
-	if (j == m)
-		return (TRUE);
-	return (FALSE);
+	return (j == p);
 }
 
 int	ms_process_dir_entry(t_ms *ms, char *pat, struct dirent *ent)
@@ -110,7 +108,7 @@ void	ms_get_wildcards(t_ms *ms, char *pat, t_token *sub)
 	entry = readdir(dir);
 	while (entry)
 	{
-		ms_process_dir_entry(ms, pat, sub, entry);
+		ms_process_dir_entry(ms, pat, entry);
 		entry = readdir(dir);
 	}
 	if (ms_toksize(ms->wc))
