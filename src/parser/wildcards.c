@@ -6,40 +6,68 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/07 14:36:34 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/07 15:35:11 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	ms_match_pattern(char *pattern, char *entry)
+int	ms_match_pattern(char *pattern, char *entry, int m, int n)
 {
-	int		len;
+	int	i;
+	int	j;
+	int	start;
+	int	match;
 
+	i = 0;
+	j = 0;
+	start = -1;
+	match = 0;
 	if (*entry == '.')
 		return (FALSE);
-	if (*pattern == '*' && pattern[1] == '\0')
-		return (TRUE);
-	while (*pattern == '*')
-		pattern++;
-	if (*pattern)
+	while (i < n)
 	{
-		len = ft_strlen(entry);
-		if (ft_strnstr(entry, pattern, len))
-			return (TRUE);
+		if (j < m && pattern[j] == entry[i])
+		{
+			i++;
+			j++;
+		}
+		if (j < m && pattern[j] == '*')
+		{
+			start = j;
+			match = i;
+			j++;
+		}
+		else if (start != -1)
+		{
+			j = start + 1;
+			match++;
+			i = match;
+		}
+		else
+			return (FALSE);
 	}
+	while (j < m && pattern[j] == '*')
+		j++;
+	if (j == m)
+		return (TRUE);
 	return (FALSE);
 }
 
 int	ms_process_dir_entry(t_ms *ms, char *pat, t_token *sub, struct dirent *ent)
 {
 	int		flag;
+	int		len_pat;
+	int		len_str;
 	char	*tmp;
 	t_token	*new;
 
 	(void)sub;
+	//! DELETE void cast if unnecessary
 	flag = 0;
-	if (ms_match_pattern(pat, ent->d_name))
+	len_str = ft_strlen(ent->d_name);
+	len_pat = ft_strlen(pat);
+	if (ms_match_pattern(pat, ent->d_name, len_pat, len_str))
 	{
 		flag = 1;
 		tmp = ft_strdup(ent->d_name);

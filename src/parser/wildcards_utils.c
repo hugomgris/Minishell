@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 13:06:53 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/07 12:21:22 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/07 15:25:01 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 /*
 	Returns the number of filenames in current dir matching a pattern.
+	Currently obsolete.
 */
+/*
 int	ms_match_count(char *pattern)
 {
 	DIR				*dir;
@@ -33,6 +35,7 @@ int	ms_match_count(char *pattern)
 	closedir(dir);
 	return (match_count);
 }
+*/
 
 int	ms_compare_wildcards(t_token *first, t_token *second)
 {
