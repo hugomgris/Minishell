@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 15:44:12 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/07 17:47:20 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,14 @@ typedef struct s_token
 	t_token_type	type;
 	struct s_token	*next;
 }	t_token;
+
+typedef struct s_match_data
+{
+	int	i;
+	int	j;
+	int	start;
+	int	match;
+}	t_match_data;
 
 typedef struct s_ms
 {
@@ -150,6 +158,10 @@ void	ms_expand_wildcards(t_ms *ms);
 void	ms_get_wildcards(t_ms *ms, char *pat, t_token *sub);
 int		ms_match_pattern(char *pattern, char *entry, int m, int n);
 int		ms_process_dir_entry(t_ms *ms, char *pat, struct dirent *ent);
+void	ms_init_match_data(t_match_data *data);
+int		ms_retry_star(t_match_data *data, int *start);
+void	ms_handle_star(t_match_data *data, int *start);
+int		ms_is_hidden_entry(char *entry);
 t_token	*ms_tokensort(t_token *tok);
 int		ms_tokcmp(const char *s1, const char *s2);
 void	ms_add_wc(t_ms *ms, t_token *sub);

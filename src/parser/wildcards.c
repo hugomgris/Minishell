@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/07 16:51:13 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/07 17:50:02 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,42 +14,27 @@
 
 int	ms_match_pattern(char *pattern, char *entry, int p, int s)
 {
-	int	i;
-	int	j;
-	int	start;
-	int	match;
+	t_match_data	data;
+	int				start;
 
-	i = 0;
-	j = 0;
-	start = -1;
-	match = 0;
-	if (entry[0] == '.')
+	ms_init_match_data(&data);
+	if (ms_is_hidden_entry(entry))
 		return (FALSE);
-	while (i < s)
+	while (data.i < s)
 	{
-		if (j < p && pattern[j] == entry[i])
+		if (data.j < p && pattern[data.j] == entry[data.i])
 		{
-			i++;
-			j++;
+			data.i++;
+			data.j++;
 		}
-		else if (j < p && pattern[j] == '*')
-		{
-			start = j;
-			match = i;
-			j++;
-		}
-		else if (start != -1)
-		{
-			j = start + 1;
-			match++;
-			i = match;
-		}
-		else
+		else if (data.j < p && pattern[data.j] == '*')
+			ms_handle_star(&data, &start);
+		else if (!ms_retry_star(&data, &start))
 			return (FALSE);
 	}
-	while (j < p && pattern[j] == '*')
-		j++;
-	return (j == p);
+	while (data.j < p && pattern[data.j] == '*')
+		data.j++;
+	return (data.j == p);
 }
 
 int	ms_process_dir_entry(t_ms *ms, char *pat, struct dirent *ent)
