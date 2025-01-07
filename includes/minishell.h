@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 10:21:46 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/07 12:18:16 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ enum e_shell_state
 
 typedef struct s_token
 {
-	void			*content;
+	char			*content;
 	t_token_type	type;
 	struct s_token	*next;
 }	t_token;
@@ -144,7 +144,6 @@ int		ms_ignore_squote(char *str, int *i);
 void	ms_remove_quotes(t_ms *ms);
 int		ms_count_quotes(char *str);
 char	*ms_trim_quotes(char *str, char *new, int len);
-void	ms_sort_toks(t_token *toks);
 
 //WILDCARDS
 void	ms_expand_wildcards(t_ms *ms);
@@ -154,6 +153,8 @@ int		ms_match_pattern(char *pattern, char *entry);
 void	ms_wildcard_unmatched(t_ms *ms, char *pattern);
 int		ms_process_dir_entry(t_ms *ms, char *pat, \
 t_token *sub, struct dirent *ent);
+t_token	*ms_tokensort(t_token *tok);
+int		ms_tokcmp(const char *s1, const char *s2);
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);

@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 13:26:24 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 17:41:26 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/07 12:47:43 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,35 @@ void	ms_tokinsert_list(t_token **lst, t_token *current, t_token *new)
 	last = ms_toklast(new);
 	last->next = current->next;
 	current->next = new;
+}
+
+/*
+	Similar to ft_strcmp(), but ignores the lowercase/uppercase difference.
+*/
+int	ms_tokcmp(const char *s1, const char *s2)
+{
+	int		i;
+	int		res;
+	char	*cpy1;
+	char	*cpy2;
+
+	cpy1 = ft_strdup_lower(s1);
+	cpy2 = ft_strdup_lower(s2);
+	i = 0;
+	res = 0;
+	while (cpy1[i] && cpy2[i])
+	{
+		if (cpy1[i] != cpy2[i])
+		{
+			res = cpy1[i] - cpy2[i];
+			free(cpy1);
+			free(cpy2);
+			return (res);
+		}
+		i++;
+	}
+	res = cpy1[i] - cpy2[i];
+	free(cpy1);
+	free(cpy2);
+	return (res);
 }
