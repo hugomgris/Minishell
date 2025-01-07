@@ -11,7 +11,11 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
+//! TODO
+// cat << EOF | echo kikoooulol >> outfile | sleep 5 | wc -w > outfile2
+// -> yields overflow
+// echo 'hola | adios'
+// echo should not be printed
 /*
 Helper function for input redirection (<).
 Gets the latest value (file) for the redirection in the input.

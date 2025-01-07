@@ -1,0 +1,15 @@
+Script started on 2025-01-07 21:01:54+01:00 [<not executed on terminal>]
+src
+tests
+typescript
+bash: /bin/brew: Aucun fichier ou dossier de ce nom
+[?2004h]0;nicolas@nicolas: ~/Bureau/Minishell[01;32mnicolas@nicolas[00m:[01;34m~/Bureau/Minishell[00m$ src
+[?2004lLa commande « src » n'a pas été trouvée, mais peut être installée avec :
+sudo apt install simple-revision-control
+[?2004h]0;nicolas@nicolas: ~/Bureau/Minishell[01;32mnicolas@nicolas[00m:[01;34m~/Bureau/Minishell[00m$ tests
+[?2004lLa commande « tests » n'a pas été trouvée, mais peut être installée avec :
+sudo apt install go-bluetooth
+[?2004h]0;nicolas@nicolas: ~/Bureau/Minishell[01;32mnicolas@nicolas[00m:[01;34m~/Bureau/Minishell[00m$ typescript
+[?2004ltypescript : commande introuvable
+[?2004h]0;nicolas@nicolas: ~/Bureau/Minishell[01;32mnicolas@nicolas[00m:[01;34m~/Bureau/Minishell[00m$ 
+Script done on 2025-01-07 21:03:03+01:00 [COMMAND_EXIT_CODE="0"]
