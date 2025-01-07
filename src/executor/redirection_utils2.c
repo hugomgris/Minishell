@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/04 13:15:57 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 08:44:49 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,14 +65,16 @@ TODO: this could use a more granular error handling.
 int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
 {
 	int	type;
+	int	offset;
 
 	type = ms_detect_redirector(args[i]);
 	if (type && (!args[i + 1] || ms_detect_redirector(args[i + 1])))
 		return (ms_error_handler(ms, "Error: Invalid redir syntax", 0), -1);
 	if (fds[0] == -1)
 	{
-		if (type == 1 && ms_open(args[i + 1], O_RDONLY, &fds[0]))
-			return (ms_handle_open_error(ms, args[i + 1]));
+		offset = ms_latest_infile(args);
+		if (type == 1 && ms_open(args[offset], O_RDONLY, &fds[0]))
+			return (ms_handle_open_error(ms, args[offset]));
 	}
 	if (type == 2 && ms_open(args[i + 1], O_WRONLY
 			| O_CREAT | O_TRUNC, &fds[1]))

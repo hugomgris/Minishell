@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 09:54:39 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 09:49:51 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,12 @@ Cleans up parsed arguments and filtered states after execution.
 */
 int	ms_execute_chunk(t_ms *ms, char **env, int i)
 {
-	int	arg_count;
-	int	code;
+	int		arg_count;
+	int		code;
+	char	*warning;
 
+	warning = "Redirection: Warning: Chained heredoc redirections detected, "
+		"will only consider last one.";
 	ms->cmd_args = ms_parse_args(ms->exec_chunks[i], &arg_count);
 	ms_filter_args(ms);
 	if (ft_array_count(ms->filt_args) == 0)
@@ -122,6 +125,8 @@ int	ms_execute_chunk(t_ms *ms, char **env, int i)
 		free(ms->cmd_args);
 		return (0);
 	}
+	if (ms_has_heredoc(ms) > 1)
+		ft_putendl_fd(warning, 0);
 	code = ms_process_command(ms, env, i);
 	ms_cleanup_args(ms);
 	return (code);

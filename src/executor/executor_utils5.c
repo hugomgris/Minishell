@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 09:57:06 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 09:43:39 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,13 @@ char	**ms_parse_args(char *exec_chunk, int *arg_count)
 {
 	char	**cmd_args;
 	char	*token;
+	int		count;
 
+	ft_printf("%s\n", exec_chunk);
 	*arg_count = 0;
-	cmd_args = malloc(sizeof(char *) * (strlen(exec_chunk) + 1));
+	count = ft_count_words(exec_chunk) + ms_detect_space_arg(exec_chunk);
+	cmd_args = malloc(sizeof(char *) * (count + 1));
+	exec_chunk = ms_process_space_args_in(exec_chunk);
 	if (!cmd_args)
 		return (NULL);
 	token = ft_strtok(exec_chunk, " ");
@@ -36,6 +40,7 @@ char	**ms_parse_args(char *exec_chunk, int *arg_count)
 		token = ft_strtok(NULL, " ");
 	}
 	cmd_args[*arg_count] = NULL;
+	cmd_args = ms_process_space_args_out(cmd_args);
 	return (cmd_args);
 }
 

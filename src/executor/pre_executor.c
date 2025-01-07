@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 10:04:04 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 08:26:58 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,12 @@ void	ms_pre_executor(t_ms *ms)
 		ms->chain_tokens = ft_lstsub(ms->tokens, start, count);
 		ms_executor(ms);
 		status = ms->exit_status;
-		if (!status && !ft_strncmp(ms->tokens->content, "&&", 2))
+		if (!ft_strncmp(ms->tokens->content, "&&", 2) && !status)
 			start += (count + 1);
-		else if (status && !ft_strncmp(ms->tokens->content, "||", 2))
+		else if (!ft_strncmp(ms->tokens->content, "||", 2) && status)
 			start += (count + 1);
 		else
-			start += (count + 1);
+			start += count + ms_get_chain_count(ms, i);
 		ft_lstclear(&ms->chain_tokens, free);
 	}
 	ft_lstclear(&ms->tokens, free);
