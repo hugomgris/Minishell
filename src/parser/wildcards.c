@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/07 15:35:11 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/07 15:43:41 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	ms_match_pattern(char *pattern, char *entry, int m, int n)
 	return (FALSE);
 }
 
-int	ms_process_dir_entry(t_ms *ms, char *pat, t_token *sub, struct dirent *ent)
+int	ms_process_dir_entry(t_ms *ms, char *pat, struct dirent *ent)
 {
 	int		flag;
 	int		len_pat;
@@ -62,8 +62,6 @@ int	ms_process_dir_entry(t_ms *ms, char *pat, t_token *sub, struct dirent *ent)
 	char	*tmp;
 	t_token	*new;
 
-	(void)sub;
-	//! DELETE void cast if unnecessary
 	flag = 0;
 	len_str = ft_strlen(ent->d_name);
 	len_pat = ft_strlen(pat);
