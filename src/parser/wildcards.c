@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/07 12:12:34 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/07 14:36:34 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,28 @@ int	ms_process_dir_entry(t_ms *ms, char *pat, t_token *sub, struct dirent *ent)
 	return (flag);
 }
 
+void	ms_add_wc(t_ms *ms, t_token *sub)
+{
+	if (ms_toksize(ms->wc) > 1)
+	{
+		free(sub->content);
+		sub->content = ft_strdup("");
+		if (!sub->content)
+			ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
+		ms_tokensort(ms->wc);
+		ms_tokinsert_list(&ms->tok, sub, ms->wc);
+	}
+	else
+	{
+		free(sub->content);
+		sub->content = ft_strdup(ms->wc->content);
+		ms_tokclear(&ms->wc, free);
+		if (!sub->content)
+			ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
+	}
+	ms->wc = NULL;
+}
+
 void	ms_get_wildcards(t_ms *ms, char *pat, t_token *sub)
 {
 	DIR				*dir;
@@ -65,16 +87,8 @@ void	ms_get_wildcards(t_ms *ms, char *pat, t_token *sub)
 		ms_process_dir_entry(ms, pat, sub, entry);
 		entry = readdir(dir);
 	}
-	if (ms_toksize(ms->wc) > 1)
-	{
-		free(sub->content);
-		sub->content = ft_strdup("");
-		ms_tokensort(ms->wc);
-		ms_tokinsert_list(&ms->tok, sub, ms->wc);
-		ms->wc = NULL;
-	}
-	if (!sub->content)
-		ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
+	if (ms_toksize(ms->wc))
+		ms_add_wc(ms, sub);
 	closedir(dir);
 }
 
