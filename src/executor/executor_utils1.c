@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 12:01:43 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 09:22:30 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,10 @@ char	*ms_process_chunk(t_ms *ms, t_list **current)
 	while (*current && !ms_is_pipe((*current)->content))
 	{
 		tmp = chunk;
-		chunk = ft_strjoin3(chunk, " ", (*current)->content);
+		if (chunk)
+			chunk = ft_strjoin3(chunk, " ", (*current)->content);
+		else
+			chunk = ft_strjoin_free(chunk, (*current)->content);
 		if (!chunk)
 		{
 			ms_error_handler(ms, "Error: Mem alloc failed", 1);

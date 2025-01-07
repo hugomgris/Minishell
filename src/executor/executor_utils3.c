@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 10:28:35 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 09:49:08 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,16 @@ TODO: check return values for consistency, may need to be switched.
 int	ms_has_heredoc(t_ms *ms)
 {
 	int	i;
+	int	hd;
 
 	i = -1;
+	hd = 0;
 	while (ms->cmd_args[++i])
 	{
 		if (!ft_strncmp(ms->cmd_args[i], "<<", 2))
-			return (1);
+			hd++;
 	}
-	return (0);
+	return (hd);
 }
 
 /*
@@ -48,11 +50,15 @@ int	ms_process_heredoc(t_ms *ms)
 	int		i;
 	int		result;
 
-	i = -1;
 	delimiter = NULL;
+	i = -1;
 	while (ms->cmd_args[++i])
+	{
 		if (!ft_strncmp(ms->cmd_args[i], "<<", 2))
+		{
 			delimiter = ms->cmd_args[i + 1];
+		}
+	}
 	if (!delimiter)
 		return (ms_handle_heredoc_error(ms, "Heredoc delimiter missing"));
 	result = ms_handle_heredoc(delimiter, &fd);
