@@ -6,11 +6,28 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/04 13:34:58 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 08:42:44 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+/*
+Helper function for input redirection (<).
+Gets the latest value (file) for the redirection in the input.
+*/
+int	ms_latest_infile(char **args)
+{
+	int	count;
+
+	count = ft_array_count(args);
+	while (args[--count] > 0)
+	{
+		if (!ft_strncmp(args[count], "<", 1))
+			return (count + 1);
+	}
+	return (1);
+}
 
 /*
 Opens a file with the specified flags and assigns its FD to the provided var.

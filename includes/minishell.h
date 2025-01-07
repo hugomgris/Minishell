@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 09:28:39 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/07 09:44:42 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ typedef struct s_ms
 	t_list	*chain_tokens;
 	t_list	*filtered_tokens;
 	t_list	*redir_tokens;
-	t_list	**exec_tokens;
 	char	**exec_chunks;
 	char	**cmd_args;
 	char	**filt_args;
@@ -220,6 +219,9 @@ void	ms_close_parent_pipes(int **pipe_fds, int pipe_count);
 void	ms_close_child_pipes(int **pipe_fds, int pipe_count);
 void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count);
 char	**ms_parse_args(char *exec_chunk, int *arg_count);
+int		ms_detect_space_arg(const char *chunk);
+char	*ms_process_space_args_in(char *chunk);
+char	**ms_process_space_args_out(char **args);
 int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);
 int		ms_try_path_execution(char *cmd_path, char **cmd_args, char **env);
 char	*ms_build_cmd_path(t_ms *ms, char *dir, char *cmd);
@@ -233,6 +235,7 @@ int		ms_redirection(t_ms *ms);
 int		ms_has_redirection(t_ms *ms);
 int		ms_detect_redirector(char *arg);
 int		ms_setup_redirects(char **args, int i, int *fds, t_ms *ms);
+int		ms_latest_infile(char **args);
 void	ms_filter_args(t_ms *ms);
 int		ms_count_non_redirectors(char **cmd_args);
 char	**ms_allocate_filtered_args(t_ms *ms, int count);

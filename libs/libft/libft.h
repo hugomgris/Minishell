@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 12:45:35 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 11:23:09 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 10:11:10 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # include <fcntl.h>
 # include <aio.h>
 # include <stdarg.h>
+# include <stdbool.h>
 # include "ft_printf/includes/ft_printf.h"
 
 typedef struct s_list
@@ -117,5 +118,7 @@ int		ft_isdigit_str(char *str);
 t_list	*ft_lstsub(t_list *lst, int start, int count);
 char	*ft_strndup(const char *s, size_t n);
 size_t	ft_min_strlen(const char *s1, const char *s2);
+int		ft_count_words(const char *str);
+t_list	*ft_lstsort(t_list *l, int (*cmp)(const void *, const void *, size_t));
 
 #endif
