@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/07 17:50:02 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/08 11:55:16 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,9 @@ void	ms_expand_wildcards(t_ms *ms)
 	aux = ms->tok;
 	while (aux)
 	{
-		if (aux->type == 0 && ft_strchr((char *)aux->content, '*'))
+		if (aux->type == 0 && ft_strchr(aux->content, '*'))
 		{
-			tmp = ft_strdup((char *)aux->content);
+			tmp = ft_strdup(aux->content);
 			ms_get_wildcards(ms, tmp, aux);
 			free(tmp);
 		}

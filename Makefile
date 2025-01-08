@@ -65,8 +65,7 @@ SRC 		:= 	main/minishell.c 				\
 				parser/expand_variable.c		\
 				parser/redirection_checker.c	\
 				parser/wildcards.c				\
-				parser/wildcards_utils1.c		\
-				parser/wildcards_utils2.c		\
+				parser/wildcards_utils.c		\
 				signals/signals.c 				\
 				env/env_manager.c 				\
 				env/env_utils.c 				\

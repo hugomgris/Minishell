@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 17:47:20 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/08 12:22:21 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,6 @@ int		ms_retry_star(t_match_data *data, int *start);
 void	ms_handle_star(t_match_data *data, int *start);
 int		ms_is_hidden_entry(char *entry);
 t_token	*ms_tokensort(t_token *tok);
-int		ms_tokcmp(const char *s1, const char *s2);
 void	ms_add_wc(t_ms *ms, t_token *sub);
 
 //SYNTAX CHECK
@@ -172,6 +171,7 @@ int		ms_checkspecialchar(t_ms *ms, char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
 int		ms_checkredirections(t_ms *ms, char *str);
+int		ms_check_parenthesis(t_ms *ms, char *str);
 int		ms_checkoutfile(t_ms *ms, char *str);
 int		ms_checkinfile(t_ms *ms, char *str);
 

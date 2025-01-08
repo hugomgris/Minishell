@@ -6,11 +6,18 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 13:06:53 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/07 17:51:15 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/08 11:54:04 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+int	ms_is_hidden_entry(char *entry)
+{
+	if (entry[0] == '.')
+		return (TRUE);
+	return (FALSE);
+}
 
 void	ms_handle_star(t_match_data *data, int *start)
 {
@@ -40,11 +47,6 @@ void	ms_init_match_data(t_match_data *data)
 	return ;
 }
 
-int	ms_compare_wildcards(t_token *first, t_token *second)
-{
-	return (ms_tokcmp(first->content, second->content));
-}
-
 t_token	*ms_tokensort(t_token *tok)
 {
 	char	*aux;
@@ -55,7 +57,7 @@ t_token	*ms_tokensort(t_token *tok)
 	start = tok;
 	while (tok && tok->next)
 	{
-		if (ms_compare_wildcards(tok, tok->next) > 0)
+		if (ft_strcmp(tok->content, tok->next->content) > 0)
 		{
 			aux = (char *)tok->content;
 			tok->content = tok->next->content;

@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 10:04:30 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/08 12:47:06 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,29 @@ int	ms_checkpipes(t_ms *ms, char *str)
 	return (TRUE);
 }
 
+int	ms_check_parenthesis(t_ms *ms, char *str)
+{
+	int	i;
+	int	open;
+
+	i = -1;
+	open = 0;
+	while (str[++i])
+	{
+		if (str[i] == '(')
+			open++;
+		if (str[i] == ')')
+			open--;
+	}
+	if (!open)
+		return (TRUE);
+	else if (open > 0)
+		ms_error_handler(ms, "syntax error near unexpected token \"(\"", 0);
+	else
+		ms_error_handler(ms, "syntax error near unexpected token \")\"", 0);
+	return (FALSE);
+}
+
 /*
 	Checks for special characters that are not handled by minishell along
 	with the correct syntax for using pipes and redirections.
@@ -96,6 +119,8 @@ int	ms_syntax_checker(t_ms *ms, char *str)
 	if (!ms_checkpipes(ms, str))
 		return (FALSE);
 	if (!ms_checkredirections(ms, str))
+		return (FALSE);
+	if (!ms_check_parenthesis(ms, str))
 		return (FALSE);
 	return (TRUE);
 }
