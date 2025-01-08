@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 09:44:42 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/08 11:47:44 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <sys/wait.h>
 # include <errno.h>
 # include <dirent.h>
+# include <termios.h>
 
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
@@ -59,7 +60,8 @@ enum e_shell_state
 	SHELL_NORMAL = 0,
 	SHELL_CHILD_PROCESS = 1,
 	SHELL_HEREDOC = 2,
-	SHELL_HEREDOC_INTERRUPTED = 3
+	SHELL_HEREDOC_INTERRUPTED = 3,
+	SHELL_CHILD_INTERRUPTED = 4
 };
 
 typedef struct s_token
@@ -93,8 +95,17 @@ typedef struct s_ms
 	int		chains;
 }	t_ms;
 
+typedef struct s_paren_group
+{
+	t_list	*tokens;
+	t_list	*redirections;
+	int		start;
+	int		end;
+}	t_paren_group;
+
 //MAIN and LOOP functions
 void	ms_initialise_minishell(t_ms *ms, char **env);
+void	ms_setup_signal_handlers(t_ms *ms);
 void	ms_main_loop(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
@@ -252,6 +263,7 @@ int		ms_write_heredoc_lines(int tmp_fd, const char *delimiter);
 int		ms_finalize_heredoc(int tmp_fd, int *fd);
 int		ms_handle_heredoc_signal(int tmp_fd, int *fd);
 int		ms_handle_heredoc_error(t_ms *ms, char *error_msg);
+int		ms_heredoc_interruption(t_ms *ms, char **env);
 
 //BUILTIN CD functions
 int		ms_cd(t_ms *ms);

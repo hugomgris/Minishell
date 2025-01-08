@@ -24,7 +24,7 @@ SRC = ft_itoa.c ft_strchr.c ft_strdup.c ft_strjoin.c ft_strjoin_free.c ft_strmap
       ft_lstadd_back_bonus.c ft_lstdelone_bonus.c ft_lstclear_bonus.c \
       ft_lstiter_bonus.c ft_lstmap_bonus.c ft_lstsize_bonus.c ft_lstcpy_bonus.c \
       ft_strrchr_n.c ft_strspn.c ft_strcspn.c ft_strchr_n.c ft_isdigit_str.c ft_strjoin3.c \
-	  ft_lstsub_bonus.c ft_strndup.c ft_min_len.c ft_count_words.c ft_lstsort.c
+	  ft_lstsub_bonus.c ft_strndup.c ft_min_len.c ft_count_words.c ft_lstsort.c ft_strtoll.c
 
 OBJ = $(SRC:.c=.o)
 

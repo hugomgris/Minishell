@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 09:25:31 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 17:51:09 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,23 @@ void	ms_init(t_ms *ms, char **env)
 	ms->user = ms_get_prompt_user(ms);
 	ms_set_shlvl(ms);
 	ms_set_custom_colors(ms);
+	read_history(0);
+}
+
+/*
+Flow control function to set up the signal handlers for the whole shell.
+*/
+void	ms_setup_signal_handlers(t_ms *ms)
+{
+	struct sigaction	action;
+
+	action.sa_flags = SA_RESTART;
+	action.sa_handler = ms_signal_handler;
+	sigemptyset(&action.sa_mask);
+	if (sigaction(SIGINT, &action, NULL) == -1)
+		ms_error_handler(ms, "SIGINT sigaction error", 0);
 	signal(SIGTSTP, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	read_history(0);
 }
 
 /*
@@ -82,15 +96,11 @@ Launches the minishell loop.
 */
 int	main(int argc, char **argv, char *env[])
 {
-	struct sigaction	action;
 	t_ms				ms;
 
 	(void)argc;
 	(void)argv;
 	ms_init(&ms, env);
-	action.sa_flags = SA_RESTART;
-	action.sa_handler = ms_signal_handler;
-	if (sigaction(SIGINT, &action, NULL) == -1)
-		ms_error_handler(&ms, "SIGINT sigaction error", 0);
+	ms_setup_signal_handlers(&ms);
 	ms_main_loop(&ms);
 }

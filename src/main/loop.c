@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 10:14:09 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 17:35:29 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	ms_main_loop(t_ms *ms)
 {
 	while (42)
 	{
+		ms_get_set(SET, 0);
 		ms->prompt = ms_build_prompt(ms);
 		gc_add(ms->prompt, &ms->gc);
 		ms->input = readline(ms->prompt);
