@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
 /*   Updated: 2025/01/07 17:51:09 by hmunoz-g         ###   ########.fr       */
@@ -61,6 +61,7 @@ void	ms_init(t_ms *ms, char **env)
 	ms->tok = NULL;
 	ms->tokens = NULL;
 	ms->redir_tokens = NULL;
+	ms->wc = NULL;
 	ms->filtered_tokens = NULL;
 	ms->exit_status = 0;
 	ms->heredoc_fd = -1;

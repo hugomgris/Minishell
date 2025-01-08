@@ -6,89 +6,99 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/06 10:35:11 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/08 11:55:16 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	ms_match_pattern(char *pattern, char *entry)
+int	ms_match_pattern(char *pattern, char *entry, int p, int s)
 {
-	int		len;
+	t_match_data	data;
+	int				start;
 
-	while (*pattern == '*')
-		pattern++;
-	if (*pattern)
+	ms_init_match_data(&data);
+	if (ms_is_hidden_entry(entry))
+		return (FALSE);
+	while (data.i < s)
 	{
-		len = ft_strlen(entry);
-		if (ft_strnstr(entry, pattern, len))
-			return (TRUE);
+		if (data.j < p && pattern[data.j] == entry[data.i])
+		{
+			data.i++;
+			data.j++;
+		}
+		else if (data.j < p && pattern[data.j] == '*')
+			ms_handle_star(&data, &start);
+		else if (!ms_retry_star(&data, &start))
+			return (FALSE);
 	}
-	return (FALSE);
+	while (data.j < p && pattern[data.j] == '*')
+		data.j++;
+	return (data.j == p);
 }
 
-int	ms_process_dir_entry(t_ms *ms, char *pat, t_token *sub, struct dirent *ent)
+int	ms_process_dir_entry(t_ms *ms, char *pat, struct dirent *ent)
 {
 	int		flag;
+	int		len_pat;
+	int		len_str;
 	char	*tmp;
 	t_token	*new;
 
 	flag = 0;
-	if (ms_match_pattern(pat, ent->d_name))
+	len_str = ft_strlen(ent->d_name);
+	len_pat = ft_strlen(pat);
+	if (ms_match_pattern(pat, ent->d_name, len_pat, len_str))
 	{
 		flag = 1;
 		tmp = ft_strdup(ent->d_name);
 		new = ms_new_token(tmp, T_ATOM);
 		if (!new || !tmp)
 			ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
-		ms_tokinsert(&ms->tok, sub, new);
+		ms_tokinsert(&ms->wc, ms->wc, new);
 	}
 	return (flag);
 }
 
-void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken)
+void	ms_add_wc(t_ms *ms, t_token *sub)
+{
+	if (ms_toksize(ms->wc) > 1)
+	{
+		free(sub->content);
+		sub->content = ft_strdup("");
+		if (!sub->content)
+			ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
+		ms_tokensort(ms->wc);
+		ms_tokinsert_list(&ms->tok, sub, ms->wc);
+	}
+	else
+	{
+		free(sub->content);
+		sub->content = ft_strdup(ms->wc->content);
+		ms_tokclear(&ms->wc, free);
+		if (!sub->content)
+			ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
+	}
+	ms->wc = NULL;
+}
+
+void	ms_get_wildcards(t_ms *ms, char *pat, t_token *sub)
 {
 	DIR				*dir;
 	struct dirent	*entry;
-	int				flag;
 
-	flag = 0;
 	dir = opendir(".");
 	if (!dir)
 		ms_exit_handler(ms, "Error opening a DIR", 1);
 	entry = readdir(dir);
 	while (entry)
 	{
-		flag = ms_process_dir_entry(ms, pattern, subtoken, entry);
+		ms_process_dir_entry(ms, pat, entry);
 		entry = readdir(dir);
 	}
-	if (!flag)
-		ms_error_handler(ms, \
-			ft_strjoin("no matches found: ", pattern), 0);
-	else
-		subtoken->content = ft_strdup("");
-	if (!subtoken->content)
-		ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
+	if (ms_toksize(ms->wc))
+		ms_add_wc(ms, sub);
 	closedir(dir);
-}
-
-int	ms_match_count(char *pattern)
-{
-	DIR				*dir;
-	int				match_count;
-	struct dirent	*entry;
-
-	match_count = 0;
-	dir = opendir(".");
-	entry = readdir(dir);
-	while (entry)
-	{
-		if (ms_match_pattern(pattern, entry->d_name))
-			match_count++;
-		entry = readdir(dir);
-	}
-	closedir(dir);
-	return (match_count);
 }
 
 void	ms_expand_wildcards(t_ms *ms)
@@ -99,11 +109,11 @@ void	ms_expand_wildcards(t_ms *ms)
 	aux = ms->tok;
 	while (aux)
 	{
-		if (aux->type == 0 && ft_strchr((char *)aux->content, '*'))
+		if (aux->type == 0 && ft_strchr(aux->content, '*'))
 		{
-			tmp = ft_strdup((char *)aux->content);
+			tmp = ft_strdup(aux->content);
 			ms_get_wildcards(ms, tmp, aux);
-			gc_add(aux->content, &ms->gc);
+			free(tmp);
 		}
 		aux = aux->next;
 	}
