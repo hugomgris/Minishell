@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sort_toks.c                                        :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/18 17:46:25 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/18 18:20:57 by nponchon         ###   ########.fr       */
+/*   Created: 2025/01/06 15:15:19 by nponchon          #+#    #+#             */
+/*   Updated: 2025/01/07 11:09:20 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "libft.h"
 
-void	ms_sort_toks(t_token *toks)
+int	ft_strcmp(char *s1, char *s2)
 {
-	t_token	*current;
+	int	i;
 
-	current = toks;
-	while (current)
+	i = 0;
+	while (s1[i] && s2[i])
 	{
-		if (current->type)
-		{
-			return ;
-		}
-		current = current->next;
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
+		i++;
 	}
+	return (s1[i] - s2[i]);
 }

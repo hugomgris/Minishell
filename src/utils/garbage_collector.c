@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 15:37:07 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/18 16:55:34 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/06 13:11:51 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,18 @@ void	ms_print_list(t_list *list)
 	while (list)
 	{
 		ft_printf("%s\n", (char *)list->content);
+		list = list->next;
+	}
+}
+
+/*
+	Same as ms_print_list, but for tokens.
+*/
+void	ms_print_toks(t_token *list)
+{
+	while (list)
+	{
+		ft_printf("%s, %i\n", (char *)list->content, list->type);
 		list = list->next;
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils5.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 09:43:39 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 10:51:46 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ char	**ms_parse_args(char *exec_chunk, int *arg_count)
 	char	*token;
 	int		count;
 
-	ft_printf("%s\n", exec_chunk);
 	*arg_count = 0;
 	count = ft_count_words(exec_chunk) + ms_detect_space_arg(exec_chunk);
 	cmd_args = malloc(sizeof(char *) * (count + 1));
