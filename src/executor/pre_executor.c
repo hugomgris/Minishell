@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 08:26:58 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/08 14:35:33 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,46 @@ int	ms_get_chain_count(t_ms *ms, int iter)
 	return (count);
 }
 
+int	ms_and(t_list **tokens, int *i)
+{
+	int		count;
+	t_list	*current;
+
+	count = 0;
+	current = *tokens;
+	while (current && ft_strncmp(current->content, "&&", 2))
+	{
+		if (!ft_strncmp(current->content, "||", 2))
+			*i += 1;
+		current = current->next;
+		count++;
+	}
+	if (current)
+		current = current->next;
+	*tokens = current;
+	return (count + 1);
+}
+
+int	ms_or(t_list **tokens, int *i)
+{
+	int		count;
+	t_list	*current;
+
+	count = 0;
+	current = *tokens;
+	while (current && ft_strncmp(current->content, "||", 2))
+	{
+		if (!ft_strncmp(current->content, "&&", 2))
+			*i += 1;
+		current = current->next;
+		count++;
+	}
+	if (current)
+		current = current->next;
+	*tokens = current;
+	return (count + 1);
+}
+
 /*
 Prepares and executes each chain of commands.
 It first counts the number of chains, then iterates over each chain,
@@ -73,24 +113,33 @@ void	ms_pre_executor(t_ms *ms)
 	int		i;
 	int		start;
 	int		count;
+	int		l;
 	int		status;
+	t_list	*current;
 
 	ms_count_chains(ms);
 	i = -1;
 	start = 0;
-	status = 0;
+	current = ms->tokens;
 	while (++i < ms->chains)
 	{
+		if (ms_get_set(GET, 0) > 1)
+		{
+			ft_lstclear(&ms->tokens, free);
+			return ;
+		}
 		count = ms_get_chain_count(ms, i);
 		ms->chain_tokens = ft_lstsub(ms->tokens, start, count);
-		ms_executor(ms);
-		status = ms->exit_status;
-		if (!ft_strncmp(ms->tokens->content, "&&", 2) && !status)
-			start += (count + 1);
-		else if (!ft_strncmp(ms->tokens->content, "||", 2) && status)
-			start += (count + 1);
-		else
-			start += count + ms_get_chain_count(ms, i);
+		l = ft_lstsize((ms->chain_tokens));
+		if (l == 0)
+			break ;
+		while (current && --l >= 0)
+			current = current->next;
+		status = ms_executor(ms);
+		if (!status && current)
+			start += count + ms_and(&current, &i);
+		else if ((status == 1 || status == 2) && current)
+			start += count + ms_or(&current, &i);
 		ft_lstclear(&ms->chain_tokens, free);
 	}
 	ft_lstclear(&ms->tokens, free);

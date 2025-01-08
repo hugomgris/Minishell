@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 08:44:49 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 12:50:00 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
 		return (ms_error_handler(ms, "Error: Invalid redir syntax", 0), -1);
 	if (fds[0] == -1)
 	{
-		offset = ms_latest_infile(args);
+		if (type == 1)
+			offset = ms_latest_infile(args);
 		if (type == 1 && ms_open(args[offset], O_RDONLY, &fds[0]))
 			return (ms_handle_open_error(ms, args[offset]));
 	}
