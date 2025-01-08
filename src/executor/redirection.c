@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 08:42:44 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/08 09:31:38 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 //! TODO
-// cat << EOF | echo kikoooulol >> outfile | sleep 5 | wc -w > outfile2
-// -> yields overflow
-// echo 'hola | adios'
-// echo should not be printed
+//! cat << EOF | echo kikoooulol >> outfile | sleep 5 | wc -w > outfile2
+//! -> yields overflow
+//! echo 'hola | adios'
+//! echo should not be printed
 /*
 Helper function for input redirection (<).
 Gets the latest value (file) for the redirection in the input.
