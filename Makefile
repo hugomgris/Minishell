@@ -68,7 +68,8 @@ SRC 		:= 	main/minishell.c 				\
 				parser/wildcards_utils.c		\
 				signals/signals.c 				\
 				env/env_manager.c 				\
-				env/env_utils.c 				\
+				env/env_utils1.c 				\
+				env/env_utils2.c 				\
 				utils/string_utils.c 			\
 				utils/error_handler.c 			\
 				utils/garbage_collector.c		\
