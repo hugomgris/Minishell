@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 10:51:36 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 14:20:56 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,13 @@ typedef struct s_match_data
 	int	match;
 }	t_match_data;
 
+typedef struct s_chain
+{
+	t_token			*tokens;
+	char			*separator;
+	struct s_chain	*next;
+}	t_chain;
+
 typedef struct s_ms
 {
 	char	*home;
@@ -90,7 +97,7 @@ typedef struct s_ms
 	t_list	*gc;
 	t_token	*tok;
 	t_token	*wc;
-	t_token	*chain_tokens;
+	t_chain	**chains;
 	char	**exec_chunks;
 	char	**cmd_args;
 	char	**filt_args;
@@ -148,7 +155,7 @@ void	ms_remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *));
 
 //PARSER
-int		ms_parser(t_ms *ms, char *str);
+int		ms_parser(t_ms *ms, t_chain *chain);
 void	ms_expand_variable(t_ms *ms);
 int		ms_key_checker(char *key, const char *var);
 char	*ms_get_key(t_ms *ms, char *str);

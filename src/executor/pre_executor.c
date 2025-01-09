@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 12:34:14 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:08:34 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,34 +31,6 @@ void	ms_count_chains(t_ms *ms)
 			ms->chains++;
 		current = current->next;
 	}
-}
-
-/*
-Gets the count of tokens in the current chain, based on it's iteration index.
-The function iterates through the tokens until the specified index is reached,
-then counts how many tokens exist in the chain before finding another separator.
-*/
-int	ms_get_chain_count(t_ms *ms, int iter)
-{
-	t_token	*current;
-	int		count;
-
-	current = ms->tok;
-	count = 0;
-	while (current && iter)
-	{
-		if (!ft_strncmp(current->content, "&&", 2)
-			|| !ft_strncmp(current->content, "||", 2))
-			iter--;
-		current = current->next;
-	}
-	while (current && ft_strncmp(current->content, "&&", 2)
-		&& ft_strncmp(current->content, "||", 2))
-	{
-		count++;
-		current = current->next;
-	}
-	return (count);
 }
 
 int	ms_and(t_token **tokens, int *i)
