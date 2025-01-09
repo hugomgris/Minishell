@@ -131,13 +131,14 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	return (ms_replace_null_value(ms, str, key));
 }
 
-void	ms_expand_variable(t_ms *ms)
+//!Left t_chain transition here
+void	ms_expand_variable(t_ms *ms, t_chain *chain)
 {
 	t_token	*aux;
 	t_token	*subtok;
 	char	*tmp;
 
-	aux = ms->tok;
+	aux = chain;
 	subtok = NULL;
 	while (aux)
 	{

@@ -6,19 +6,17 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 09:22:30 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 10:59:39 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-/*
-Checks if a given token represents a pipe ('|').
-*/
-int	ms_is_pipe(const char *token)
+/*int	ms_is_pipe(t_ms *ms, char *token)
 {
+	(void)ms;
 	return (token && ft_strncmp(token, "|", 1) == 0);
-}
+}*/
 
 /*
 Counts the number of execution chunks in the input tokens.
@@ -26,17 +24,21 @@ Chunks are divided by pipe tokens ('|').
 Starts with a count of 1 and increments for each pipe encountered.
 Returns the total number of execution chunks.
 */
-int	ms_count_chunks(t_list *tokens)
+int	ms_count_chunks(t_ms *ms, t_token *tokens)
 {
 	int		count;
-	t_list	*current;
+	int		index;
+	t_token	*current;
 
+	(void)ms;
 	count = 1;
+	index = 0;
 	current = tokens;
 	while (current)
 	{
-		if (ms_is_pipe(current->content))
+		if (current->type == T_PIPE)
 			count++;
+		index++;
 		current = current->next;
 	}
 	return (count);
@@ -51,13 +53,13 @@ Returns:
   - A string representing the chunk on success.
   - NULL on memory allocation failure.
 */
-char	*ms_process_chunk(t_ms *ms, t_list **current)
+char	*ms_process_chunk(t_ms *ms, t_token **current)
 {
 	char	*chunk;
 	char	*tmp;
 
 	chunk = NULL;
-	while (*current && !ms_is_pipe((*current)->content))
+	while (*current && (*current)->type != T_PIPE)
 	{
 		tmp = chunk;
 		if (chunk)
@@ -73,7 +75,7 @@ char	*ms_process_chunk(t_ms *ms, t_list **current)
 		free(tmp);
 		*current = (*current)->next;
 	}
-	if (*current && ms_is_pipe((*current)->content))
+	if (*current && (*current)->type == T_PIPE)
 		*current = (*current)->next;
 	return (chunk);
 }
@@ -87,9 +89,9 @@ Returns:
   - An array of strings representing chunks on success.
   - NULL on memory allocation failure.
 */
-char	**ms_extract_chunks(t_ms *ms, t_list **tokens)
+char	**ms_extract_chunks(t_ms *ms, t_token **tokens)
 {
-	t_list	*current;
+	t_token	*current;
 	char	**chunks;
 	int		count;
 	int		i;
@@ -97,7 +99,7 @@ char	**ms_extract_chunks(t_ms *ms, t_list **tokens)
 	if (!tokens || !*tokens)
 		return (NULL);
 	current = *tokens;
-	count = ms_count_chunks(current);
+	count = ms_count_chunks(ms, current);
 	chunks = malloc(sizeof(char *) * (count + 1));
 	if (!chunks)
 		return (ms_error_handler(ms, "Error: Mem alloc failed", 1), NULL);

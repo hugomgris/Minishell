@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 20:15:22 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:19:08 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ int	ms_executor(t_ms *ms)
 	int		i;
 	int		code;
 
-	if (!ft_lstsize(ms->tokens))
+	if (!ms_toksize(ms->tok))
 		return (1);
 	ms_initialize_execution(ms, &env);
 	i = -1;

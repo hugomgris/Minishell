@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 14:35:33 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:08:34 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ The total number of chains is stored in the chains field inside ms struct.
 */
 void	ms_count_chains(t_ms *ms)
 {
-	t_list	*current;
+	t_token	*current;
 
 	ms->chains = 1;
-	current = ms->tokens;
+	current = ms->tok;
 	while (current)
 	{
 		if (!ft_strncmp(current->content, "&&", 2)
@@ -33,38 +33,10 @@ void	ms_count_chains(t_ms *ms)
 	}
 }
 
-/*
-Gets the count of tokens in the current chain, based on it's iteration index.
-The function iterates through the tokens until the specified index is reached,
-then counts how many tokens exist in the chain before finding another separator.
-*/
-int	ms_get_chain_count(t_ms *ms, int iter)
-{
-	t_list	*current;
-	int		count;
-
-	current = ms->tokens;
-	count = 0;
-	while (current && iter)
-	{
-		if (!ft_strncmp(current->content, "&&", 2)
-			|| !ft_strncmp(current->content, "||", 2))
-			iter--;
-		current = current->next;
-	}
-	while (current && ft_strncmp(current->content, "&&", 2)
-		&& ft_strncmp(current->content, "||", 2))
-	{
-		count++;
-		current = current->next;
-	}
-	return (count);
-}
-
-int	ms_and(t_list **tokens, int *i)
+int	ms_and(t_token **tokens, int *i)
 {
 	int		count;
-	t_list	*current;
+	t_token	*current;
 
 	count = 0;
 	current = *tokens;
@@ -81,10 +53,10 @@ int	ms_and(t_list **tokens, int *i)
 	return (count + 1);
 }
 
-int	ms_or(t_list **tokens, int *i)
+int	ms_or(t_token **tokens, int *i)
 {
 	int		count;
-	t_list	*current;
+	t_token	*current;
 
 	count = 0;
 	current = *tokens;
@@ -115,22 +87,22 @@ void	ms_pre_executor(t_ms *ms)
 	int		count;
 	int		l;
 	int		status;
-	t_list	*current;
+	t_token	*current;
 
 	ms_count_chains(ms);
 	i = -1;
 	start = 0;
-	current = ms->tokens;
+	current = ms->tok;
 	while (++i < ms->chains)
 	{
 		if (ms_get_set(GET, 0) > 1)
 		{
-			ft_lstclear(&ms->tokens, free);
+			ms_tokclear(&ms->tok, free);
 			return ;
 		}
 		count = ms_get_chain_count(ms, i);
-		ms->chain_tokens = ft_lstsub(ms->tokens, start, count);
-		l = ft_lstsize((ms->chain_tokens));
+		ms->chain_tokens = ms_toksub(ms->tok, start, count);
+		l = ms_toksize((ms->chain_tokens));
 		if (l == 0)
 			break ;
 		while (current && --l >= 0)
@@ -140,7 +112,7 @@ void	ms_pre_executor(t_ms *ms)
 			start += count + ms_and(&current, &i);
 		else if ((status == 1 || status == 2) && current)
 			start += count + ms_or(&current, &i);
-		ft_lstclear(&ms->chain_tokens, free);
+		ms_tokclear(&ms->chain_tokens, free);
 	}
-	ft_lstclear(&ms->tokens, free);
+	ms_tokclear(&ms->tok, free);
 }

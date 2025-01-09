@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 11:23:05 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/02 19:02:52 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 10:41:21 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,29 @@ int	ms_update_oldpwd(t_ms *ms, char *current_pwd)
 			ms_set_env_variable(ms, "OLDPWD", current_pwd);
 		}
 	}
+	return (0);
+}
+
+int	ms_check_cd_args(t_ms *ms)
+{
+	t_token	*current;
+	int		count;
+
+	if (ft_array_count(ms->cmd_args) < 2)
+		return (0);
+	current = ms->chain_tokens;
+	count = 0;
+	while (ft_strcmp(current->content, "cd"))
+		current = current->next;
+	while (!ft_strcmp(current->content, "cd"))
+		current = current->next;
+	while (current && current->type != T_PIPE
+		&& !ms_detect_redirector(current->content))
+	{
+		count++;
+		current = current->next;
+	}
+	if (count > 1)
+		return (1);
 	return (0);
 }

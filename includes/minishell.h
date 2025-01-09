@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 12:15:20 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:28:17 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,13 @@ typedef struct s_match_data
 	int	match;
 }	t_match_data;
 
+typedef struct s_chain
+{
+	t_token			*tokens;
+	char			*separator;
+	struct s_chain	*next;
+}	t_chain;
+
 typedef struct s_ms
 {
 	char	*home;
@@ -90,18 +97,15 @@ typedef struct s_ms
 	t_list	*gc;
 	t_token	*tok;
 	t_token	*wc;
-	t_list	*tokens;
-	t_list	*chain_tokens;
-	t_list	*filtered_tokens;
-	t_list	*redir_tokens;
+	t_chain	**chains;
 	char	**exec_chunks;
 	char	**cmd_args;
 	char	**filt_args;
-	char	**cmd_table;
 	int		heredoc_fd;
 	int		**pipe_fds;
 	int		pipe_count;
 	int		chains;
+	char	*last_checked;
 }	t_ms;
 
 typedef struct s_paren_group
@@ -151,7 +155,7 @@ void	ms_remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *));
 
 //PARSER
-int		ms_parser(t_ms *ms, char *str);
+int		ms_parser(t_ms *ms, t_chain *chain);
 void	ms_expand_variable(t_ms *ms);
 int		ms_key_checker(char *key, const char *var);
 char	*ms_get_key(t_ms *ms, char *str);
@@ -220,10 +224,10 @@ void	ms_initialize_execution(t_ms *ms, char ***env);
 int		ms_execute_chunk(t_ms *ms, char **env, int i);
 int		ms_process_command(t_ms *ms, char **env, int i);
 int		ms_exec_command(t_ms *ms, char **env);
-char	**ms_extract_chunks(t_ms *ms, t_list **tokens);
-char	*ms_process_chunk(t_ms *ms, t_list **current);
-int		ms_count_chunks(t_list *tokens);
-int		ms_is_pipe(const char *token);
+char	**ms_extract_chunks(t_ms *ms, t_token **tokens);
+char	*ms_process_chunk(t_ms *ms, t_token **current);
+int		ms_count_chunks(t_ms *ms, t_token *tokens);
+int		ms_is_pipe(t_ms *ms, char *token);
 char	**ms_env_to_array(t_ms *ms, char **arr);
 char	**ms_rebuild_env(t_ms *ms);
 int		ms_handle_parent_process(t_ms *ms);
@@ -284,6 +288,7 @@ int		ms_heredoc_interruption(t_ms *ms, char **env);
 
 //BUILTIN CD functions
 int		ms_cd(t_ms *ms);
+int		ms_check_cd_args(t_ms *ms);
 int		ms_change_directory(t_ms *ms, char *new_path);
 int		ms_join_paths(t_ms *ms, char *cwd, char *path, char **new_path);
 void	ms_cd_absolute(t_ms *ms, char *path);
@@ -336,5 +341,6 @@ void	ms_print_toks(t_token *list);
 
 //EXECUTOR BONUS function
 void	ms_pre_executor(t_ms *ms);
+t_token	*ms_toksub(t_token *lst, int start, int count);
 
 #endif

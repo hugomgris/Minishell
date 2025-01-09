@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 12:22:23 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:28:35 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,10 +143,7 @@ int	ms_tokenizer(t_ms *ms, char *str)
 	while (*str)
 	{
 		if (error)
-		{
-			ft_lstclear(&ms->tokens, free);
 			return (FALSE);
-		}
 		while (*str && ft_isspace(*str))
 			str++;
 		if (ms_is_operator(str))

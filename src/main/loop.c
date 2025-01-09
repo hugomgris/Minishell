@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 17:35:29 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:19:07 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ Passes the input to the tokenizer and calls the executor.
 */
 void	ms_main_loop(t_ms *ms)
 {
+	t_chain	*current;
+
 	while (42)
 	{
 		ms_get_set(SET, 0);
@@ -56,10 +58,20 @@ void	ms_main_loop(t_ms *ms)
 		ms->input = ms_check_empty_input(ms, ms->input);
 		if (!ms->input)
 			continue ;
+		if (!ms_syntax_checker(ms, ms->input))
+			break ;
+		if (ms_tokenizer(ms, ms->input))
+			break ;
+		ms_build_chains(ms); //TODO
 		add_history(ms->input);
 		write_history(0);
-		if (!ms_parser(ms, ms->input))
-			continue ;
-		ms_pre_executor(ms);
+		current = ms->chains;
+		while (current)
+		{
+			ms_parser(ms, current);
+			ms_execute(ms);
+			current = current->next;
+		}
+		//Clean chains
 	}
 }
