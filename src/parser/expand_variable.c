@@ -138,7 +138,8 @@ void	ms_expand_variable(t_ms *ms, t_chain *chain)
 	t_token	*subtok;
 	char	*tmp;
 
-	aux = chain;
+	(void)chain;
+	aux = ms->tok;
 	subtok = NULL;
 	while (aux)
 	{

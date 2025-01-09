@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 11:23:05 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 10:41:21 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 17:11:41 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	ms_check_cd_args(t_ms *ms)
 
 	if (ft_array_count(ms->cmd_args) < 2)
 		return (0);
-	current = ms->chain_tokens;
+	current = ms->chain_tokens;//!OJO
 	count = 0;
 	while (ft_strcmp(current->content, "cd"))
 		current = current->next;
