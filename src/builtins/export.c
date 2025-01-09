@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:20:34 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 12:46:22 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 10:33:43 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ Checks arguments and derives to case managing:
 int	ms_export(t_ms *ms, char **cmd_args, char **env)
 {
 	int		code;
-	t_list	*current;
+	t_token	*current;
 
 	if (!cmd_args[1])
 		return (ms_export_print(ms, env));

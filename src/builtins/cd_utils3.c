@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 14:37:10 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/31 11:18:24 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/08 20:20:16 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,13 +111,22 @@ It is the first check that a cd call needs to pass.
 */
 char	*ms_cd_initial_path(t_ms *ms)
 {
-	if (!ms->filt_args[1] || ms->filt_args[1][0] == ' ')
+	char	*path;
+	int		i;
+
+	if (ft_array_count(ms->cmd_args) < 2)
 		return (NULL);
-	else if (ms->filt_args[1] && !ms->filt_args[2])
-		return (ms->filt_args[1]);
-	else
+	i = 2;
+	path = ft_strdup(ms->cmd_args[1]);
+	gc_add(path, &ms->gc);
+	while (ms->cmd_args[i])
 	{
-		ms_error_handler(ms, "cd: invalid args", 0);
-		return (NULL);
+		path = ft_strjoin3(path, " ", ms->cmd_args[i]);
+		gc_add(path, &ms->gc);
+		i++;
 	}
+	gc_add(path, &ms->gc);
+	if (!path)
+		return (NULL);
+	return (path);
 }

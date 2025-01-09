@@ -3,14 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 12:50:54 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:31:49 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+int	ms_check_file_statuses(char **args)
+{
+	int		i;
+	char	*filename;
+
+	i = -1;
+	while (args[++i])
+	{
+		if (!ft_strncmp(args[i], "<", 1))
+		{
+			filename = args[i + 1];
+			if (access(filename, F_OK) == -1)
+				return (i + 1);
+			if (access(filename, R_OK) == -1)
+				return (i + 1);
+		}
+	}
+	return (0);
+}
 
 /*
 Helper function for input redirection (<).
@@ -19,7 +39,11 @@ Gets the latest value (file) for the redirection in the input.
 int	ms_latest_infile(char **args)
 {
 	int	count;
+	int	status;
 
+	status = ms_check_file_statuses(args);
+	if (status)
+		return (status);
 	count = ft_array_count(args);
 	while (args[--count] > 0)
 	{

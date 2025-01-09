@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 18:16:07 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 10:53:37 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,10 +146,7 @@ int	ms_tokenizer(t_ms *ms, char *str)
 	while (*str)
 	{
 		if (error)
-		{
-			ft_lstclear(&ms->tokens, free);
 			return (FALSE);
-		}
 		while (*str && ft_isspace(*str))
 			str++;
 		if (ms_is_operator(str))

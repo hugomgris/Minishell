@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/02 19:11:05 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/08 20:20:25 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,8 @@ int	ms_cd(t_ms *ms)
 {
 	char	*path;
 
+	if (ms_check_cd_args(ms))
+		return (ms_error_handler(ms, "cd: too many arguments", 0), 2);
 	path = ms_cd_initial_path(ms);
 	if (!path || path[0] == '\0' || (path[0] == '~' && !path[1]))
 		return (ms_cd_home(ms));

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 16:57:20 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 10:52:40 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,5 @@ int	ms_heredoc_interruption(t_ms *ms, char **env)
 	ms_free_pipes(ms->pipe_fds, ms->pipe_count);
 	ms_cleanup_heredoc(ms);
 	ms->exit_status = 130;
-	ft_lstclear(&ms->tokens, free);
 	return (130);
 }

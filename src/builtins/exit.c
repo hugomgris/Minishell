@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 14:35:30 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 10:52:23 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ void	ms_exit_handler(t_ms *ms, const char *msg, int code)
 		ft_printf("%s\n", msg);
 	ft_lstclear(&ms->ms_env, free);
 	ft_lstclear(&ms->gc, free);
-	if (ft_lstsize(ms->tokens))
-		ft_lstclear(&ms->tokens, free);
 	if (ms_toksize(ms->tok))
 		ms_tokclear(&ms->tok, free);
 	exit(code);

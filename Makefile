@@ -75,7 +75,8 @@ SRC 		:= 	main/minishell.c 				\
 				utils/token_utils1.c			\
 				utils/token_utils2.c			\
 				utils/token_utils3.c			\
-				executor/pre_executor.c
+				executor/pre_executor.c			\
+				executor/pre_executor_utils1.c	
 
 SRCDIR		= src
 SRCS		= $(addprefix $(SRCDIR)/, $(SRC))
