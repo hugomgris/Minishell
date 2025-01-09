@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 17:49:40 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/23 14:57:07 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:05:01 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,15 @@ int	ms_skip_quotes(t_ms *ms, char *str, int *i)
 
 /*
 	Does a check of all possible operators, excluding the ones not
-	handled by minishell. 
-	TODO
-	Check and protect against wrong parenthesis: doubles, unclosed, etc.
+	handled by minishell like herestrings etc.
 */
 int	ms_check_operator(t_ms *ms, char **str)
 {
+	if (!ft_strncmp(*str, "<<<", 3))
+	{
+		ms_error_handler(ms, "Syntax error near unexpected token `<<'", 0);
+		return (TRUE);
+	}
 	if (!ft_strncmp(*str, ">>>", 3))
 	{
 		ms_error_handler(ms, "Syntax error near unexpected token `>>'", 0);

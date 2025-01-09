@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 18:16:07 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 12:22:23 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,6 @@ int	ms_extract_operator(t_ms *ms, t_token_type type, char **str)
 
 /*
 	Identifies the type of operator and sends it to the extractor function.
-	TODO
-	It will need to mark each operator with its associated type
-	(replacing the string itself?)
 */
 int	ms_handle_operator(t_ms *ms, char **str)
 {
