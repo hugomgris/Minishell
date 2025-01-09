@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 15:19:08 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 17:17:46 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,13 +142,16 @@ Waits for all child processes to finish execution.
 Performs cleanup for pipes, environment, and other resources after execution.
 Returns 0 on successful execution.
 */
-int	ms_executor(t_ms *ms)
+int	ms_executor(t_ms *ms, t_chain *chain)
 {
 	char	**env;
 	int		i;
 	int		code;
 
-	if (!ms_toksize(ms->tok))
+	ms->chain_tokens = chain->tokens;
+	ft_printf("CHAIN TOKENS:\n");
+	ms_print_toks(ms->chain_tokens);
+	if (!ms_toksize(ms->chain_tokens))
 		return (1);
 	ms_initialize_execution(ms, &env);
 	i = -1;

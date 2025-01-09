@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 15:19:07 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 17:18:46 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,19 +59,21 @@ void	ms_main_loop(t_ms *ms)
 		if (!ms->input)
 			continue ;
 		if (!ms_syntax_checker(ms, ms->input))
-			break ;
-		if (ms_tokenizer(ms, ms->input))
-			break ;
-		ms_build_chains(ms); //TODO
+			continue ;
+		if (!ms_tokenizer(ms, ms->input))
+			continue ;
+		ms_print_toks(ms->tok);
+		ms_build_chains(ms);
 		add_history(ms->input);
 		write_history(0);
-		current = ms->chains;
+		current = *ms->chains;
 		while (current)
 		{
 			ms_parser(ms, current);
-			ms_execute(ms);
+			ms_executor(ms, current);
 			current = current->next;
 		}
-		//Clean chains
+		ms_free_chains(ms);
+		ms_tokclear(&ms->tok, free);
 	}
 }

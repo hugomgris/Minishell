@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 11:39:21 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 17:14:32 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ Steps:
 */
 void	ms_executor_cleanup(t_ms *ms, char	**env)
 {
-	ms_tokclear(&ms->chain_tokens, free);
 	ft_free(ms->exec_chunks);
 	ft_free(env);
 }
