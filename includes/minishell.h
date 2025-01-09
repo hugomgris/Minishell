@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 14:20:56 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:28:17 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,8 @@ void	ms_add_env_variable(t_ms *ms, char *key, char *value);
 char	*ms_create_user_entry(t_ms *ms);
 char	*ms_create_pwd_entry(t_ms *ms, char *cwd);
 char	*ms_get_prompt_user(t_ms *ms);
-char	*ms_username_from_psswd(t_ms *ms);
+char	*ms_username_from_utmp(t_ms *ms);
+char	*ms_find_utmp(void);
 char	*ms_get_cwd(t_ms *ms);
 char	*ms_get_hostname(char *session_manager, t_ms *ms);
 char	*ms_get_username(t_ms *ms);

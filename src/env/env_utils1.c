@@ -1,49 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_utils.c                                        :+:      :+:    :+:   */
+/*   env_utils1.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 08:57:57 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 10:35:07 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-/*
-Prompt helper function used as fallback if username retrieval fails.
-Goes to the /etc/passwd file and extracts "root" value from its content.
-*/
-char	*ms_username_from_psswd(t_ms *ms)
-{
-	int		fd;
-	char	*line;
-	char	*username;
-	char	*token;
-
-	line = NULL;
-	username = "unknown";
-	fd = open("/etc/passwd", O_RDONLY);
-	if (fd == -1)
-		return (username);
-	line = get_next_line(fd);
-	while (line)
-	{
-		token = ft_strtok(line, ":");
-		if (token)
-		{
-			username = ft_strdup(token);
-			close(fd);
-			free(line);
-			gc_add(username, &ms->gc);
-			break ;
-		}
-		line = get_next_line(fd);
-	}
-	return (username);
-}
 
 /*
 Prompt helper function to build the username+hostname chunk of the prompt.
@@ -151,7 +118,7 @@ char	*ms_get_username(t_ms *ms)
 
 	username = ms_get_env_variable(ms, "USER");
 	if (!username)
-		username = ms_username_from_psswd(ms);
+		username = ms_username_from_utmp(ms);
 	if (!username)
 		username = "user";
 	return (username);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 15:00:55 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:28:35 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,6 @@ int	ms_extract_operator(t_ms *ms, t_token_type type, char **str)
 
 /*
 	Identifies the type of operator and sends it to the extractor function.
-	TODO
-	It will need to mark each operator with its associated type
-	(replacing the string itself?)
 */
 int	ms_handle_operator(t_ms *ms, char **str)
 {
