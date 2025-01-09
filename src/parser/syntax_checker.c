@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 10:40:00 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 13:43:10 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,7 @@ int	ms_check_empty_pipe(t_ms *ms, char *str)
 }
 
 /*
-	Checks for an empty pipe, ie. a syntax with "| NULL |" or
-	"cmd | NULL".
+	Checks for incorrect pipe syntax.
 */
 int	ms_checkpipes(t_ms *ms, char *str)
 {
@@ -84,6 +83,11 @@ int	ms_checkpipes(t_ms *ms, char *str)
 	return (TRUE);
 }
 
+/*
+	Checks for incorrect parenthesis syntax by substracting the number
+	of closed parenthesis to the number of open ones, ignoring quotes.
+	Non-zero result indicates a wrong syntax and raises error.
+*/
 int	ms_check_parenthesis(t_ms *ms, char *str)
 {
 	int	i;
