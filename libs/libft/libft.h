@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 12:45:35 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 14:32:34 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 18:28:38 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ size_t		ft_min_strlen(const char *s1, const char *s2);
 int			ft_count_words(const char *str);
 t_list		*ft_lstsort(t_list *l, int (*cmp)(const void *, const void *, \
 	size_t));
-int		ft_strcmp(char *s1, char *s2);
-char	*ft_strdup_lower(const char *str);
+int			ft_strcmp(char *s1, char *s2);
+char		*ft_strdup_lower(const char *str);
 
 #endif

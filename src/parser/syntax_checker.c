@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checker.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 13:43:10 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/10 10:29:39 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ int	ms_check_parenthesis(t_ms *ms, char *str)
 	{
 		if (ms_is_quote(str[i]))
 		{
-			ms_skip_quotes(ms, str, &i);
-			continue ;
+			if (!ms_skip_quotes(ms, str, &i))
+				return (FALSE);
 		}
 		if (str[i] == '(')
 			open++;
