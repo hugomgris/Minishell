@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
 /*   Updated: 2025/01/10 14:47:33 by hmunoz-g         ###   ########.fr       */
@@ -19,6 +19,7 @@ void	ms_handle_input(t_ms *ms)
 		return ;
 	if (!ms_syntax_checker(ms, ms->input) || !ms_tokenizer(ms, ms->input))
 	{
+		ms->exit_status = 2;
 		add_history(ms->input);
 		write_history(0);
 		return ;

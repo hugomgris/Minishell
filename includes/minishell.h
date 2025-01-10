@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
 /*   Updated: 2025/01/10 18:53:59 by hmunoz-g         ###   ########.fr       */
@@ -202,6 +202,9 @@ int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
 int		ms_checkredirections(t_ms *ms, char *str);
 int		ms_check_parenthesis(t_ms *ms, char *str);
+int		ms_check_or(t_ms *ms, char *str);
+int		ms_check_and(t_ms *ms, char *str);
+int		ms_is_doubleoperator(t_ms *ms, char *str, int i);
 int		ms_checkoutfile(t_ms *ms, char *str);
 int		ms_checkinfile(t_ms *ms, char *str);
 
