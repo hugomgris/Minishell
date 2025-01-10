@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_utils1.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 17:49:40 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/10 10:24:33 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 14:19:49 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int	ms_check_operator(t_ms *ms, char **str)
 {
 	if (!ft_strncmp(*str, "<<<", 3))
 	{
-		ms_error_handler(ms, "Syntax error near unexpected token `<<'", 0);
+		ms_error_handler(ms, "Syntax error near unexpected token `<<<'", 0);
 		return (TRUE);
 	}
 	if (!ft_strncmp(*str, ">>>", 3))
