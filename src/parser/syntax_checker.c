@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 10:29:39 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 11:49:04 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,20 +93,20 @@ int	ms_check_parenthesis(t_ms *ms, char *str)
 	int	i;
 	int	open;
 
-	i = 0;
+	i = -1;
 	open = 0;
-	while (str[i])
+	while (str[++i])
 	{
 		if (ms_is_quote(str[i]))
 		{
 			if (!ms_skip_quotes(ms, str, &i))
 				return (FALSE);
+			--i;
 		}
 		if (str[i] == '(')
 			open++;
 		if (str[i] == ')')
 			open--;
-		i++;
 	}
 	if (!open)
 		return (TRUE);

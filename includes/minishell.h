@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 09:08:06 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 12:19:16 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,8 @@ typedef struct s_paren_group
 void	ms_initialise_minishell(t_ms *ms, char **env);
 void	ms_setup_signal_handlers(t_ms *ms);
 void	ms_main_loop(t_ms *ms);
+void	ms_execute_chains(t_ms *ms);
+void	ms_handle_input(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
 void	ms_set_shlvl(t_ms *ms);
@@ -128,6 +130,9 @@ void	ms_set_custom_colors(t_ms *ms);
 //CHAINER functions
 void	ms_build_chains(t_ms *ms);
 void	ms_create_chain(t_ms *ms, int iter, int index);
+t_token	*ms_extract_chain_tokens(t_ms *ms, char **sep, int iter, int index);
+int		ms_find_start_position(t_token **current, int iter, int id, char **sep);
+int		ms_count_chains(t_ms *ms);
 int		ms_count_chains(t_ms *ms);
 t_chain	*ms_new_chain(t_token *tokens, char *separator);
 void	ms_chain_add_back(t_chain **lst, t_chain *new);
