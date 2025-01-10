@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checker.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 10:04:30 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/10 11:49:04 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,7 @@ int	ms_check_empty_pipe(t_ms *ms, char *str)
 }
 
 /*
-	Checks for an empty pipe, ie. a syntax with "| NULL |" or
-	"cmd | NULL".
+	Checks for incorrect pipe syntax.
 */
 int	ms_checkpipes(t_ms *ms, char *str)
 {
@@ -85,6 +84,40 @@ int	ms_checkpipes(t_ms *ms, char *str)
 }
 
 /*
+	Checks for incorrect parenthesis syntax by substracting the number
+	of closed parenthesis to the number of open ones, ignoring quotes.
+	Non-zero result indicates a wrong syntax and raises error.
+*/
+int	ms_check_parenthesis(t_ms *ms, char *str)
+{
+	int	i;
+	int	open;
+
+	i = -1;
+	open = 0;
+	while (str[++i])
+	{
+		if (ms_is_quote(str[i]))
+		{
+			if (!ms_skip_quotes(ms, str, &i))
+				return (FALSE);
+			--i;
+		}
+		if (str[i] == '(')
+			open++;
+		if (str[i] == ')')
+			open--;
+	}
+	if (!open)
+		return (TRUE);
+	else if (open > 0)
+		ms_error_handler(ms, "syntax error near unexpected token \"(\"", 0);
+	else
+		ms_error_handler(ms, "syntax error near unexpected token \")\"", 0);
+	return (FALSE);
+}
+
+/*
 	Checks for special characters that are not handled by minishell along
 	with the correct syntax for using pipes and redirections.
 	Returns error in case of bad syntax, displaying a new prompt to the user.
@@ -96,6 +129,8 @@ int	ms_syntax_checker(t_ms *ms, char *str)
 	if (!ms_checkpipes(ms, str))
 		return (FALSE);
 	if (!ms_checkredirections(ms, str))
+		return (FALSE);
+	if (!ms_check_parenthesis(ms, str))
 		return (FALSE);
 	return (TRUE);
 }

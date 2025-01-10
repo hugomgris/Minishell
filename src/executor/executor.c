@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 09:54:39 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 11:55:08 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ int	ms_process_command(t_ms *ms, char **env, int i)
 			ms_error_handler(ms, "Error: Failed to redir input", 0);
 		return (1);
 	}
+	if (ms_get_set(GET, 0) == SHELL_HEREDOC_INTERRUPTED)
+		return (130);
 	if (ms->filt_args[0] && ms_is_builtin(ms->filt_args[0]) && !ms->pipe_count)
 		return (ms_handle_builtin(ms, env, saved_fds));
 	if (!ft_array_count(ms->filt_args))
@@ -109,9 +111,12 @@ Cleans up parsed arguments and filtered states after execution.
 */
 int	ms_execute_chunk(t_ms *ms, char **env, int i)
 {
-	int	arg_count;
-	int	code;
+	int		arg_count;
+	int		code;
+	char	*warning;
 
+	warning = "Redirection: Warning: Chained heredoc redirections detected, "
+		"will only consider last one.";
 	ms->cmd_args = ms_parse_args(ms->exec_chunks[i], &arg_count);
 	ms_filter_args(ms);
 	if (ft_array_count(ms->filt_args) == 0)
@@ -122,6 +127,8 @@ int	ms_execute_chunk(t_ms *ms, char **env, int i)
 		free(ms->cmd_args);
 		return (0);
 	}
+	if (ms_has_heredoc(ms) > 1)
+		ft_putendl_fd(warning, 0);
 	code = ms_process_command(ms, env, i);
 	ms_cleanup_args(ms);
 	return (code);
@@ -141,7 +148,7 @@ int	ms_executor(t_ms *ms)
 	int		i;
 	int		code;
 
-	if (!ft_lstsize(ms->tokens))
+	if (!ms_toksize(ms->chain_tokens))
 		return (1);
 	ms_initialize_execution(ms, &env);
 	i = -1;
@@ -152,14 +159,13 @@ int	ms_executor(t_ms *ms)
 			ms_close_used_pipes(ms->pipe_fds, i);
 	}
 	ms_close_parent_pipes(ms->pipe_fds, ms->pipe_count);
+	if (ms_get_set(GET, 0) == 3)
+		return (ms_heredoc_interruption(ms, env));
 	if (ft_array_count(ms->exec_chunks) > 1)
-		code = ms_wait_children(ms, ft_array_count(ms->exec_chunks));
+		ms_wait_children(ms, ft_array_count(ms->exec_chunks));
 	ms_executor_cleanup(ms, env);
 	ms_free_pipes(ms->pipe_fds, ms->pipe_count);
 	ms_cleanup_heredoc(ms);
-	if (ms_get_set(GET, 0) != 3)
-		ms->exit_status = code;
-	else
-		ms->exit_status = 130;
+	ms->exit_status = code;
 	return (code);
 }

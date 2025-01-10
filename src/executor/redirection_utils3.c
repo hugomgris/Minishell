@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 10:25:24 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/07 18:59:56 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ Closes the temporary heredoc file, removes it from the filesystem,
 */
 int	ms_handle_heredoc_signal(int tmp_fd, int *fd)
 {
+	ms_get_set(SET, SHELL_HEREDOC_INTERRUPTED);
 	close(tmp_fd);
 	unlink("/tmp/heredoc_tmp");
 	ms_get_set(GET, 0);
@@ -55,7 +56,6 @@ int	ms_write_heredoc_lines(int tmp_fd, const char *delimiter)
 		{
 			if (ms_get_set(GET, 0) == 3)
 				return (-1);
-			close(tmp_fd);
 			return (0);
 		}
 		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter))

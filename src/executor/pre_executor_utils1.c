@@ -1,39 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstsub_bonus.c                                  :+:      :+:    :+:   */
+/*   pre_executor_utils1.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/19 14:33:23 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 12:40:25 by hmunoz-g         ###   ########.fr       */
+/*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
+/*   Updated: 2025/01/10 11:28:17 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../includes/minishell.h"
 
-static int	add_node_to_sublist(t_list **sub_list, t_list *current)
+static int	ms_add_node_to_sublist(t_token **sub_list, t_token *current)
 {
 	char	*copy;
-	t_list	*new_node;
+	t_token	*new_node;
 
 	copy = ft_strdup(current->content);
 	if (!copy)
 		return (0);
-	new_node = ft_lstnew(copy);
+	new_node = ms_new_token(copy, current->type);
 	if (!new_node)
 	{
 		free(copy);
 		return (0);
 	}
-	ft_lstadd_back(sub_list, new_node);
+	ms_tokadd_back(sub_list, new_node);
 	return (1);
 }
 
-t_list	*ft_lstsub(t_list *lst, int start, int count)
+t_token	*ms_toksub(t_token *lst, int start, int count)
 {
-	t_list	*sub_list;
-	t_list	*current;
+	t_token	*sub_list;
+	t_token	*current;
 	int		i;
 
 	if (!lst || start < 0 || count <= 0)
@@ -46,9 +46,9 @@ t_list	*ft_lstsub(t_list *lst, int start, int count)
 	i = -1;
 	while (current && ++i < count)
 	{
-		if (!add_node_to_sublist(&sub_list, current))
+		if (!ms_add_node_to_sublist(&sub_list, current))
 		{
-			ft_lstclear(&sub_list, free);
+			ms_tokclear(&sub_list, free);
 			return (NULL);
 		}
 		current = current->next;

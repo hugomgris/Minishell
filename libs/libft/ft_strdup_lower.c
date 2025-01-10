@@ -1,28 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sort_toks.c                                        :+:      :+:    :+:   */
+/*   ft_strdup_lower.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/18 17:46:25 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/18 18:20:57 by nponchon         ###   ########.fr       */
+/*   Created: 2025/01/07 12:35:56 by nponchon          #+#    #+#             */
+/*   Updated: 2025/01/07 12:44:39 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "libft.h"
 
-void	ms_sort_toks(t_token *toks)
+/*
+	Duplicates a string like ft_strdup() putting all uppercase letters
+	to lowercases.
+*/
+char	*ft_strdup_lower(const char *str)
 {
-	t_token	*current;
+	char	*dup;
+	int		i;
 
-	current = toks;
-	while (current)
+	i = 0;
+	dup = (char *)malloc(sizeof(char) * (ft_strlen(str)) + 1);
+	if (!dup)
+		return (NULL);
+	while (str[i])
 	{
-		if (current->type)
-		{
-			return ;
-		}
-		current = current->next;
+		dup[i] = ft_tolower(str[i]);
+		i++;
 	}
+	dup[i] = '\0';
+	return (dup);
 }

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:20:34 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/02 19:26:15 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 18:28:20 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,16 +113,17 @@ Checks arguments and derives to case managing:
 */
 int	ms_export(t_ms *ms, char **cmd_args, char **env)
 {
-	int	i;
-	int	code;
+	int		code;
+	t_token	*current;
 
 	if (!cmd_args[1])
 		return (ms_export_print(ms, env));
-	i = 1;
-	while (cmd_args[i])
+	current = ms->chain_tokens;
+	while (current)
 	{
-		code = ms_process_export_arg(ms, cmd_args[i]);
-		i++;
+		if (ft_strchr(current->content, '='))
+			code = ms_process_export_arg(ms, current->content);
+		current = current->next;
 	}
 	return (code);
 }

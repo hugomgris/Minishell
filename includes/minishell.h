@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 09:28:39 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/10 12:19:16 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <sys/wait.h>
 # include <errno.h>
 # include <dirent.h>
+# include <termios.h>
 
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
@@ -59,15 +60,31 @@ enum e_shell_state
 	SHELL_NORMAL = 0,
 	SHELL_CHILD_PROCESS = 1,
 	SHELL_HEREDOC = 2,
-	SHELL_HEREDOC_INTERRUPTED = 3
+	SHELL_HEREDOC_INTERRUPTED = 3,
+	SHELL_CHILD_INTERRUPTED = 4
 };
 
 typedef struct s_token
 {
-	void			*content;
+	char			*content;
 	t_token_type	type;
 	struct s_token	*next;
 }	t_token;
+
+typedef struct s_match_data
+{
+	int	i;
+	int	j;
+	int	start;
+	int	match;
+}	t_match_data;
+
+typedef struct s_chain
+{
+	t_token			*tokens;
+	char			*separator;
+	struct s_chain	*next;
+}	t_chain;
 
 typedef struct s_ms
 {
@@ -78,29 +95,49 @@ typedef struct s_ms
 	int		exit_status;
 	t_list	*ms_env;
 	t_list	*gc;
+	t_chain	*chains;
 	t_token	*tok;
-	t_list	*tokens;
-	t_list	*chain_tokens;
-	t_list	*filtered_tokens;
-	t_list	*redir_tokens;
-	t_list	**exec_tokens;
+	t_token	*wc;
+	t_token	*chain_tokens;
 	char	**exec_chunks;
 	char	**cmd_args;
 	char	**filt_args;
-	char	**cmd_table;
 	int		heredoc_fd;
 	int		**pipe_fds;
 	int		pipe_count;
-	int		chains;
+	int		chain_count;
 }	t_ms;
+
+typedef struct s_paren_group
+{
+	t_list	*tokens;
+	t_list	*redirections;
+	int		start;
+	int		end;
+}	t_paren_group;
 
 //MAIN and LOOP functions
 void	ms_initialise_minishell(t_ms *ms, char **env);
+void	ms_setup_signal_handlers(t_ms *ms);
 void	ms_main_loop(t_ms *ms);
+void	ms_execute_chains(t_ms *ms);
+void	ms_handle_input(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
 void	ms_set_shlvl(t_ms *ms);
 void	ms_set_custom_colors(t_ms *ms);
+
+//CHAINER functions
+void	ms_build_chains(t_ms *ms);
+void	ms_create_chain(t_ms *ms, int iter, int index);
+t_token	*ms_extract_chain_tokens(t_ms *ms, char **sep, int iter, int index);
+int		ms_find_start_position(t_token **current, int iter, int id, char **sep);
+int		ms_count_chains(t_ms *ms);
+int		ms_count_chains(t_ms *ms);
+t_chain	*ms_new_chain(t_token *tokens, char *separator);
+void	ms_chain_add_back(t_chain **lst, t_chain *new);
+t_chain	*ms_chain_last(t_chain *lst);
+void	ms_chain_clear(t_chain **lst);
 
 //TOKENIZER and UTILS
 int		ms_tokenizer(t_ms *ms, char *str);
@@ -120,17 +157,20 @@ t_token	*ms_new_token(void *content, t_token_type type);
 t_token	*ms_toklast(t_token *lst);
 void	ms_tokadd_back(t_token **lst, t_token *new);
 void	ms_tokclear(t_token **lst, void (*del)(void *));
+int		ms_toksize(t_token *lst);
+t_token	*ms_tokcpy(t_token *original);
 void	ms_process_token_content(t_ms *ms, char *tmp, t_token **subtok);
 void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok);
 void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote);
 void	ms_expand_subtoken(t_ms *ms, t_token *lst);
 char	*ms_merge_subtoken(t_ms *ms, t_token *subtok);
 void	ms_tokinsert(t_token **lst, t_token *current, t_token *new);
+void	ms_tokinsert_list(t_token **lst, t_token *current, t_token *new);
 void	ms_remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *));
 
 //PARSER
-int		ms_parser(t_ms *ms, char *str);
+int		ms_parser(t_ms *ms);
 void	ms_expand_variable(t_ms *ms);
 int		ms_key_checker(char *key, const char *var);
 char	*ms_get_key(t_ms *ms, char *str);
@@ -142,14 +182,18 @@ int		ms_ignore_squote(char *str, int *i);
 void	ms_remove_quotes(t_ms *ms);
 int		ms_count_quotes(char *str);
 char	*ms_trim_quotes(char *str, char *new, int len);
-void	ms_sort_toks(t_token *toks);
 
 //WILDCARDS
 void	ms_expand_wildcards(t_ms *ms);
-void	ms_get_wildcards(t_ms *ms, char *pattern, t_token *subtoken);
-int		ms_match_count(char *pattern);
-int		ms_process_dir_entry(t_ms *ms, char *pat, \
-t_token *sub, struct dirent *ent);
+void	ms_get_wildcards(t_ms *ms, char *pat, t_token *sub);
+int		ms_match_pattern(char *pattern, char *entry, int m, int n);
+int		ms_process_dir_entry(t_ms *ms, char *pat, struct dirent *ent);
+void	ms_init_match_data(t_match_data *data);
+int		ms_retry_star(t_match_data *data, int *start);
+void	ms_handle_star(t_match_data *data, int *start);
+int		ms_is_hidden_entry(char *entry);
+t_token	*ms_tokensort(t_token *tok);
+void	ms_add_wc(t_ms *ms, t_token *sub);
 
 //SYNTAX CHECK
 int		ms_syntax_checker(t_ms *ms, char *str);
@@ -157,6 +201,7 @@ int		ms_checkspecialchar(t_ms *ms, char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
 int		ms_checkredirections(t_ms *ms, char *str);
+int		ms_check_parenthesis(t_ms *ms, char *str);
 int		ms_checkoutfile(t_ms *ms, char *str);
 int		ms_checkinfile(t_ms *ms, char *str);
 
@@ -180,7 +225,8 @@ void	ms_add_env_variable(t_ms *ms, char *key, char *value);
 char	*ms_create_user_entry(t_ms *ms);
 char	*ms_create_pwd_entry(t_ms *ms, char *cwd);
 char	*ms_get_prompt_user(t_ms *ms);
-char	*ms_username_from_psswd(t_ms *ms);
+char	*ms_username_from_utmp(t_ms *ms);
+char	*ms_find_utmp(void);
 char	*ms_get_cwd(t_ms *ms);
 char	*ms_get_hostname(char *session_manager, t_ms *ms);
 char	*ms_get_username(t_ms *ms);
@@ -193,10 +239,10 @@ void	ms_initialize_execution(t_ms *ms, char ***env);
 int		ms_execute_chunk(t_ms *ms, char **env, int i);
 int		ms_process_command(t_ms *ms, char **env, int i);
 int		ms_exec_command(t_ms *ms, char **env);
-char	**ms_extract_chunks(t_ms *ms, t_list **tokens);
-char	*ms_process_chunk(t_ms *ms, t_list **current);
-int		ms_count_chunks(t_list *tokens);
-int		ms_is_pipe(const char *token);
+char	**ms_extract_chunks(t_ms *ms, t_token **tokens);
+char	*ms_process_chunk(t_ms *ms, t_token **current);
+int		ms_count_chunks(t_ms *ms, t_token *tokens);
+int		ms_is_pipe(t_ms *ms, char *token);
 char	**ms_env_to_array(t_ms *ms, char **arr);
 char	**ms_rebuild_env(t_ms *ms);
 int		ms_handle_parent_process(t_ms *ms);
@@ -220,6 +266,9 @@ void	ms_close_parent_pipes(int **pipe_fds, int pipe_count);
 void	ms_close_child_pipes(int **pipe_fds, int pipe_count);
 void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count);
 char	**ms_parse_args(char *exec_chunk, int *arg_count);
+int		ms_detect_space_arg(const char *chunk);
+char	*ms_process_space_args_in(char *chunk);
+char	**ms_process_space_args_out(char **args);
 int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);
 int		ms_try_path_execution(char *cmd_path, char **cmd_args, char **env);
 char	*ms_build_cmd_path(t_ms *ms, char *dir, char *cmd);
@@ -233,6 +282,7 @@ int		ms_redirection(t_ms *ms);
 int		ms_has_redirection(t_ms *ms);
 int		ms_detect_redirector(char *arg);
 int		ms_setup_redirects(char **args, int i, int *fds, t_ms *ms);
+int		ms_latest_infile(char **args);
 void	ms_filter_args(t_ms *ms);
 int		ms_count_non_redirectors(char **cmd_args);
 char	**ms_allocate_filtered_args(t_ms *ms, int count);
@@ -249,9 +299,11 @@ int		ms_write_heredoc_lines(int tmp_fd, const char *delimiter);
 int		ms_finalize_heredoc(int tmp_fd, int *fd);
 int		ms_handle_heredoc_signal(int tmp_fd, int *fd);
 int		ms_handle_heredoc_error(t_ms *ms, char *error_msg);
+int		ms_heredoc_interruption(t_ms *ms, char **env);
 
 //BUILTIN CD functions
 int		ms_cd(t_ms *ms);
+int		ms_check_cd_args(t_ms *ms);
 int		ms_change_directory(t_ms *ms, char *new_path);
 int		ms_join_paths(t_ms *ms, char *cwd, char *path, char **new_path);
 void	ms_cd_absolute(t_ms *ms, char *path);
@@ -304,5 +356,6 @@ void	ms_print_toks(t_token *list);
 
 //EXECUTOR BONUS function
 void	ms_pre_executor(t_ms *ms);
+t_token	*ms_toksub(t_token *lst, int start, int count);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 16:25:37 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/31 11:43:43 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 11:29:13 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,6 @@ void	ms_tokinsert(t_token **lst, t_token *current, t_token *new)
 	}
 	new->next = current->next;
 	current->next = new;
-}
-
-/*
-	Same as ms_print_list, but for tokens.
-*/
-void	ms_print_toks(t_token *list)
-{
-	while (list)
-	{
-		ft_printf("%s, %i\n", (char *)list->content, list->type);
-		list = list->next;
-	}
 }
 
 void	ms_tokclear(t_token **lst, void (*del)(void *))

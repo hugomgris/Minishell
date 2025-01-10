@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2024/12/20 13:23:41 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 10:53:47 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void	ms_error_handler(t_ms *ms, char *msg, int critical)
 	{
 		ft_lstclear(&ms->ms_env, free);
 		ft_lstclear(&ms->gc, free);
-		ft_lstclear(&ms->tokens, free);
 		ms_tokclear(&ms->tok, free);
 		exit (1);
 	}

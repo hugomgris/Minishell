@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/03 11:39:23 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:13:21 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,8 +108,17 @@ TODO: Again, check return values for consistency (0-1 vs 0-(-1))
 int	ms_handle_open_error(t_ms *ms, char *filename)
 {
 	char	*output;
+	int		err;
 
-	output = ft_strjoin(filename, ": No such file or directory");
+	err = errno;
+	if (err == ENOENT)
+		output = ft_strjoin(filename, ": No such file or directory");
+	else if (err == EACCES)
+		output = ft_strjoin(filename, ": Permission denied");
+	else if (err == EISDIR)
+		output = ft_strjoin(filename, ": Is a directory");
+	else
+		output = ft_strjoin(filename, ": Unknown error");
 	gc_add(output, &ms->gc);
 	ms_error_handler(ms, output, 0);
 	if (ms->pipe_count || !ms_is_builtin(ms->filt_args[0]))

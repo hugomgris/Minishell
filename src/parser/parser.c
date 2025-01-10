@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 10:24:28 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 18:01:55 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	ms_remove_quotes(t_ms *ms)
 	int		count;
 	int		len;
 
-	aux = ms->tok;
+	aux = ms->chain_tokens;
 	while (aux)
 	{
 		tmp = ft_strdup((char *)aux->content);
@@ -101,21 +101,6 @@ void	ms_remove_quotes(t_ms *ms)
 	}
 }
 
-void	ms_copy_toktolist(t_ms *ms)
-{
-	t_token	*aux;
-	t_list	*new;
-
-	new = NULL;
-	aux = ms->tok;
-	while (aux)
-	{
-		new = ft_lstnew(ft_strdup((char *)aux->content));
-		ft_lstadd_back(&ms->tokens, new);
-		aux = aux->next;
-	}
-}
-
 /*
 	The control tower for the parsing process.
 	Does a preliminary check of the user input and yields error
@@ -123,18 +108,12 @@ void	ms_copy_toktolist(t_ms *ms)
 	containing variable are expanded to their correct values. 
 	Empty tokens are then removed and the unnecessary quotes are trimmed.
 */
-int	ms_parser(t_ms *ms, char *str)
+int	ms_parser(t_ms *ms)
 {
-	if (!ms_syntax_checker(ms, str))
-		return (FALSE);
-	if (!ms_tokenizer(ms, str))
-		return (FALSE);
 	ms_expand_variable(ms);
 	ms_expand_wildcards(ms);
 	ms_remove_quotes(ms);
-	ms_remove_empty_tokens(&ms->tok, free);
-	ms_sort_toks(ms->tok);
-	ms_copy_toktolist(ms);
-	ms_tokclear(&ms->tok, free);
+	ms_remove_empty_tokens(&ms->chain_tokens, free);
+	ms_tokclear(&ms->wc, free);
 	return (TRUE);
 }
