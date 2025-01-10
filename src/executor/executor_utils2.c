@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 18:03:01 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 21:17:40 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,7 @@ int	ms_handle_child_process(t_ms *ms, char **env, int i)
 			ms_error_handler(ms, "Heredoc dup2 failed", 0);
 			exit(1);
 		}
-		if (close(ms->heredoc_fd) == -1)
-		{
-			ms_error_handler(ms, "Error: close failed", 0);
-			exit(1);
-		}
+		close(ms->heredoc_fd);
 	}
 	else if (i > 0)
 		ms->heredoc_fd = -1;
@@ -103,8 +99,7 @@ int	ms_handle_parent_process(t_ms *ms)
 {
 	if (ms->heredoc_fd != -1)
 	{
-		if (close(ms->heredoc_fd) == -1)
-			return (ms_error_handler(ms, "Error: close failed", 0), 1);
+		close(ms->heredoc_fd);
 		ms->heredoc_fd = -1;
 	}
 	return (0);
@@ -116,22 +111,10 @@ Steps:
   1. Closes the read end of the previous pipe (if applicable).
   2. Closes the write end of the current pipe.
 */
-void	ms_close_used_pipes(t_ms *ms, int **pipe_fds, int i)
+void	ms_close_used_pipes(int **pipe_fds, int i)
 {
 	if (i > 0)
-	{
-		if (close(pipe_fds[i - 1][0]) == -1)
-		{
-			ms_error_handler(ms, "Error: close failed", 0);
-			return ;
-		}
-	}
+		close(pipe_fds[i - 1][0]);
 	if (pipe_fds[i])
-	{
-		if (close(pipe_fds[i][1]) == -1)
-		{
-			ms_error_handler(ms, "Error: close failed", 0);
-			return ;
-		}
-	}
+		close(pipe_fds[i][1]);
 }

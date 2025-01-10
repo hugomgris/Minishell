@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 18:46:48 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 20:48:15 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,15 @@ Closes all the pipe file descriptors for child processes.
 This is done after the pipes have been used for redirection
 	to prevent resource leakage.
 */
-void	ms_close_child_pipes(t_ms *ms, int **pipe_fds, int pipe_count)
+void	ms_close_child_pipes(int **pipe_fds, int pipe_count)
 {
 	int	j;
 
 	j = 0;
 	while (j < pipe_count)
 	{
-		if (close(pipe_fds[j][0]) == -1 || close(pipe_fds[j][1]) == -1)
-			ms_error_handler(ms, "Error: close failed", 0);
+		close(pipe_fds[j][0]);
+		close(pipe_fds[j][1]);
 		j++;
 	}
 }
@@ -50,14 +50,14 @@ Closes all the pipe file descriptors for the parent process.
 After the pipes are no longer needed, this function ensures that
 	the pipe file descriptors are closed.
 */
-void	ms_close_parent_pipes(t_ms *ms, int **pipe_fds, int pipe_count)
+void	ms_close_parent_pipes(int **pipe_fds, int pipe_count)
 {
 	int	i;
 
 	i = -1;
 	while (++i < pipe_count)
 	{
-		if (close(pipe_fds[i][0]) == -1 || close(pipe_fds[i][1] == -1))
-			ms_error_handler(ms, "Error: close failed", 0);
+		close(pipe_fds[i][0]);
+		close(pipe_fds[i][1]);
 	}
 }

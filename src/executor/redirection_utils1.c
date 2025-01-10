@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 15:56:09 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 21:07:30 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,6 @@ Handles errors when attempting to open a file by generating an error message
 	indicating the specific file does not exist.
 If the error occurs in a pipe or non-builtin command context, the program exits.
 Returns -1 after handling the error.
-TODO: Again, check return values for consistency (0-1 vs 0-(-1))
 */
 int	ms_handle_open_error(t_ms *ms, char *filename)
 {

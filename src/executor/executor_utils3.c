@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 18:53:56 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 20:59:43 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	ms_process_heredoc(t_ms *ms)
 	}
 	if (!delimiter)
 		return (ms_handle_heredoc_error(ms, "Heredoc delimiter missing"));
-	result = ms_handle_heredoc(ms, delimiter, &fd);
+	result = ms_handle_heredoc(delimiter, &fd);
 	if (result == -1)
 		return (ms_handle_heredoc_error(ms, "Heredoc processing failed"));
 	ms->heredoc_fd = fd;
@@ -92,16 +92,13 @@ int	ms_handle_heredoc_setup(t_ms *ms)
 	{
 		dup2(tty, STDIN_FILENO);
 		dup2(tty, STDOUT_FILENO);
-		if (close(tty) == -1)
-			return (ms_error_handler(ms, "Error: close failed", 0), 1);
+		close(tty);
 	}
 	result = ms_process_heredoc(ms);
 	dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);
-	if (close(orig_stdin) == -1)
-		return (ms_error_handler(ms, "Error: close failed", 0), 1);
-	if (close(orig_stdout) == -1)
-		return (ms_error_handler(ms, "Error: close failed", 0), 1);
+	close(orig_stdin);
+	close(orig_stdout);
 	return (result);
 }
 

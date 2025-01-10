@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 18:47:26 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 21:18:17 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,8 @@ int	ms_handle_builtin(t_ms *ms, char **env, int saved_fds[3])
 	int	code;
 
 	ms_save_std_fds(saved_fds);
-	if (ms_has_redirection(ms))
-		ms_redirection(ms);
 	code = ms_exec_command(ms, env);
-	ms_restore_std_fds(ms, saved_fds);
+	ms_restore_std_fds(saved_fds);
 	ms_cleanup_heredoc(ms);
 	return (code);
 }
@@ -155,9 +153,9 @@ int	ms_executor(t_ms *ms)
 	{
 		code = ms_execute_chunk(ms, env, i);
 		if (i < ft_array_count(ms->exec_chunks) - 1)
-			ms_close_used_pipes(ms, ms->pipe_fds, i);
+			ms_close_used_pipes(ms->pipe_fds, i);
 	}
-	ms_close_parent_pipes(ms, ms->pipe_fds, ms->pipe_count);
+	ms_close_parent_pipes(ms->pipe_fds, ms->pipe_count);
 	if (ms_get_set(GET, 0) == 3)
 		return (ms_heredoc_interruption(ms, env));
 	if (ft_array_count(ms->exec_chunks) > 1)

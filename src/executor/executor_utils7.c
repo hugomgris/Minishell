@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 18:13:13 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 20:47:36 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,7 @@ void	ms_cleanup_heredoc(t_ms *ms)
 {
 	if (ms->heredoc_fd != -1)
 	{
-		if (close(ms->heredoc_fd) == -1)
-		{
-			ms_error_handler(ms, "Error: close failed", 0);
-			return ;
-		}
+		close(ms->heredoc_fd);
 		ms->heredoc_fd = -1;
 	}
 }
@@ -82,12 +78,12 @@ Steps:
   1. Restores the file descriptors from the saved_fds array using dup2().
   2. Closes the saved file descriptors.
 */
-void	ms_restore_std_fds(t_ms *ms, int *saved_fds)
+void	ms_restore_std_fds(int *saved_fds)
 {
 	dup2(saved_fds[0], STDIN_FILENO);
 	dup2(saved_fds[1], STDOUT_FILENO);
 	dup2(saved_fds[2], STDERR_FILENO);
-	if (close(saved_fds[0]) == -1 || close(saved_fds[1]) == -1
-		|| close(saved_fds[2]) == -1)
-		ms_error_handler(ms, "Error: close failed", 0);
+	close(saved_fds[0]);
+	close(saved_fds[1]);
+	close(saved_fds[2]);
 }
