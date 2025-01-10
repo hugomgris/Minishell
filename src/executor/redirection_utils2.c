@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 16:19:23 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 18:51:44 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,10 @@ int	ms_manage_heredoc(t_ms *ms, int *fds)
 	if (ms->heredoc_fd != -1)
 	{
 		if (fds[0] != -1)
-			close(fds[0]);
+		{
+			if (close(fds[0]) == -1)
+				return (ms_error_handler(ms, "Error: close failed", 0), 1);
+		}
 		fds[0] = ms->heredoc_fd;
 	}
 	return (0);

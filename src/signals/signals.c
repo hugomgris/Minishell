@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 10:54:30 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 17:04:29 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	ms_sigint_handler(void)
 	state = ms_get_set(GET, 0);
 	if (state == SHELL_CHILD_PROCESS)
 	{
-		ms_get_set(SET, SHELL_CHILD_INTERRUPTED);
+		ms_get_set(SET, SHELL_HEREDOC_INTERRUPTED);
 		ft_putstr_fd("\n", STDERR_FILENO);
 		return ;
 	}
