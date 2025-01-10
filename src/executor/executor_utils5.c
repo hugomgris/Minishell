@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils5.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 11:20:06 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 17:00:47 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,13 @@ Steps:
   3. Counts the number of arguments and stores them in arg_count.
   4. Null-terminates the array.
 */
-char	**ms_parse_args(char *exec_chunk, int *arg_count)
+char	**ms_parse_args(t_ms *ms, char *exec_chunk, int *arg_count)
 {
 	char	**cmd_args;
 	char	*token;
 	int		count;
 
+	(void)ms;
 	*arg_count = 0;
 	count = ft_count_words(exec_chunk) + ms_detect_space_arg(exec_chunk);
 	cmd_args = malloc(sizeof(char *) * (count + 1));

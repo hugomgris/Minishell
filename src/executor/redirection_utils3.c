@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 18:59:56 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 18:53:34 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,11 @@ Handles the cleanup process for a heredoc signal.
 Closes the temporary heredoc file, removes it from the filesystem,
 	and updates the heredoc state.
 */
-int	ms_handle_heredoc_signal(int tmp_fd, int *fd)
+int	ms_handle_heredoc_signal(t_ms *ms, int tmp_fd, int *fd)
 {
 	ms_get_set(SET, SHELL_HEREDOC_INTERRUPTED);
-	close(tmp_fd);
+	if (close(tmp_fd) == -1)
+		return (ms_error_handler(ms, "Error: close failed", 0), 1);
 	unlink("/tmp/heredoc_tmp");
 	ms_get_set(GET, 0);
 	*fd = -1;
@@ -90,7 +91,7 @@ Handles the full heredoc process: creating the temporary file,
 and setting up the file descriptor for reading the heredoc content.
 If an error occurs, it handles the cleanup and returns an error.
 */
-int	ms_handle_heredoc(const char *delimiter, int *fd)
+int	ms_handle_heredoc(t_ms *ms, const char *delimiter, int *fd)
 {
 	int		tmp_fd;
 	char	*tmp_file;
@@ -101,7 +102,7 @@ int	ms_handle_heredoc(const char *delimiter, int *fd)
 	if (tmp_fd == -1)
 		return (-1);
 	if (ms_write_heredoc_lines(tmp_fd, delimiter) == -1)
-		return (ms_handle_heredoc_signal(tmp_fd, fd));
+		return (ms_handle_heredoc_signal(ms, tmp_fd, fd));
 	close(tmp_fd);
 	*fd = open(tmp_file, O_RDONLY);
 	unlink(tmp_file);

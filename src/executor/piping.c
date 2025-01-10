@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 17:14:29 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 18:48:17 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,15 @@ void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count)
 	while (++i < pipe_count)
 	{
 		if (ms->pipe_fds[i][0] != -1)
-			close(ms->pipe_fds[i][0]);
+		{
+			if (close(ms->pipe_fds[i][0]) == -1)
+				ms_error_handler(ms, "Error: close failed", 0);
+		}
 		if (ms->pipe_fds[i][1] != -1)
-			close(ms->pipe_fds[i][1]);
+		{
+			if (close(ms->pipe_fds[i][1]) == -1)
+				ms_error_handler(ms, "Error: close failed", 0);
+		}
 	}
 }
 

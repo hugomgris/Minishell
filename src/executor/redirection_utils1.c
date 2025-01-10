@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 16:13:21 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 15:56:09 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,8 @@ void	ms_populate_filtered_args(t_ms *ms, int count)
 			i += 2;
 		else
 		{
-			ms->filt_args[f_pos] = ms->cmd_args[i];
+			ms->filt_args[f_pos] = ft_strdup(ms->cmd_args[i]);
+			gc_add(ms->filt_args[f_pos], &ms->gc);
 			f_pos++;
 			i++;
 		}

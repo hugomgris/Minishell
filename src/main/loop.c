@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 12:22:35 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 14:47:33 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ void	ms_execute_chains(t_ms *ms)
 		ms_parser(ms);
 		ms_executor(ms);
 		current = current->next;
+		if (current)
+			ms_manage_separator(ms, &current);
 	}
 	ms_chain_clear(&ms->chains);
 	ms_tokclear(&ms->tok, free);

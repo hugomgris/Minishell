@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 10:33:54 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/09 10:37:21 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/10 17:17:55 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ char	*ms_username_from_utmp(t_ms *ms)
 		if (token)
 		{
 			username = ft_strdup(token + 1);
-			close(fd);
+			if (close(fd) == -1)
+				return (ms_error_handler(ms, "Error: close failed", 0), NULL);
 			free(line);
 			gc_add(username, &ms->gc);
 		}
