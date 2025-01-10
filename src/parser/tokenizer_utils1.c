@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_utils1.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 17:49:40 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/08 15:05:01 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/10 10:24:33 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	ms_skip_quotes(t_ms *ms, char *str, int *i)
 	}
 	else
 	{
-		ms_error_handler(ms, "Error: Invalid quote", 0);
+		ms_error_handler(ms, "Invalid quote", 0);
 		return (FALSE);
 	}
 }

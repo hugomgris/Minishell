@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   garbage_collector.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/28 15:37:07 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/06 13:11:51 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/10 09:10:27 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ void	ms_print_toks(t_token *list)
 {
 	while (list)
 	{
-		ft_printf("%s, %i\n", (char *)list->content, list->type);
+		ft_printf("%s, add:%p, %i\n", (char *)list->content, \
+			list->content, list->type);
 		list = list->next;
 	}
 }

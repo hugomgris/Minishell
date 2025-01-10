@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcards.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/08 11:55:16 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 18:00:31 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	ms_add_wc(t_ms *ms, t_token *sub)
 		if (!sub->content)
 			ms_exit_handler(ms, "Malloc failed creating a wildcard", 1);
 		ms_tokensort(ms->wc);
-		ms_tokinsert_list(&ms->tok, sub, ms->wc);
+		ms_tokinsert_list(&ms->chain_tokens, sub, ms->wc);
 	}
 	else
 	{
@@ -106,7 +106,7 @@ void	ms_expand_wildcards(t_ms *ms)
 	t_token	*aux;
 	char	*tmp;
 
-	aux = ms->tok;
+	aux = ms->chain_tokens;
 	while (aux)
 	{
 		if (aux->type == 0 && ft_strchr(aux->content, '*'))

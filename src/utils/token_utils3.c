@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils3.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 13:26:24 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/07 12:47:43 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/10 09:02:03 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,4 +76,21 @@ int	ms_tokcmp(const char *s1, const char *s2)
 	free(cpy1);
 	free(cpy2);
 	return (res);
+}
+
+t_token	*ms_tokcpy(t_token *original)
+{
+	t_token	*new_list;
+	t_token	*new_node;
+
+	new_list = NULL;
+	while (original)
+	{
+		new_node = ms_new_token(ft_strdup(original->content), original->type);
+		if (!new_node)
+			return (NULL);
+		ms_tokadd_back(&new_list, new_node);
+		original = original->next;
+	}
+	return (new_list);
 }

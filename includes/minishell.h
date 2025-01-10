@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 17:13:07 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 09:08:06 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ typedef struct s_ms
 	int		exit_status;
 	t_list	*ms_env;
 	t_list	*gc;
-	t_chain	**chains;
+	t_chain	*chains;
 	t_token	*tok;
 	t_token	*wc;
 	t_token	*chain_tokens;
@@ -106,7 +106,6 @@ typedef struct s_ms
 	int		**pipe_fds;
 	int		pipe_count;
 	int		chain_count;
-	char	*last_checked;
 }	t_ms;
 
 typedef struct s_paren_group
@@ -130,7 +129,10 @@ void	ms_set_custom_colors(t_ms *ms);
 void	ms_build_chains(t_ms *ms);
 void	ms_create_chain(t_ms *ms, int iter, int index);
 int		ms_count_chains(t_ms *ms);
-void	ms_free_chains(t_ms *ms);
+t_chain	*ms_new_chain(t_token *tokens, char *separator);
+void	ms_chain_add_back(t_chain **lst, t_chain *new);
+t_chain	*ms_chain_last(t_chain *lst);
+void	ms_chain_clear(t_chain **lst);
 
 //TOKENIZER and UTILS
 int		ms_tokenizer(t_ms *ms, char *str);
@@ -151,6 +153,7 @@ t_token	*ms_toklast(t_token *lst);
 void	ms_tokadd_back(t_token **lst, t_token *new);
 void	ms_tokclear(t_token **lst, void (*del)(void *));
 int		ms_toksize(t_token *lst);
+t_token	*ms_tokcpy(t_token *original);
 void	ms_process_token_content(t_ms *ms, char *tmp, t_token **subtok);
 void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok);
 void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote);
@@ -162,8 +165,8 @@ void	ms_remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *));
 
 //PARSER
-int		ms_parser(t_ms *ms, t_chain *chain);
-void	ms_expand_variable(t_ms *ms, t_chain *chain);
+int		ms_parser(t_ms *ms);
+void	ms_expand_variable(t_ms *ms);
 int		ms_key_checker(char *key, const char *var);
 char	*ms_get_key(t_ms *ms, char *str);
 char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark);
@@ -226,7 +229,7 @@ char	*ms_make_home_ref(t_ms *ms, char **env);
 char	*ms_get_parent_path(t_ms *ms, char *cwd);
 
 //EXECUTOR functions
-int		ms_executor(t_ms *ms, t_chain *chain);
+int		ms_executor(t_ms *ms);
 void	ms_initialize_execution(t_ms *ms, char ***env);
 int		ms_execute_chunk(t_ms *ms, char **env, int i);
 int		ms_process_command(t_ms *ms, char **env, int i);

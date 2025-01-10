@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 10:39:53 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 09:25:58 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int	ms_add_node_to_sublist(t_token **sub_list, t_token *current)
 	char	*copy;
 	t_token	*new_node;
 
-	copy = ft_strdup(current->content);
+	copy = (current->content);
 	if (!copy)
 		return (0);
 	new_node = ms_new_token(copy, current->type);

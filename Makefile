@@ -56,6 +56,10 @@ SRC 		:= 	main/minishell.c 				\
 				executor/redirection_utils2.c 	\
 				executor/redirection_utils3.c 	\
 				executor/rerouter.c				\
+				executor/chainer.c				\
+				executor/chain_utils1.c			\
+				executor/pre_executor.c			\
+				executor/pre_executor_utils1.c	\
 				parser/parser.c 				\
 				parser/parser_utils.c			\
 				parser/tokenizer.c 				\
@@ -75,10 +79,7 @@ SRC 		:= 	main/minishell.c 				\
 				utils/garbage_collector.c		\
 				utils/token_utils1.c			\
 				utils/token_utils2.c			\
-				utils/token_utils3.c			\
-				executor/chainer.c				\
-				executor/pre_executor.c			\
-				executor/pre_executor_utils1.c	
+				utils/token_utils3.c			
 
 SRCDIR		= src
 SRCS		= $(addprefix $(SRCDIR)/, $(SRC))

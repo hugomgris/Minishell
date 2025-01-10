@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:20:34 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 17:11:52 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/09 18:28:20 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ int	ms_export(t_ms *ms, char **cmd_args, char **env)
 
 	if (!cmd_args[1])
 		return (ms_export_print(ms, env));
-	current = ms->chain_tokens;//!OJO
+	current = ms->chain_tokens;
 	while (current)
 	{
 		if (ft_strchr(current->content, '='))
