@@ -6,12 +6,26 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 16:41:32 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/10 18:04:40 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/13 10:17:06 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+	Return TRUE if c is an i/o redirection character, FALSE otherwise.
+*/
+int	ms_is_redirection(char c)
+{
+	if (c == '>' || c == '<')
+		return (TRUE);
+	return (FALSE);
+}
+
+/*
+	Returns TRUE if the current index in the string is on a double operator.
+	FALSE otherwise.
+*/
 int	ms_is_doubleoperator(t_ms *ms, char *str, int i)
 {
 	if (!ft_strncmp(str + i, "&&", 2))
@@ -27,6 +41,10 @@ int	ms_is_doubleoperator(t_ms *ms, char *str, int i)
 	return (FALSE);
 }
 
+/*
+	Checks for empty double operator command, eg.
+	'cmd1 || && cmd2'.
+*/
 int	ms_handle_andor_error(t_ms *ms, char *str, int i)
 {
 	i += 2;

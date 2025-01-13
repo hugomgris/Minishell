@@ -211,8 +211,11 @@ int		ms_check_parenthesis(t_ms *ms, char *str);
 int		ms_check_or(t_ms *ms, char *str);
 int		ms_check_and(t_ms *ms, char *str);
 int		ms_is_doubleoperator(t_ms *ms, char *str, int i);
-int		ms_checkoutfile(t_ms *ms, char *str);
-int		ms_checkinfile(t_ms *ms, char *str);
+int		ms_checkiofile(t_ms *ms, char *str);
+int		ms_check_redirparenthesis(t_ms *ms);
+int		ms_is_redirection(char c);
+int		ms_check_tokens(t_ms *ms);
+int		ms_check_multipleredir(t_ms *ms);
 
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);
@@ -251,7 +254,6 @@ int		ms_exec_command(t_ms *ms, char **env);
 char	**ms_extract_chunks(t_ms *ms, t_token **tokens);
 char	*ms_process_chunk(t_ms *ms, t_token **current);
 int		ms_count_chunks(t_ms *ms, t_token *tokens);
-int		ms_is_pipe(t_ms *ms, char *token);
 char	**ms_env_to_array(t_ms *ms, char **arr);
 char	**ms_rebuild_env(t_ms *ms);
 int		ms_handle_parent_process(t_ms *ms);
