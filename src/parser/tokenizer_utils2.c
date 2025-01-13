@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:10:37 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/13 16:05:00 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/13 18:10:41 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,14 @@ int	ms_is_empty_token(void *content)
 void	ms_remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *))
 {
+	if (!lst || !cur)
+		return ;
 	if (prev)
 		prev->next = cur->next;
-	else
+	else if (*lst)
 		*lst = cur->next;
-	del(cur->content);
+	if (cur->content)
+		del(cur->content);
 	free(cur);
 	cur = NULL;
 }

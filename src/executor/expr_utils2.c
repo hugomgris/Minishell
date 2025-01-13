@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 12:26:32 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 17:56:06 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,16 @@ int	ms_execute_expression(t_ms *ms, t_expr *expr)
 {
 	int	result;
 
+	if (!expr || (!expr->tokens && !expr->next && !expr->child))
+		return (1);
 	if (expr->child)
 		result = ms_execute_expression(ms, expr->child);
 	else
 	{
 		ms->chain_tokens = expr->tokens;
 		ms_parser(ms);
+		if (ms_toksize(ms->chain_tokens) == 0)
+			expr->tokens = ms->chain_tokens;
 		ms_executor(ms);
 		result = ms->exit_status;
 	}

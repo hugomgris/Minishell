@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 12:10:56 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 17:22:00 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*ms_check_empty_input(t_ms *ms, char *input)
 {
 	char	*trimmed;
 
-	if (input == NULL)
+	if (input == NULL || input[0] == '\0')
 		return (NULL);
 	trimmed = ft_strtrim(input, " \n");
 	if (!trimmed)
@@ -76,6 +76,8 @@ void	ms_main_loop(t_ms *ms)
 			break ;
 		}
 		ms_handle_input(ms);
+		if (!ms->expr_tree)
+			continue ;
 		ms_execute_commands(ms);
 	}
 }
