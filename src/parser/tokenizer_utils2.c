@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:10:37 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/13 13:00:18 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/13 16:05:00 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void	ms_remove_token(t_token **lst, t_token *prev, \
 		*lst = cur->next;
 	del(cur->content);
 	free(cur);
+	cur = NULL;
 }
 
 /*

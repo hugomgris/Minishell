@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 14:17:24 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/13 14:26:51 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/13 16:47:56 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,31 @@ int	ms_check_multipleredir(t_ms *ms)
 	return (TRUE);
 }
 
+int	ms_check_emptyparenthesis(t_ms *ms)
+{
+	t_token	*aux;
+
+	aux = ms->tok;
+	while (aux && aux->next)
+	{
+		if (aux->type == T_LPARENTH && aux->next->type == T_RPARENTH)
+		{
+			ms_error_handler(ms, "invalid syntax: empty parenthesis", 0);
+			return (FALSE);
+		}
+		aux = aux->next;
+	}
+	return (TRUE);
+}
+
 /*
-	Does various checks of the newly formed tokens, like parenthesis syntax,
-	correct redirections, etc.
+	Does various checks of the newly formed tokens ms->tok,
+	like parenthesis syntax, correct redirections, etc.
 */
 int	ms_check_tokens(t_ms *ms)
 {
+	if (!ms_check_emptyparenthesis(ms))
+		return (FALSE);
 	if (!ms_check_redirparenthesis(ms))
 		return (FALSE);
 	if (!ms_check_multipleredir(ms))
