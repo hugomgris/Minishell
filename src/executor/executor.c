@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 11:55:08 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 21:18:17 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,12 @@ Returns:
 */
 int	ms_handle_system_cmd(t_ms *ms, char **env)
 {
-	if (ms->input[0] != '$' && (ms->cmd_args[0][0] == '/'
-		|| ms->cmd_args[0][0] == '.'))
+	if (ms->filt_args[0][0] == '/'
+		|| ms->filt_args[0][0] == '.')
 	{
 		if (ms_exec_direct_path(ms, ms->filt_args, env))
 		{
 			ft_free(ms->filt_args);
-			ft_free(ms->cmd_args);
 			return (1);
 		}
 	}
@@ -58,8 +57,6 @@ int	ms_handle_builtin(t_ms *ms, char **env, int saved_fds[3])
 	int	code;
 
 	ms_save_std_fds(saved_fds);
-	if (ms_has_redirection(ms))
-		ms_redirection(ms);
 	code = ms_exec_command(ms, env);
 	ms_restore_std_fds(saved_fds);
 	ms_cleanup_heredoc(ms);
@@ -117,7 +114,7 @@ int	ms_execute_chunk(t_ms *ms, char **env, int i)
 
 	warning = "Redirection: Warning: Chained heredoc redirections detected, "
 		"will only consider last one.";
-	ms->cmd_args = ms_parse_args(ms->exec_chunks[i], &arg_count);
+	ms->cmd_args = ms_parse_args(ms, ms->exec_chunks[i], &arg_count);
 	ms_filter_args(ms);
 	if (ft_array_count(ms->filt_args) == 0)
 	{

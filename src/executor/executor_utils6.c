@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/07 08:27:52 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 21:07:08 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,25 @@ Steps:
 int	ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env)
 {
 	struct stat	stat_buf;
+	char		*file;
 
 	if (stat(cmd_args[0], &stat_buf) == 0)
-	{
 		execve(cmd_args[0], cmd_args, env);
+	file = ft_strdup(cmd_args[0]);
+	gc_add(file, &ms->gc);
+	file = ft_strtrim(file, "./");
+	gc_add(file, &ms->gc);
+	if (errno == EACCES)
+	{
+		file = ft_strjoin(file, ": Permission denied");
+		gc_add(file, &ms->gc);
 	}
-	ms_error_handler(ms, "Error: execve: invalid file", 0);
+	else
+	{
+		file = ft_strjoin(file, ": No such file or directory");
+		gc_add(file, &ms->gc);
+	}
+	ms_error_handler(ms, file, 0);
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 16:43:30 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/10 21:17:40 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ int	ms_handle_child_process(t_ms *ms, char **env, int i)
 	if (ms_exec_command(ms, env) != 0)
 		exit(1);
 	exit(127);
-	return (0);
 }
 
 /*

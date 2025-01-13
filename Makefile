@@ -56,10 +56,9 @@ SRC 		:= 	main/minishell.c 				\
 				executor/redirection_utils2.c 	\
 				executor/redirection_utils3.c 	\
 				executor/rerouter.c				\
-				executor/chainer.c				\
-				executor/chain_utils1.c			\
-				executor/pre_executor.c			\
-				executor/pre_executor_utils1.c	\
+				executor/expr_utils1.c			\
+				executor/expr_utils2.c			\
+				executor/expr_utils3.c			\
 				parser/parser.c 				\
 				parser/parser_utils.c			\
 				parser/tokenizer.c 				\
