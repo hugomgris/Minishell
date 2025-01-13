@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 18:01:55 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 17:05:55 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,5 +115,7 @@ int	ms_parser(t_ms *ms)
 	ms_remove_quotes(ms);
 	ms_remove_empty_tokens(&ms->chain_tokens, free);
 	ms_tokclear(&ms->wc, free);
+	if (!ms->chain_tokens)
+		return (FALSE);
 	return (TRUE);
 }

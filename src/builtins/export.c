@@ -6,41 +6,11 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:20:34 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 18:28:20 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 15:07:15 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-/*
-Flow control function to print environment variables set for export.
-(set for export = VAR has KEY and set VALUE).
-Called if export is called without arguments.
-Relies on ms_build_export_output to build output.
-*/
-int	ms_export_print(t_ms *ms, char **env)
-{
-	char	*sym;
-	char	*out;
-	int		i;
-
-	i = 0;
-	env = ms_sort(env, ft_memcmp);
-	while (env[i])
-	{
-		sym = ft_strchr(env[i], '=');
-		if (sym)
-			out = ms_build_export_output(ms, env[i], sym);
-		else
-		{
-			out = ft_strdup(env[i]);
-			gc_add(out, &ms->gc);
-		}
-		ft_printf("declare -x %s\n", out);
-		i++;
-	}
-	return (0);
-}
 
 /*
 Helper function to check export builtin cmd argument's syntax/contents.
@@ -88,6 +58,9 @@ If passed:
 */
 int	ms_export_ex(t_ms *ms, char *key, char *value)
 {
+	t_list	*new_node;
+	char	*export_key ;
+
 	if (!ms_export_check(key))
 		return (ms_export_error(ms, key));
 	if (value)
@@ -96,11 +69,18 @@ int	ms_export_ex(t_ms *ms, char *key, char *value)
 			ms_set_env_variable(ms, key, value);
 		else
 			ms_add_env_variable(ms, key, value);
+		ms_remove_from_export_only(ms, key);
 	}
 	else
 	{
-		if (!ms_key_exists(ms, key))
-			ms_add_env_variable(ms, key, NULL);
+		if (!ms_key_exists(ms, key) && !ms_is_export_only(ms, key))
+		{
+			export_key = ft_strdup(key);
+			gc_add(export_key, &ms->gc);
+			new_node = ft_lstnew(export_key);
+			gc_add(new_node, &ms->gc);
+			ft_lstadd_back(&ms->export_only, new_node);
+		}
 	}
 	return (0);
 }
@@ -118,11 +98,10 @@ int	ms_export(t_ms *ms, char **cmd_args, char **env)
 
 	if (!cmd_args[1])
 		return (ms_export_print(ms, env));
-	current = ms->chain_tokens;
+	current = ms->chain_tokens->next;
 	while (current)
 	{
-		if (ft_strchr(current->content, '='))
-			code = ms_process_export_arg(ms, current->content);
+		code = ms_process_export_arg(ms, current->content);
 		current = current->next;
 	}
 	return (code);

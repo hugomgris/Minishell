@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 12:27:25 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 17:22:29 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ typedef struct s_ms
 	char	*input;
 	int		exit_status;
 	t_list	*ms_env;
+	t_list	*export_only;
 	t_list	*gc;
 	t_token	*tok;
 	t_token	*wc;
@@ -349,6 +350,10 @@ int		ms_export_ex(t_ms *ms, char *key, char *value);
 int		ms_export_error(t_ms *ms, char *entry);
 int		ms_export_check(const char *var);
 int		ms_export_print(t_ms *ms, char **env);
+void	ms_remove_from_export_only(t_ms *ms, char *key);
+int		ms_is_export_only(t_ms *ms, char *key);
+void	ms_print_env_var(t_ms *ms, char *env_var);
+void	ms_print_export_only(t_list *export_var);
 int		ms_key_exists(t_ms *ms, char *key);
 char	*ms_build_export_output(t_ms *ms, char *content, char *sym);
 int		ms_process_export_arg(t_ms *ms, char *arg);
