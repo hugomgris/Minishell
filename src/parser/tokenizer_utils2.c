@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:10:37 by nponchon          #+#    #+#             */
-/*   Updated: 2024/12/23 17:18:37 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:00:18 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,32 @@ void	ms_remove_token(t_token **lst, t_token *prev, \
 		*lst = cur->next;
 	del(cur->content);
 	free(cur);
+}
+
+/*
+	Checks for potential redirectin with parenthesis, which is not handled
+	by minishell.
+*/
+int	ms_check_redirparenthesis(t_ms *ms)
+{
+	t_token	*aux;
+
+	aux = ms->tok;
+	while (aux && aux->next)
+	{
+		if (ms_is_operator(aux->content) \
+			&& (aux->next->type == T_LPARENTH || aux->next->type == T_RPARENTH))
+		{
+			ms_error_handler(ms, "unsupported redirection with parenthesis", 0);
+			return (FALSE);
+		}
+		else if (ms_is_operator(aux->next->content) \
+			&& (aux->type == T_LPARENTH || aux->type == T_RPARENTH))
+		{
+			ms_error_handler(ms, "unsupported redirection with parenthesis", 0);
+			return (FALSE);
+		}
+		aux = aux->next;
+	}
+	return (TRUE);
 }

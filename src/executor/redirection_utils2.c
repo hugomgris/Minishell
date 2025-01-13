@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_utils2.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 16:19:23 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 11:51:39 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
 
 	type = ms_detect_redirector(args[i]);
 	if (type && (!args[i + 1] || ms_detect_redirector(args[i + 1])))
-		return (ms_error_handler(ms, "Error: Invalid redir syntax", 0), -1);
+		return (ms_error_handler(ms, "Error: invalid redir syntax", 0), -1);
 	if (fds[0] == -1)
 	{
 		if (type == 1)
