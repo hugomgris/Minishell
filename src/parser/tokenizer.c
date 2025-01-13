@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 12:57:57 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/13 14:17:00 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ int	ms_tokenizer(t_ms *ms, char *str)
 		else
 			error = ms_extract_atom(ms, &str);
 	}
-	if (!ms_check_redirparenthesis(ms))
+	if (!ms_check_tokens(ms))
 		return (FALSE);
 	return (TRUE);
 }

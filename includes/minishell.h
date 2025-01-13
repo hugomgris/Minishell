@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 12:30:37 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/13 14:24:00 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,6 +208,8 @@ int		ms_is_doubleoperator(t_ms *ms, char *str, int i);
 int		ms_checkiofile(t_ms *ms, char *str);
 int		ms_check_redirparenthesis(t_ms *ms);
 int		ms_is_redirection(char c);
+int		ms_check_tokens(t_ms *ms);
+int		ms_check_multipleredir(t_ms *ms);
 
 //ERROR and EXIT HANDLER functions
 void	ms_error_handler(t_ms *ms, char *msg, int critical);

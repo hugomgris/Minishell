@@ -65,6 +65,7 @@ SRC 		:= 	main/minishell.c 				\
 				parser/tokenizer.c 				\
 				parser/tokenizer_utils1.c		\
 				parser/tokenizer_utils2.c		\
+				parser/tokenizer_utils3.c		\
 				parser/syntax_checker.c 		\
 				parser/syntax_checker_utils.c	\
 				parser/expand_variable.c		\
