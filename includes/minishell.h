@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 20:49:21 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 12:27:25 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,12 +79,13 @@ typedef struct s_match_data
 	int	match;
 }	t_match_data;
 
-typedef struct s_chain
+typedef struct s_expr
 {
 	t_token			*tokens;
+	struct s_expr	*next;
+	struct s_expr	*child;
 	char			*separator;
-	struct s_chain	*next;
-}	t_chain;
+}	t_expr;
 
 typedef struct s_ms
 {
@@ -95,9 +96,10 @@ typedef struct s_ms
 	int		exit_status;
 	t_list	*ms_env;
 	t_list	*gc;
-	t_chain	*chains;
 	t_token	*tok;
 	t_token	*wc;
+	t_expr	*expr_tree;
+	t_token	*paren_content;
 	t_token	*chain_tokens;
 	char	**exec_chunks;
 	char	**cmd_args;
@@ -127,17 +129,20 @@ char	*ms_build_prompt(t_ms *ms);
 void	ms_set_shlvl(t_ms *ms);
 void	ms_set_custom_colors(t_ms *ms);
 
-//CHAINER functions
-void	ms_build_chains(t_ms *ms);
-void	ms_create_chain(t_ms *ms, int iter, int index);
-t_token	*ms_extract_chain_tokens(t_ms *ms, char **sep, int iter, int index);
-int		ms_find_start_position(t_token **current, int iter, int id, char **sep);
-int		ms_count_chains(t_ms *ms);
-int		ms_count_chains(t_ms *ms);
-t_chain	*ms_new_chain(t_token *tokens, char *separator);
-void	ms_chain_add_back(t_chain **lst, t_chain *new);
-t_chain	*ms_chain_last(t_chain *lst);
-void	ms_chain_clear(t_chain **lst);
+//EXPR functions
+t_expr	*ms_build_expression_tree(t_ms *ms, t_token *tokens);
+t_token	*ms_extract_paren_content(t_token *start, int len);
+void	ms_process_token(t_ms *ms, t_expr *expr, t_token **current);
+t_expr	*ms_init_expr(void);
+t_token	*ms_extract_paren_content(t_token *start, int len);
+void	ms_handle_parentheses(t_ms *ms, t_expr *expr, t_token **current);
+int		ms_execute_expression(t_ms *ms, t_expr *expr);
+int		ms_handle_or(t_ms *ms, t_expr *expr, int result);
+int		ms_handle_and(t_ms *ms, t_expr *expr, int result);
+void	ms_skip_similar_operators(t_expr **expr, char *op);
+int		ms_find_matching_paren(t_token *start);
+t_token	*ms_token_dup(t_token *token);
+void	ms_free_expression_tree(t_expr *expr);
 
 //TOKENIZER and UTILS
 int		ms_tokenizer(t_ms *ms, char *str);
@@ -356,10 +361,5 @@ size_t	ft_min_strlen(const char *s1, const char *s2);
 void	gc_add(void *ptr, t_list **gc);
 void	ms_print_list(t_list *list);
 void	ms_print_toks(t_token *list);
-
-//EXECUTOR BONUS function
-void	ms_manage_separator(t_ms *ms, t_chain **chain);
-void	ms_pre_executor(t_ms *ms);
-t_token	*ms_toksub(t_token *lst, int start, int count);
 
 #endif

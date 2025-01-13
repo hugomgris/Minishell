@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 14:47:33 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 12:10:56 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,34 +24,27 @@ void	ms_handle_input(t_ms *ms)
 		write_history(0);
 		return ;
 	}
-	ms_build_chains(ms);
+	ms->expr_tree = ms_build_expression_tree(ms, ms->tok);
+	if (!ms->expr_tree)
+	{
+		ms_error_handler(ms, "Error: Expression tree creation failed", 1);
+		return ;
+	}
 	add_history(ms->input);
 	write_history(0);
 }
 
-void	ms_execute_chains(t_ms *ms)
+void	ms_execute_commands(t_ms *ms)
 {
-	t_chain	*current;
-
-	current = ms->chains;
-	while (current)
+	if (ms->expr_tree)
 	{
-		ms->chain_tokens = current->tokens;
-		ms_parser(ms);
-		ms_executor(ms);
-		current = current->next;
-		if (current)
-			ms_manage_separator(ms, &current);
+		ms_execute_expression(ms, ms->expr_tree);
+		ms_free_expression_tree(ms->expr_tree);
+		ms->expr_tree = NULL;
 	}
-	ms_chain_clear(&ms->chains);
 	ms_tokclear(&ms->tok, free);
-	ms->chains = NULL;
 }
 
-/*
-Helper function to handle empty user input.
-Trims leading and treading spaces, cleaning the input.
-*/
 char	*ms_check_empty_input(t_ms *ms, char *input)
 {
 	char	*trimmed;
@@ -68,13 +61,6 @@ char	*ms_check_empty_input(t_ms *ms, char *input)
 	return (trimmed);
 }
 
-/*
-Main loop for Minishell.
-Calls for prompt build.
-Uses readline() to get input and adds it to history.
-Catches CTRL+D input case (with null input check).
-Passes the input to the tokenizer and calls the executor.
-*/
 void	ms_main_loop(t_ms *ms)
 {
 	while (42)
@@ -90,6 +76,6 @@ void	ms_main_loop(t_ms *ms)
 			break ;
 		}
 		ms_handle_input(ms);
-		ms_execute_chains(ms);
+		ms_execute_commands(ms);
 	}
 }
