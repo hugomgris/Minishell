@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 16:34:26 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/13 18:04:06 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,12 +205,10 @@ int		ms_syntax_checker(t_ms *ms, char *str);
 int		ms_checkspecialchar(t_ms *ms, char *str);
 int		ms_checkpipes(t_ms *ms, char *str);
 int		ms_check_empty_pipe(t_ms *ms, char *str);
-int		ms_check_redirections(t_ms *ms);
 int		ms_check_parenthesis(t_ms *ms, char *str);
 int		ms_check_or(t_ms *ms, char *str);
 int		ms_check_and(t_ms *ms, char *str);
 int		ms_is_doubleoperator(t_ms *ms, char *str, int i);
-int		ms_checkiofile(t_ms *ms, char *str);
 int		ms_check_redirparenthesis(t_ms *ms);
 int		ms_is_redirection(char c);
 int		ms_check_tokens(t_ms *ms);
