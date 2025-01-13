@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 18:10:27 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/13 18:39:48 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ typedef enum e_type_tokens
 	T_OR,
 	T_NL,
 	T_SUBPRO,
-	T_SQUOTE
+	T_SQUOTE,
+	T_EXPANDED = 0
 }	t_token_type;
 
 enum e_shell_state

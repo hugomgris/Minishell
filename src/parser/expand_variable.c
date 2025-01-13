@@ -147,9 +147,9 @@ void	ms_expand_variable(t_ms *ms)
 	subtok = NULL;
 	while (aux)
 	{
-		if (aux->type == 0 && ft_strchr((char *)aux->content, '$'))
+		if (aux->type == 0 && ft_strchr(aux->content, '$'))
 		{
-			tmp = ft_strdup((char *)aux->content);
+			tmp = ft_strdup(aux->content);
 			ms_process_token_content(ms, tmp, &subtok);
 			free(tmp);
 			ms_expand_subtoken(ms, subtok);
