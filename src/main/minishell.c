@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 12:27:01 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 16:40:21 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ void	ms_init(t_ms *ms, char **env)
 	ms->ms_env = ms_copy_env(ms, env);
 	ms->home = ms_make_home_ref(ms, env);
 	ms->user = ms_get_prompt_user(ms);
+	ms->export_only = NULL;
+	ms->expr_tree = NULL;
 	ms_set_shlvl(ms);
 	ms_set_custom_colors(ms);
 	read_history(0);
