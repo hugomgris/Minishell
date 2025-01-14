@@ -28,17 +28,17 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 	j = -1;
 	var = ms_get_env_variable(ms, key);
 	new = (char *)malloc(sizeof(char) \
-		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 1);
+		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 3);
 	if (!new)
 		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
+	new[++i] = '"';
 	while (++i < mark)
 		new[i] = str[i];
 	while (var[++j])
 		new[i + j] = var[j];
-	k = ft_strlen(key) + i;
+	k = ft_strlen(key) + i - 1;
 	i += j;
-	while (str[++k])
-		new[i++] = str[k];
+	new[i++] = '"';
 	new[i] = '\0';
 	return (new);
 }
@@ -156,7 +156,6 @@ void	ms_expand_variable(t_ms *ms)
 			gc_add(aux->content, &ms->gc);
 			aux->content = ms_merge_subtoken(ms, subtok);
 			ms_tokclear(&subtok, free);
-			aux->type = T_EXPANDED;
 		}
 		aux = aux->next;
 	}

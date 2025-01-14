@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:09:10 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/14 15:07:43 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/14 16:16:36 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	ms_expand_subtoken(t_ms *ms, t_token *lst)
 		i = -1;
 		while (str[++i])
 		{
-			if (*str == S_QUOTE)
+			if (str[i] == S_QUOTE)
 				break ;
 			else if (str[i] == '$' && str[i + 1] != '\0' \
 				&& str[i + 1] != '$')
