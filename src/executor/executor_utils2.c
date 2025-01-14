@@ -6,115 +6,137 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 21:17:40 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 10:52:16 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Executes a single command in the Minishell.
-Steps:
-  1. Validates the cmd_args array for memory allocation.
-  2. Handles redirection if required:
-      - If redirection fails, exits for non-builtin commands.
-  3. Checks if the command is a builtin:
-      - Executes the builtin and handles rerouting if necessary.
-  4. For non-builtin commands:
-      - Delegates execution to ms_handle_system_cmd.
-      - Cleans up memory if system command handling fails.
-Returns:
-  - 1 on success or handled error.
-  - Exits the process on fatal errors during redirection or command execution.
+Counts the number of execution chunks in the input tokens.
+Chunks are divided by pipe tokens ('|').
+Starts with a count of 1 and increments for each pipe encountered.
+Returns the total number of execution chunks.
 */
-int	ms_exec_command(t_ms *ms, char **env)
+int	ms_count_chunks(t_ms *ms, t_token *tokens)
 {
-	if (!ms->cmd_args)
-		return (ms_error_handler(ms, "Error: Mem alloc failed", 1), 1);
-	if (ms_has_redirection(ms))
+	int		count;
+	int		index;
+	t_token	*current;
+
+	(void)ms;
+	count = 1;
+	index = 0;
+	current = tokens;
+	while (current)
 	{
-		if (ms_redirection(ms) == -1)
+		if (current->type == T_PIPE)
+			count++;
+		index++;
+		current = current->next;
+	}
+	return (count);
+}
+
+/*
+Processes a single chunk of tokens, concatenating its content into a string.
+Stops processing at a pipe token ('|') or the end of the list.
+Handles memory allocation errors and ensures safe cleanup in case of failure.
+Moves the list pointer to the next chunk after processing.
+Returns:
+  - A string representing the chunk on success.
+  - NULL on memory allocation failure.
+*/
+char	*ms_process_chunk(t_ms *ms, t_token **current)
+{
+	char	*chunk;
+	char	*tmp;
+
+	chunk = NULL;
+	while (*current && (*current)->type != T_PIPE)
+	{
+		tmp = chunk;
+		if (chunk)
+			chunk = ft_strjoin3(chunk, " ", (*current)->content);
+		else
+			chunk = ft_strjoin_free(chunk, (*current)->content);
+		if (!chunk)
 		{
-			if (ms_is_builtin(ms->filt_args[0]))
-				return (1);
-			exit(1);
+			ms_error_handler(ms, "Error: Mem alloc failed", 1);
+			free(tmp);
+			return (NULL);
 		}
+		free(tmp);
+		*current = (*current)->next;
 	}
-	if (ms_is_builtin(ms->cmd_args[0]))
+	if (*current && (*current)->type == T_PIPE)
+		*current = (*current)->next;
+	return (chunk);
+}
+
+/*
+Extracts all execution chunks from the input token list.
+Calls ms_process_chunk for each chunk, storing the result in an array.
+Allocates memory for the array dynamically based on the number of chunks.
+Ensures safe cleanup of memory in case of processing failure.
+Returns:
+  - An array of strings representing chunks on success.
+  - NULL on memory allocation failure.
+*/
+void	ms_extract_chunks(t_ms *ms, t_token **tokens)
+{
+	t_token	*current;
+	int		i;
+	int		count;
+	int		start;
+
+	if (!tokens || !*tokens)
+		return ;
+	current = *tokens;
+	ms->chunk_count = ms_count_chunks(ms, current);
+	ms->exec_chunks = malloc(sizeof(t_token *) * ms->chunk_count);
+	if (!ms->exec_chunks)
+		return (ms_error_handler(ms, "Error: Mem alloc failed", 1));
+	start = 0;
+	i = 0;
+	while (i < ms->chunk_count && current)
 	{
-		if (ms_reroute_builtins(ms, env))
-			return (1);
+		count = 0;
+		while (current && current->type != T_PIPE && ++count)
+			current = current->next;
+		ms->exec_chunks[i] = ms_toksub(ms->chain_tokens, start, count);
+		start += count + 1;
+		i++;
+		if (current && current->next)
+			current = current->next;
 	}
-	else if (ms_handle_system_cmd(ms, env) == -1)
+}
+
+/*
+Initializes the execution environment for the Minishell.
+Breaks down input tokens into execution chunks and rebuilds the env array.
+Calculates the number of pipes based on the chunk count.
+Creates the necessary pipes for inter-process communication.
+*/
+void	ms_initialize_execution(t_ms *ms, char ***env)
+{
+	ms_extract_chunks(ms, &ms->chain_tokens);
+	*env = ms_rebuild_env(ms);
+	ms->pipe_count = ms_count_chunks(ms, ms->chain_tokens) - 1;
+	ms_create_pipes(ms, &ms->pipe_fds, ms->pipe_count);
+}
+
+int	ms_ex_check_file_in_dir(char *cmd)
+{
+	struct stat	stat_buf;
+	char		*path;
+
+	path = ft_strjoin("./", cmd);
+	if (stat(path, &stat_buf) == 0)
 	{
-		ft_free(ms->cmd_args);
-		ft_free(ms->filt_args);
+		free(path);
 		return (1);
 	}
+	free(path);
 	return (0);
-}
-
-/*
-Handles the child process execution logic for a Minishell command.
-Received int i is the current exec chunk index in the exec pipeline.
-Steps:
-  1. If a heredoc is present, duplicates its file descriptor to STDIN_FILENO.
-  2. Sets up the appropriate pipes for the child process.
-  3. Handles redirection unless a heredoc is present.
-  4. Executes the command (builtin or system).
-  5. Exits the child process with a failure status if any error occurs.
-*/
-int	ms_handle_child_process(t_ms *ms, char **env, int i)
-{
-	ms_setup_child_pipes(ms, i, ms->pipe_count);
-	if (i == 0 && ms->heredoc_fd != -1)
-	{
-		if (dup2(ms->heredoc_fd, STDIN_FILENO) == -1)
-		{
-			perror("heredoc dup2 failed");
-			ms_error_handler(ms, "Heredoc dup2 failed", 0);
-			exit(1);
-		}
-		close(ms->heredoc_fd);
-	}
-	else if (i > 0)
-		ms->heredoc_fd = -1;
-	if (ms_has_redirection(ms))
-	{
-		if (ms_redirection(ms) == -1)
-			exit(1);
-	}
-	if (ms_exec_command(ms, env) != 0)
-		exit(1);
-	exit(127);
-}
-
-/*
-Handles the parent process logic for Minishell.
-Steps:
-  1. Closes the heredoc file descriptor if it was used.
-  2. Resets the heredoc_fd in the Minishell state to indicate closure.
-*/
-int	ms_handle_parent_process(t_ms *ms)
-{
-	if (ms->heredoc_fd != -1)
-	{
-		close(ms->heredoc_fd);
-		ms->heredoc_fd = -1;
-	}
-	return (0);
-}
-
-/*
-Closes the appropriate pipe file descriptors after use.
-Steps:
-  1. Closes the read end of the previous pipe (if applicable).
-  2. Closes the write end of the current pipe.
-*/
-void	ms_close_used_pipes(int **pipe_fds, int i)
-{
-	if (i > 0)
-		close(pipe_fds[i - 1][0]);
-	if (pipe_fds[i])
-		close(pipe_fds[i][1]);
 }

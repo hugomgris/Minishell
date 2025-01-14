@@ -6,43 +6,31 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 21:18:17 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 10:55:33 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-/*
-Handles execution of system commands.
-Checks whether the command is provided as an absolute/relative path
-	or needs to be searched in the PATH.
-If the command is not found or fails execution, outputs an appropriate error.
-Frees allocated argument arrays upon failure or success.
-Returns:
-  - 1 on error (e.g., command not found).
-  - -1 if execve fails.
-*/
 int	ms_handle_system_cmd(t_ms *ms, char **env)
 {
-	if (ms->filt_args[0][0] == '/'
-		|| ms->filt_args[0][0] == '.')
+	if (ms->filt_args[0][0] == '/')
+		return (ms_handle_absolute_path(ms, env));
+	else if (ms->filt_args[0][0] == '.' || ft_strchr(ms->filt_args[0], '/'))
+		return (ms_handle_relative_path(ms, env));
+	else
 	{
-		if (ms_exec_direct_path(ms, ms->filt_args, env))
+		if (ms_ex_check_file_in_dir(ms->filt_args[0]))
+			return (ms_handle_relative_path(ms, env));
+		else if (ms_search_in_path(ms, ms->filt_args, env))
+			return (ms_handle_relative_path(ms, env));
+		else
 		{
 			ft_free(ms->filt_args);
-			return (1);
+			ft_free(ms->cmd_args);
+			return (ms_error_handler(ms, "Error: Command not found", 0), 1);
 		}
 	}
-	else if (ms_search_in_path(ms, ms->filt_args, env))
-	{
-		free(ms->filt_args);
-		free(ms->cmd_args);
-		return (ms_error_handler(ms, "Error: Command not found", 0), 1);
-	}
-	ms_error_handler(ms, "Error: execve failed", 0);
-	free(ms->filt_args);
-	free(ms->cmd_args);
-	return (-1);
 }
 
 /*
@@ -143,26 +131,26 @@ int	ms_executor(t_ms *ms)
 {
 	char	**env;
 	int		i;
-	int		code;
+	int		count;
 
 	if (!ms_toksize(ms->chain_tokens))
 		return (1);
 	ms_initialize_execution(ms, &env);
 	i = -1;
-	while (++i < ft_array_count(ms->exec_chunks))
+	count = ms_count_chunks(ms, ms->chain_tokens);
+	while (++i < count)
 	{
-		code = ms_execute_chunk(ms, env, i);
-		if (i < ft_array_count(ms->exec_chunks) - 1)
+		ms->exit_status = ms_execute_chunk(ms, env, i);
+		if (i < count - 1)
 			ms_close_used_pipes(ms->pipe_fds, i);
 	}
 	ms_close_parent_pipes(ms->pipe_fds, ms->pipe_count);
 	if (ms_get_set(GET, 0) == 3)
 		return (ms_heredoc_interruption(ms, env));
-	if (ft_array_count(ms->exec_chunks) > 1)
-		ms_wait_children(ms, ft_array_count(ms->exec_chunks));
+	if (count > 1)
+		ms_wait_children(ms, count);
 	ms_executor_cleanup(ms, env);
 	ms_free_pipes(ms->pipe_fds, ms->pipe_count);
 	ms_cleanup_heredoc(ms);
-	ms->exit_status = code;
-	return (code);
+	return (ms->exit_status);
 }
