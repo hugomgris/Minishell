@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 11:46:19 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/13 16:47:46 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,6 @@ int	ms_syntax_checker(t_ms *ms, char *str)
 	if (!ms_checkpipes(ms, str))
 		return (FALSE);
 	if (!ms_check_parenthesis(ms, str))
-		return (FALSE);
-	if (!ms_checkredirections(ms, str))
 		return (FALSE);
 	return (TRUE);
 }
