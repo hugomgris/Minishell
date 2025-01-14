@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 17:22:00 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:03:18 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void	ms_main_loop(t_ms *ms)
 {
 	while (42)
 	{
+		ms_setup_signal_handlers(ms);
 		ms_get_set(SET, 0);
 		ms->prompt = ms_build_prompt(ms);
 		gc_add(ms->prompt, &ms->gc);
@@ -78,6 +79,7 @@ void	ms_main_loop(t_ms *ms)
 		ms_handle_input(ms);
 		if (!ms->expr_tree)
 			continue ;
+		ms_reset_signal_handlers(ms);
 		ms_execute_commands(ms);
 	}
 }
