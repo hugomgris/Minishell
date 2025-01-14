@@ -6,11 +6,47 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 08:43:03 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 10:00:33 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+int	ms_exec_relative_path(t_ms *ms, char **cmd_args, char **env)
+{
+	struct stat	stat_buf;
+	char		*file;
+	char		*path;
+	char		*cwd;
+
+	path = ft_strtrim(cmd_args[0], "./");
+	gc_add(path, &ms->gc);
+	ft_printf("pathA:%s\n", path);
+	cwd = getcwd(NULL, 0);
+	gc_add(cwd, &ms->gc);
+	ft_printf("cwd:%s\n", path);
+	path = ft_strjoin3(cwd, "/", path);
+	gc_add(path, &ms->gc);
+	ft_printf("pathB:%s\n", path);
+	if (stat(path, &stat_buf) == 0)
+		execve(path, cmd_args, env);
+	file = ft_strdup(cmd_args[0]);
+	gc_add(file, &ms->gc);
+	file = ft_strtrim(file, "./");
+	gc_add(file, &ms->gc);
+	if (errno == EACCES)
+	{
+		file = ft_strjoin(file, ": Permission denied");
+		gc_add(file, &ms->gc);
+	}
+	else
+	{
+		file = ft_strjoin(file, ": No such file or directory");
+		gc_add(file, &ms->gc);
+	}
+	ms_error_handler(ms, file, 0);
+	return (1);
+}
 
 /*
 Handles execution of system commands.
@@ -24,10 +60,17 @@ Returns:
 */
 int	ms_handle_system_cmd(t_ms *ms, char **env)
 {
-	if (ms->filt_args[0][0] == '/'
-		|| ms->filt_args[0][0] == '.')
+	if (ms->filt_args[0][0] == '/')
 	{
 		if (ms_exec_direct_path(ms, ms->filt_args, env))
+		{
+			ft_free(ms->filt_args);
+			return (1);
+		}
+	}
+	else if (ms->filt_args[0][0] == '.' || ft_strchr(ms->filt_args[0], '/'))
+	{
+		if (ms_exec_relative_path(ms, ms->filt_args, env))
 		{
 			ft_free(ms->filt_args);
 			return (1);
