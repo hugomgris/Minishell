@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 10:00:33 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 10:10:36 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,10 @@ int	ms_exec_relative_path(t_ms *ms, char **cmd_args, char **env)
 
 	path = ft_strtrim(cmd_args[0], "./");
 	gc_add(path, &ms->gc);
-	ft_printf("pathA:%s\n", path);
 	cwd = getcwd(NULL, 0);
 	gc_add(cwd, &ms->gc);
-	ft_printf("cwd:%s\n", path);
 	path = ft_strjoin3(cwd, "/", path);
 	gc_add(path, &ms->gc);
-	ft_printf("pathB:%s\n", path);
 	if (stat(path, &stat_buf) == 0)
 		execve(path, cmd_args, env);
 	file = ft_strdup(cmd_args[0]);
