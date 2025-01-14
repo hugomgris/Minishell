@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 10:15:12 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 10:56:16 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,6 +262,12 @@ int		ms_is_builtin(const char *cmd);
 int		ms_reroute_builtins(t_ms *ms, char **env);
 int		ms_handle_builtin(t_ms *ms, char **env, int saved_fds[3]);
 int		ms_handle_system_cmd(t_ms *ms, char **env);
+int		ms_ex_check_file_in_dir(char *cmd);
+int		ms_handle_absolute_path(t_ms *ms, char **env);
+int		ms_handle_relative_path(t_ms *ms, char **env);
+int		ms_handle_path_search(t_ms *ms, char **env);
+int		ms_exec_relative_path(t_ms *ms, char **cmd_args, char **env);
+char	*ms_create_error_message(t_ms *ms, char *cmd);
 void	ms_save_std_fds(int *saved_fds);
 void	ms_restore_std_fds(int *saved_fds);
 void	ms_executor_cleanup(t_ms *ms, char **env);

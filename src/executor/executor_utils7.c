@@ -1,98 +1,110 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_utils7.c                                  :+:      :+:    :+:   */
+/*   executor_utils6.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 08:34:58 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 09:58:39 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Cleans up the executor env by clearing lists and freeing allocated memory.
+Executes a command at a direct path.
 Steps:
-  1. Clears the list of `chain_tokens`, freeing each element.
-  2. Frees the `exec_chunks` array and the environment array.
+  1. Checks if the file at cmd_args[0] exists and is a valid file using stat().
+  2. If the file exists, attempts to execute it using execve.
+  3. If execution fails, outputs an error using ms_error_handler.
+  4. Returns 0 on success, 1 on failure (invalid command or exec fail).
 */
-void	ms_executor_cleanup(t_ms *ms, char **env)
+int	ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env)
 {
-	int	i;
+	struct stat	stat_buf;
+	char		*file;
 
-	i = 0;
-	while (i < ms->chunk_count)
+	if (stat(cmd_args[0], &stat_buf) == 0)
+		execve(cmd_args[0], cmd_args, env);
+	file = ft_strdup(cmd_args[0]);
+	gc_add(file, &ms->gc);
+	file = ft_strtrim(file, "./");
+	gc_add(file, &ms->gc);
+	if (errno == EACCES)
 	{
-		ms_tokclear(&ms->exec_chunks[i], free);
-		i++;
+		file = ft_strjoin(file, ": Permission denied");
+		gc_add(file, &ms->gc);
 	}
-	free(ms->exec_chunks);
-	ms->exec_chunks = NULL;
-	ft_free(env);
+	else
+	{
+		file = ft_strjoin(file, ": No such file or directory");
+		gc_add(file, &ms->gc);
+	}
+	ms_error_handler(ms, file, 0);
+	return (1);
 }
 
 /*
-Cleans up arguments by freeing allocated memory.
+Attempts to execute a command at a specified path.
 Steps:
-  1. Checks if `filt_args` is not NULL, then frees it.
-  2. Checks if `cmd_args` is not NULL, then frees it.
+  1. Checks if the cmd_path exists and is executable using stat().
+  2. If the file exists and is executable, tries to execute it using execve.
+  3. Returns 0 on exec failure or non-executable file.
+  4. Doesn't return on success, as execve replaces current process.
 */
-void	ms_cleanup_args(t_ms *ms)
+int	ms_try_path_execution(char *cmd_path, char **cmd_args, char **env)
 {
-	if (ms->filt_args[0] != NULL)
+	struct stat	stat_buf;
+
+	if (stat(cmd_path, &stat_buf) == 0 && (stat_buf.st_mode & S_IXUSR))
 	{
-		free(ms->filt_args);
-		ms->filt_args = NULL;
+		execve(cmd_path, cmd_args, env);
 	}
-	if (ms->cmd_args[0] != NULL)
-	{
-		free(ms->cmd_args);
-		ms->cmd_args = NULL;
-	}
+	return (1);
 }
 
 /*
-Cleans up heredoc file descriptor.
+Builds the full command path by combining the directory and the command name.
 Steps:
-  1. Checks if the heredoc file descriptor (heredoc_fd) is valid (not -1).
-  2. If valid, closes the file descriptor and resets it to -1.
+  1. Allocates memory for the full command path.
+  2. Concatenates the directory and command name with a "/" separator.
+  3. Returns a pointer to the full command path on success.
 */
-void	ms_cleanup_heredoc(t_ms *ms)
+char	*ms_build_cmd_path(t_ms *ms, char *dir, char *cmd)
 {
-	if (ms->heredoc_fd != -1)
+	char	*cmd_path;
+
+	cmd_path = malloc(strlen(dir) + strlen(cmd) + 2);
+	if (!cmd_path)
+		return (NULL);
+	gc_add(cmd_path, &ms->gc);
+	ft_strlcpy(cmd_path, dir, PATH_MAX);
+	gc_add(cmd_path, &ms->gc);
+	ft_strlcat(cmd_path, "/", PATH_MAX);
+	gc_add(cmd_path, &ms->gc);
+	ft_strlcat(cmd_path, cmd, PATH_MAX);
+	gc_add(cmd_path, &ms->gc);
+	return (cmd_path);
+}
+
+/*
+Duplicates the PATH environment variable for use in command search.
+Steps:
+  1. Retrieves the PATH variable using ms_get_env_variable().
+  2. If PATH is not set, defines a default value.
+  3. Returns the PATH variable (default or retrieved).
+*/
+char	*ms_duplicate_path(t_ms *ms)
+{
+	char	*path;
+
+	path = ms_get_env_variable(ms, "PATH");
+	if (!path)
 	{
-		close(ms->heredoc_fd);
-		ms->heredoc_fd = -1;
+		path = "/bin:/usr/local/sbin:/usr/local";
+		path = ft_strjoin(path, "/bin:/usr/sbin:/usr/bin:/sbin:/bin");
+		gc_add(path, &ms->gc);
 	}
-}
-
-/*
-Saves the current standard input, output, and error file descriptors.
-Steps:
-  1. Duplicates the current standard file descriptors.
-  2. Saves STD FDS in the saved_fds array.
-*/
-void	ms_save_std_fds(int *saved_fds)
-{
-	saved_fds[0] = dup(STDIN_FILENO);
-	saved_fds[1] = dup(STDOUT_FILENO);
-	saved_fds[2] = dup(STDERR_FILENO);
-}
-
-/*
-Restores the previously saved standard input, output, and error file descriptors.
-Steps:
-  1. Restores the file descriptors from the saved_fds array using dup2().
-  2. Closes the saved file descriptors.
-*/
-void	ms_restore_std_fds(int *saved_fds)
-{
-	dup2(saved_fds[0], STDIN_FILENO);
-	dup2(saved_fds[1], STDOUT_FILENO);
-	dup2(saved_fds[2], STDERR_FILENO);
-	close(saved_fds[0]);
-	close(saved_fds[1]);
-	close(saved_fds[2]);
+	return (path);
 }

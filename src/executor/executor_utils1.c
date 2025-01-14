@@ -6,122 +6,86 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 08:41:31 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 10:55:04 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-/*
-Counts the number of execution chunks in the input tokens.
-Chunks are divided by pipe tokens ('|').
-Starts with a count of 1 and increments for each pipe encountered.
-Returns the total number of execution chunks.
-*/
-int	ms_count_chunks(t_ms *ms, t_token *tokens)
+char	*ms_create_error_message(t_ms *ms, char *cmd)
 {
-	int		count;
-	int		index;
-	t_token	*current;
+	char	*file;
+	char	*error_msg;
 
-	(void)ms;
-	count = 1;
-	index = 0;
-	current = tokens;
-	while (current)
-	{
-		if (current->type == T_PIPE)
-			count++;
-		index++;
-		current = current->next;
-	}
-	return (count);
+	file = ft_strdup(cmd);
+	gc_add(file, &ms->gc);
+	file = ft_strtrim(file, "./");
+	gc_add(file, &ms->gc);
+	if (errno == EACCES)
+		error_msg = ft_strjoin(file, ": Permission denied");
+	else
+		error_msg = ft_strjoin(file, ": No such file or directory");
+	gc_add(error_msg, &ms->gc);
+	return (error_msg);
 }
 
-/*
-Processes a single chunk of tokens, concatenating its content into a string.
-Stops processing at a pipe token ('|') or the end of the list.
-Handles memory allocation errors and ensures safe cleanup in case of failure.
-Moves the list pointer to the next chunk after processing.
-Returns:
-  - A string representing the chunk on success.
-  - NULL on memory allocation failure.
-*/
-char	*ms_process_chunk(t_ms *ms, t_token **current)
+int	ms_exec_relative_path(t_ms *ms, char **cmd_args, char **env)
 {
-	char	*chunk;
-	char	*tmp;
+	struct stat	stat_buf;
+	char		*file;
+	char		*path;
 
-	chunk = NULL;
-	while (*current && (*current)->type != T_PIPE)
-	{
-		tmp = chunk;
-		if (chunk)
-			chunk = ft_strjoin3(chunk, " ", (*current)->content);
-		else
-			chunk = ft_strjoin_free(chunk, (*current)->content);
-		if (!chunk)
-		{
-			ms_error_handler(ms, "Error: Mem alloc failed", 1);
-			free(tmp);
-			return (NULL);
-		}
-		free(tmp);
-		*current = (*current)->next;
-	}
-	if (*current && (*current)->type == T_PIPE)
-		*current = (*current)->next;
-	return (chunk);
+	path = ms_normalize_path(ms, cmd_args[0]);
+	ft_printf("path:%s\n", path);
+	if (stat(path, &stat_buf) == 0)
+		execve(path, cmd_args, env);
+	file = ms_create_error_message(ms, cmd_args[0]);
+	ms_error_handler(ms, file, 0);
+	return (1);
 }
 
-/*
-Extracts all execution chunks from the input token list.
-Calls ms_process_chunk for each chunk, storing the result in an array.
-Allocates memory for the array dynamically based on the number of chunks.
-Ensures safe cleanup of memory in case of processing failure.
-Returns:
-  - An array of strings representing chunks on success.
-  - NULL on memory allocation failure.
-*/
-void	ms_extract_chunks(t_ms *ms, t_token **tokens)
+int	ms_handle_path_search(t_ms *ms, char **env)
 {
-	t_token	*current;
-	int		i;
-	int		count;
-	int		start;
-
-	if (!tokens || !*tokens)
-		return ;
-	current = *tokens;
-	ms->chunk_count = ms_count_chunks(ms, current);
-	ms->exec_chunks = malloc(sizeof(t_token *) * ms->chunk_count);
-	if (!ms->exec_chunks)
-		return (ms_error_handler(ms, "Error: Mem alloc failed", 1));
-	start = 0;
-	i = 0;
-	while (i < ms->chunk_count && current)
+	if (ms_search_in_path(ms, ms->filt_args, env))
 	{
-		count = 0;
-		while (current && current->type != T_PIPE && ++count)
-			current = current->next;
-		ms->exec_chunks[i] = ms_toksub(ms->chain_tokens, start, count);
-		start += count + 1;
-		i++;
-		if (current && current->next)
-			current = current->next;
+		ft_free(ms->filt_args);
+		ft_free(ms->cmd_args);
+		return (ms_error_handler(ms, "Error: Command not found", 0), 1);
 	}
+	ms_error_handler(ms, "Error: execve failed", 0);
+	ft_free(ms->filt_args);
+	ft_free(ms->cmd_args);
+	return (-1);
 }
 
-/*
-Initializes the execution environment for the Minishell.
-Breaks down input tokens into execution chunks and rebuilds the env array.
-Calculates the number of pipes based on the chunk count.
-Creates the necessary pipes for inter-process communication.
-*/
-void	ms_initialize_execution(t_ms *ms, char ***env)
+int	ms_handle_relative_path(t_ms *ms, char **env)
 {
-	ms_extract_chunks(ms, &ms->chain_tokens);
-	*env = ms_rebuild_env(ms);
-	ms->pipe_count = ms_count_chunks(ms, ms->chain_tokens) - 1;
-	ms_create_pipes(ms, &ms->pipe_fds, ms->pipe_count);
+	char	*path;
+
+	if (ms->filt_args[0][0] != '/' && ms->filt_args[0][0] != '.')
+		path = ft_strjoin("./", ms->filt_args[0]);
+	else
+		path = ft_strdup(ms->filt_args[0]);
+	if (ms_exec_relative_path(ms, ms->filt_args, env))
+	{
+		free(path);
+		ft_free(ms->filt_args);
+		return (1);
+	}
+	free(path);
+	ms_error_handler(ms, "Error: execve failed", 0);
+	ft_free(ms->filt_args);
+	return (-1);
+}
+
+int	ms_handle_absolute_path(t_ms *ms, char **env)
+{
+	if (ms_exec_direct_path(ms, ms->filt_args, env))
+	{
+		ft_free(ms->filt_args);
+		return (1);
+	}
+	ms_error_handler(ms, "Error: execve failed", 0);
+	ft_free(ms->filt_args);
+	return (-1);
 }

@@ -1,110 +1,110 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_utils6.c                                  :+:      :+:    :+:   */
+/*   executor_utils5.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 09:58:39 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:32:14 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Executes a command at a direct path.
+Parses the execution chunk into an array of arguments.
 Steps:
-  1. Checks if the file at cmd_args[0] exists and is a valid file using stat().
-  2. If the file exists, attempts to execute it using execve.
-  3. If execution fails, outputs an error using ms_error_handler.
-  4. Returns 0 on success, 1 on failure (invalid command or exec fail).
+  1. Allocates memory for the array of strings to store arguments.
+  2. Splits the exec_chunk into tokens using whitespace as a delimiter.
+  3. Counts the number of arguments and stores them in arg_count.
+  4. Null-terminates the array.
 */
-int	ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env)
+char	**ms_parse_args(t_ms *ms, t_token *exec_chunk, int *arg_count)
 {
-	struct stat	stat_buf;
-	char		*file;
+	char	**cmd_args;
+	t_token	*current;
+	int		count;
+	int		i;
 
-	if (stat(cmd_args[0], &stat_buf) == 0)
-		execve(cmd_args[0], cmd_args, env);
-	file = ft_strdup(cmd_args[0]);
-	gc_add(file, &ms->gc);
-	file = ft_strtrim(file, "./");
-	gc_add(file, &ms->gc);
-	if (errno == EACCES)
+	(void)arg_count;
+	current = exec_chunk;
+	count = ms_toksize(current);
+	cmd_args = malloc(sizeof(char *) * (count + 1));
+	if (!cmd_args)
+		return (NULL);
+	i = 0;
+	while (current && i < count)
 	{
-		file = ft_strjoin(file, ": Permission denied");
-		gc_add(file, &ms->gc);
+		cmd_args[i] = ft_strdup(current->content);
+		gc_add(cmd_args[i], &ms->gc);
+		i++;
+		current = current->next;
 	}
-	else
-	{
-		file = ft_strjoin(file, ": No such file or directory");
-		gc_add(file, &ms->gc);
-	}
-	ms_error_handler(ms, file, 0);
-	return (1);
+	cmd_args[i] = NULL;
+	return (cmd_args);
 }
 
 /*
-Attempts to execute a command at a specified path.
+Processes directory tokens for command path search.
 Steps:
-  1. Checks if the cmd_path exists and is executable using stat().
-  2. If the file exists and is executable, tries to execute it using execve.
-  3. Returns 0 on exec failure or non-executable file.
-  4. Doesn't return on success, as execve replaces current process.
+  1. Checks if the directory pointer is NULL, indicating end of processing.
+  2. Frees the path_copy and returns NULL in case of no valid directories.
+  3. Proceeds to tokenize the next directory path for subsequent searches.
+  4. Returns pointer to the next directory token on success.
 */
-int	ms_try_path_execution(char *cmd_path, char **cmd_args, char **env)
+char	*ms_process_directory(char **path_copy, char **dir)
 {
-	struct stat	stat_buf;
-
-	if (stat(cmd_path, &stat_buf) == 0 && (stat_buf.st_mode & S_IXUSR))
+	if (!*dir)
 	{
-		execve(cmd_path, cmd_args, env);
+		free(*path_copy);
+		return (NULL);
 	}
-	return (1);
+	return (ft_strtok(NULL, ":"));
 }
 
 /*
-Builds the full command path by combining the directory and the command name.
+Attempts to execute a command at a given path.
 Steps:
-  1. Allocates memory for the full command path.
-  2. Concatenates the directory and command name with a "/" separator.
-  3. Returns a pointer to the full command path on success.
+  1. Tries to execute the command located at cmd_path.
+  2. If execution succeeds, frees allocated memory and returns 0.
+  3. On failure, frees the command path and returns 1.
 */
-char	*ms_build_cmd_path(t_ms *ms, char *dir, char *cmd)
+int	ms_try_and_execute(char *cmd_path, char **cmd_args, char **env, char *path)
 {
+	(void)path;
+	return (ms_try_path_execution(cmd_path, cmd_args, env));
+}
+
+/*
+Searches for a cmd in the directories listed in the PATH environment variable.
+Steps:
+  1. Duplicates the PATH variable for safe tokenization.
+  2. Iterates through directories in the PATH, building potential command paths.
+  3. Attempts to execute the command in each directory.
+  4. Frees resources and returns based on success (0) or failure(1).
+*/
+int	ms_search_in_path(t_ms *ms, char **cmd_args, char **env)
+{
+	char	*path_copy;
+	char	*dir;
 	char	*cmd_path;
 
-	cmd_path = malloc(strlen(dir) + strlen(cmd) + 2);
-	if (!cmd_path)
-		return (NULL);
-	gc_add(cmd_path, &ms->gc);
-	ft_strlcpy(cmd_path, dir, PATH_MAX);
-	gc_add(cmd_path, &ms->gc);
-	ft_strlcat(cmd_path, "/", PATH_MAX);
-	gc_add(cmd_path, &ms->gc);
-	ft_strlcat(cmd_path, cmd, PATH_MAX);
-	gc_add(cmd_path, &ms->gc);
-	return (cmd_path);
-}
-
-/*
-Duplicates the PATH environment variable for use in command search.
-Steps:
-  1. Retrieves the PATH variable using ms_get_env_variable().
-  2. If PATH is not set, defines a default value.
-  3. Returns the PATH variable (default or retrieved).
-*/
-char	*ms_duplicate_path(t_ms *ms)
-{
-	char	*path;
-
-	path = ms_get_env_variable(ms, "PATH");
-	if (!path)
+	path_copy = ms_duplicate_path(ms);
+	if (!path_copy)
+		return (1);
+	dir = ft_strtok(path_copy, ":");
+	while (dir)
 	{
-		path = "/bin:/usr/local/sbin:/usr/local";
-		path = ft_strjoin(path, "/bin:/usr/sbin:/usr/bin:/sbin:/bin");
-		gc_add(path, &ms->gc);
+		cmd_path = ms_build_cmd_path(ms, dir, cmd_args[0]);
+		if (!cmd_path)
+		{
+			free(path_copy);
+			return (1);
+		}
+		if (!ms_try_and_execute(cmd_path, cmd_args, env, path_copy))
+			return (0);
+		dir = ms_process_directory(&path_copy, &dir);
 	}
-	return (path);
+	return (1);
 }

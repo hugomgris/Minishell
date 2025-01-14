@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 14:03:41 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 14:54:03 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,18 @@ void	ms_sigint_handler(void)
 	rl_redisplay();
 }
 
+void	ms_sigquit_handler(void)
+{
+	int	state;
+
+	state = ms_get_set(GET, 0);
+	if (state == SHELL_CHILD_PROCESS)
+	{
+		ft_putstr_fd("Quit (core dumped)\n", STDERR_FILENO);
+		return ;
+	}
+}
+
 /*
 Signal hub.
 Catches signals and redirects them to their respective handler functions.
@@ -72,4 +84,6 @@ void	ms_signal_handler(int signal)
 {
 	if (signal == SIGINT)
 		ms_sigint_handler();
+	else if (signal == SIGQUIT)
+		ms_sigquit_handler();
 }

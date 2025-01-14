@@ -6,83 +6,31 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 10:10:36 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 10:55:33 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	ms_exec_relative_path(t_ms *ms, char **cmd_args, char **env)
-{
-	struct stat	stat_buf;
-	char		*file;
-	char		*path;
-	char		*cwd;
-
-	path = ft_strtrim(cmd_args[0], "./");
-	gc_add(path, &ms->gc);
-	cwd = getcwd(NULL, 0);
-	gc_add(cwd, &ms->gc);
-	path = ft_strjoin3(cwd, "/", path);
-	gc_add(path, &ms->gc);
-	if (stat(path, &stat_buf) == 0)
-		execve(path, cmd_args, env);
-	file = ft_strdup(cmd_args[0]);
-	gc_add(file, &ms->gc);
-	file = ft_strtrim(file, "./");
-	gc_add(file, &ms->gc);
-	if (errno == EACCES)
-	{
-		file = ft_strjoin(file, ": Permission denied");
-		gc_add(file, &ms->gc);
-	}
-	else
-	{
-		file = ft_strjoin(file, ": No such file or directory");
-		gc_add(file, &ms->gc);
-	}
-	ms_error_handler(ms, file, 0);
-	return (1);
-}
-
-/*
-Handles execution of system commands.
-Checks whether the command is provided as an absolute/relative path
-	or needs to be searched in the PATH.
-If the command is not found or fails execution, outputs an appropriate error.
-Frees allocated argument arrays upon failure or success.
-Returns:
-  - 1 on error (e.g., command not found).
-  - -1 if execve fails.
-*/
 int	ms_handle_system_cmd(t_ms *ms, char **env)
 {
 	if (ms->filt_args[0][0] == '/')
-	{
-		if (ms_exec_direct_path(ms, ms->filt_args, env))
-		{
-			ft_free(ms->filt_args);
-			return (1);
-		}
-	}
+		return (ms_handle_absolute_path(ms, env));
 	else if (ms->filt_args[0][0] == '.' || ft_strchr(ms->filt_args[0], '/'))
+		return (ms_handle_relative_path(ms, env));
+	else
 	{
-		if (ms_exec_relative_path(ms, ms->filt_args, env))
+		if (ms_ex_check_file_in_dir(ms->filt_args[0]))
+			return (ms_handle_relative_path(ms, env));
+		else if (ms_search_in_path(ms, ms->filt_args, env))
+			return (ms_handle_relative_path(ms, env));
+		else
 		{
 			ft_free(ms->filt_args);
-			return (1);
+			ft_free(ms->cmd_args);
+			return (ms_error_handler(ms, "Error: Command not found", 0), 1);
 		}
 	}
-	else if (ms_search_in_path(ms, ms->filt_args, env))
-	{
-		free(ms->filt_args);
-		free(ms->cmd_args);
-		return (ms_error_handler(ms, "Error: Command not found", 0), 1);
-	}
-	ms_error_handler(ms, "Error: execve failed", 0);
-	free(ms->filt_args);
-	free(ms->cmd_args);
-	return (-1);
 }
 
 /*
