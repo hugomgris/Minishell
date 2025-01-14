@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 14:17:24 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/13 16:47:56 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/14 09:42:28 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ int	ms_check_multipleredir(t_ms *ms)
 			ms_error_handler(ms, "invalid syntax with heredoc", 0);
 			return (FALSE);
 		}
-		else if (ms_is_operator(aux->content) && aux->next->type != T_ATOM)
+		else if ((*(aux->content) == '<' || *(aux->content) == '>') \
+			&& aux->next->type != T_ATOM && aux->next->type != T_LPARENTH)
 		{
 			ms_error_handler(ms, "invalid syntax with redirections", 0);
 			return (FALSE);
