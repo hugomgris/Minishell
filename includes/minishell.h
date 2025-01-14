@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
 /*   Updated: 2025/01/14 17:34:43 by hmunoz-g         ###   ########.fr       */
@@ -53,7 +53,7 @@ typedef enum e_type_tokens
 	T_NL,
 	T_SUBPRO,
 	T_SQUOTE,
-	T_EXPANDED = 0
+	T_EXPANDED
 }	t_token_type;
 
 enum e_shell_state
