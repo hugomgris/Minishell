@@ -3,15 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   wildcards.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/09 18:00:31 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 17:48:26 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+	Does a comparison of the pattern against the current entry using two indexes.
+	Hidden files are ignored ('.', '..', '.xyz' etc.)
+*/
 int	ms_match_pattern(char *pattern, char *entry, int p, int s)
 {
 	t_match_data	data;
@@ -37,6 +41,10 @@ int	ms_match_pattern(char *pattern, char *entry, int p, int s)
 	return (data.j == p);
 }
 
+/*
+	Does a comparison between the wildcard pattern and the current entry.
+	If a match is found, a new token is created and added in ms->wc.
+*/
 int	ms_process_dir_entry(t_ms *ms, char *pat, struct dirent *ent)
 {
 	int		flag;
@@ -60,6 +68,11 @@ int	ms_process_dir_entry(t_ms *ms, char *pat, struct dirent *ent)
 	return (flag);
 }
 
+/*
+	If the list of wildcards is 2 or more, the whole list of wc is inserted
+	into the ms->chain_tokens list, replacing the expanded * token.
+	If the list of wildcards is 1, the * token is replaced by its unique match.
+*/
 void	ms_add_wc(t_ms *ms, t_token *sub)
 {
 	if (ms_toksize(ms->wc) > 1)
@@ -82,6 +95,10 @@ void	ms_add_wc(t_ms *ms, t_token *sub)
 	ms->wc = NULL;
 }
 
+/*
+	Opens the current directory and assigns it to the entry structure.
+	Iterates over the list of entries until a match is found.
+*/
 void	ms_get_wildcards(t_ms *ms, char *pat, t_token *sub)
 {
 	DIR				*dir;
@@ -101,6 +118,9 @@ void	ms_get_wildcards(t_ms *ms, char *pat, t_token *sub)
 	closedir(dir);
 }
 
+/*
+	Looks for potential wildcards expandition in the ms->chain_tokens.
+*/
 void	ms_expand_wildcards(t_ms *ms)
 {
 	t_token	*aux;

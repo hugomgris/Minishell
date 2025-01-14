@@ -69,7 +69,6 @@ SRC 		:= 	main/minishell.c 				\
 				parser/syntax_checker.c 		\
 				parser/syntax_checker_utils.c	\
 				parser/expand_variable.c		\
-				parser/redirection_checker.c	\
 				parser/wildcards.c				\
 				parser/wildcards_utils.c		\
 				signals/signals.c 				\

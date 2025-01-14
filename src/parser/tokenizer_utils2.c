@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:10:37 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/14 10:07:27 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 10:15:03 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,13 +123,13 @@ int	ms_check_redirparenthesis(t_ms *ms)
 	aux = ms->tok;
 	while (aux && aux->next)
 	{
-		if (ms_is_operator(aux->content) \
+		if ((*(aux->content) == '<' || *(aux->content) == '>') \
 			&& (aux->next->type == T_LPARENTH || aux->next->type == T_RPARENTH))
 		{
 			ms_error_handler(ms, "unsupported redirection with parenthesis", 0);
 			return (FALSE);
 		}
-		else if (ms_is_operator(aux->next->content) \
+		else if ((*(aux->next->content) == '<' || *(aux->next->content) == '>') \
 			&& (aux->type == T_LPARENTH || aux->type == T_RPARENTH))
 		{
 			ms_error_handler(ms, "unsupported redirection with parenthesis", 0);
