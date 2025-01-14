@@ -160,5 +160,4 @@ void	ms_expand_variable(t_ms *ms)
 		}
 		aux = aux->next;
 	}
-	ms_print_toks(ms->chain_tokens);
 }
