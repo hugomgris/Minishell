@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 16:07:24 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/14 17:34:43 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,6 @@ typedef struct s_paren_group
 
 //MAIN and LOOP functions
 void	ms_initialise_minishell(t_ms *ms, char **env);
-void	ms_setup_signal_handlers(t_ms *ms);
 void	ms_main_loop(t_ms *ms);
 void	ms_handle_input(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
@@ -224,9 +223,11 @@ int		ms_exit(t_ms *ms);
 
 //SIGNAL HANDLER functions
 void	ms_signal_handler(int signal);
+void	ms_reset_signal_handlers(t_ms *ms);
 void	ms_sigint_handler(void);
 void	ms_sigquit_handler(void);
 int		ms_get_set(int flag, int val);
+void	ms_setup_signal_handlers(t_ms *ms);
 
 //ENVIRONMENT COPY and MANAGEMENT functions
 t_list	*ms_copy_env(t_ms *ms, char **env);
@@ -308,6 +309,7 @@ int		ms_open(char *file, int flags, int *fd);
 int		ms_handle_open_error(t_ms *ms, char *filename);
 int		ms_close_redirect_fds(int input, int output, int append, int stderr_fd);
 int		ms_has_heredoc(t_ms *ms);
+char	*ms_get_separator(t_ms *ms);
 int		ms_handle_heredoc_setup(t_ms *ms);
 int		ms_manage_heredoc(t_ms *ms, int *fds);
 int		ms_handle_heredoc(const char *delimiter, int *fd);

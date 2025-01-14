@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_utils2.c                                  :+:      :+:    :+:   */
+/*   executor_utils3.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 21:17:40 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 17:48:10 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,19 @@ int	ms_exec_command(t_ms *ms, char **env)
 	return (0);
 }
 
+int	ms_has_input_redirection(t_ms *ms)
+{
+	int	i;
+
+	i = -1;
+	while (ms->cmd_args[++i])
+	{
+		if (!ft_strcmp(ms->cmd_args[i], "<"))
+			return (1);
+	}
+	return (0);
+}
+
 /*
 Handles the child process execution logic for a Minishell command.
 Received int i is the current exec chunk index in the exec pipeline.
@@ -67,7 +80,12 @@ Steps:
 int	ms_handle_child_process(t_ms *ms, char **env, int i)
 {
 	ms_setup_child_pipes(ms, i, ms->pipe_count);
-	if (i == 0 && ms->heredoc_fd != -1)
+	if (ms_has_redirection(ms))
+	{
+		if (ms_redirection(ms) == -1)
+			exit(1);
+	}
+	if (i == 0 && ms->heredoc_fd != -1 && !ms_has_input_redirection(ms))
 	{
 		if (dup2(ms->heredoc_fd, STDIN_FILENO) == -1)
 		{
@@ -79,11 +97,6 @@ int	ms_handle_child_process(t_ms *ms, char **env, int i)
 	}
 	else if (i > 0)
 		ms->heredoc_fd = -1;
-	if (ms_has_redirection(ms))
-	{
-		if (ms_redirection(ms) == -1)
-			exit(1);
-	}
 	if (ms_exec_command(ms, env) != 0)
 		exit(1);
 	exit(127);
