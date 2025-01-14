@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 21:18:17 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 08:43:03 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,26 +143,26 @@ int	ms_executor(t_ms *ms)
 {
 	char	**env;
 	int		i;
-	int		code;
+	int		count;
 
 	if (!ms_toksize(ms->chain_tokens))
 		return (1);
 	ms_initialize_execution(ms, &env);
 	i = -1;
-	while (++i < ft_array_count(ms->exec_chunks))
+	count = ms_count_chunks(ms, ms->chain_tokens);
+	while (++i < count)
 	{
-		code = ms_execute_chunk(ms, env, i);
-		if (i < ft_array_count(ms->exec_chunks) - 1)
+		ms->exit_status = ms_execute_chunk(ms, env, i);
+		if (i < count - 1)
 			ms_close_used_pipes(ms->pipe_fds, i);
 	}
 	ms_close_parent_pipes(ms->pipe_fds, ms->pipe_count);
 	if (ms_get_set(GET, 0) == 3)
 		return (ms_heredoc_interruption(ms, env));
-	if (ft_array_count(ms->exec_chunks) > 1)
-		ms_wait_children(ms, ft_array_count(ms->exec_chunks));
+	if (count > 1)
+		ms_wait_children(ms, count);
 	ms_executor_cleanup(ms, env);
 	ms_free_pipes(ms->pipe_fds, ms->pipe_count);
 	ms_cleanup_heredoc(ms);
-	ms->exit_status = code;
-	return (code);
+	return (ms->exit_status);
 }

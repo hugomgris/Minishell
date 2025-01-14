@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 20:47:36 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 08:34:58 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,18 @@ Steps:
   1. Clears the list of `chain_tokens`, freeing each element.
   2. Frees the `exec_chunks` array and the environment array.
 */
-void	ms_executor_cleanup(t_ms *ms, char	**env)
+void	ms_executor_cleanup(t_ms *ms, char **env)
 {
-	ft_free(ms->exec_chunks);
+	int	i;
+
+	i = 0;
+	while (i < ms->chunk_count)
+	{
+		ms_tokclear(&ms->exec_chunks[i], free);
+		i++;
+	}
+	free(ms->exec_chunks);
+	ms->exec_chunks = NULL;
 	ft_free(env);
 }
 

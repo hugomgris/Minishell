@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/13 17:22:29 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 08:39:12 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,13 +102,13 @@ typedef struct s_ms
 	t_expr	*expr_tree;
 	t_token	*paren_content;
 	t_token	*chain_tokens;
-	char	**exec_chunks;
+	t_token	**exec_chunks;
 	char	**cmd_args;
 	char	**filt_args;
 	int		heredoc_fd;
 	int		**pipe_fds;
 	int		pipe_count;
-	int		chain_count;
+	int		chunk_count;
 }	t_ms;
 
 typedef struct s_paren_group
@@ -123,7 +123,6 @@ typedef struct s_paren_group
 void	ms_initialise_minishell(t_ms *ms, char **env);
 void	ms_setup_signal_handlers(t_ms *ms);
 void	ms_main_loop(t_ms *ms);
-void	ms_execute_chains(t_ms *ms);
 void	ms_handle_input(t_ms *ms);
 char	*ms_check_empty_input(t_ms *ms, char *input);
 char	*ms_build_prompt(t_ms *ms);
@@ -172,6 +171,8 @@ void	ms_expand_subtoken(t_ms *ms, t_token *lst);
 char	*ms_merge_subtoken(t_ms *ms, t_token *subtok);
 void	ms_tokinsert(t_token **lst, t_token *current, t_token *new);
 void	ms_tokinsert_list(t_token **lst, t_token *current, t_token *new);
+t_token	*ms_toksub(t_token *lst, int start, int count);
+int		ms_add_node_to_sublist(t_token **sub_list, t_token *current);
 void	ms_remove_token(t_token **lst, t_token *prev, \
 	t_token *cur, void (*del)(void *));
 
@@ -248,9 +249,10 @@ void	ms_initialize_execution(t_ms *ms, char ***env);
 int		ms_execute_chunk(t_ms *ms, char **env, int i);
 int		ms_process_command(t_ms *ms, char **env, int i);
 int		ms_exec_command(t_ms *ms, char **env);
-char	**ms_extract_chunks(t_ms *ms, t_token **tokens);
+void	ms_extract_chunks(t_ms *ms, t_token **tokens);
 char	*ms_process_chunk(t_ms *ms, t_token **current);
 int		ms_count_chunks(t_ms *ms, t_token *tokens);
+
 int		ms_is_pipe(t_ms *ms, char *token);
 char	**ms_env_to_array(t_ms *ms, char **arr);
 char	**ms_rebuild_env(t_ms *ms);
@@ -274,7 +276,7 @@ void	ms_create_pipes(t_ms *ms, int ***pipe_fds, int pipe_count);
 void	ms_close_parent_pipes(int **pipe_fds, int pipe_count);
 void	ms_close_child_pipes(int **pipe_fds, int pipe_count);
 void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count);
-char	**ms_parse_args(t_ms *ms, char *exec_chunk, int *arg_count);
+char	**ms_parse_args(t_ms *ms, t_token *exec_chunk, int *arg_count);
 int		ms_detect_space_arg(const char *chunk);
 char	*ms_process_space_args_in(char *chunk);
 char	**ms_process_space_args_out(char **args);

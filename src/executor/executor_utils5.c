@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 17:00:47 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:32:14 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,27 +20,28 @@ Steps:
   3. Counts the number of arguments and stores them in arg_count.
   4. Null-terminates the array.
 */
-char	**ms_parse_args(t_ms *ms, char *exec_chunk, int *arg_count)
+char	**ms_parse_args(t_ms *ms, t_token *exec_chunk, int *arg_count)
 {
 	char	**cmd_args;
-	char	*token;
+	t_token	*current;
 	int		count;
+	int		i;
 
-	(void)ms;
-	*arg_count = 0;
-	count = ft_count_words(exec_chunk) + ms_detect_space_arg(exec_chunk);
+	(void)arg_count;
+	current = exec_chunk;
+	count = ms_toksize(current);
 	cmd_args = malloc(sizeof(char *) * (count + 1));
-	exec_chunk = ms_process_space_args_in(exec_chunk);
 	if (!cmd_args)
 		return (NULL);
-	token = ft_strtok(exec_chunk, " ");
-	while (token)
+	i = 0;
+	while (current && i < count)
 	{
-		cmd_args[(*arg_count)++] = token;
-		token = ft_strtok(NULL, " ");
+		cmd_args[i] = ft_strdup(current->content);
+		gc_add(cmd_args[i], &ms->gc);
+		i++;
+		current = current->next;
 	}
-	cmd_args[*arg_count] = NULL;
-	cmd_args = ms_process_space_args_out(cmd_args);
+	cmd_args[i] = NULL;
 	return (cmd_args);
 }
 
