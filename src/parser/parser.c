@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 09:58:56 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/14 16:07:47 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void	ms_remove_quotes(t_ms *ms)
 		tmp = ft_strdup(aux->content);
 		gc_add(tmp, &ms->gc);
 		if ((ft_strchr(tmp, S_QUOTE) || ft_strchr(tmp, D_QUOTE)) \
-			&& aux->type == 0)
+			&& aux->type == T_ATOM)
 		{
 			count = ms_count_quotes(tmp);
 			len = ft_strlen(tmp) - count;
