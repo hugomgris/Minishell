@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
 /*   Updated: 2025/01/13 17:05:55 by hmunoz-g         ###   ########.fr       */
@@ -103,10 +103,10 @@ void	ms_remove_quotes(t_ms *ms)
 
 /*
 	The control tower for the parsing process.
-	Does a preliminary check of the user input and yields error
-	in case of incorrect input. Input get then tokenised, and the tokens
+	Does a serie of preliminary checks of user input and yields error
+	in case of incorrect syntax. Input get then tokenised, and the tokens
 	containing variable are expanded to their correct values. 
-	Empty tokens are then removed and the unnecessary quotes are trimmed.
+	Unnecessary quotes are trimmed and resulting empty tokens are deleted.
 */
 int	ms_parser(t_ms *ms)
 {

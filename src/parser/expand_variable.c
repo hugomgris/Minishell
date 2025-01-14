@@ -131,6 +131,12 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	return (ms_replace_null_value(ms, str, key));
 }
 
+/*
+	Iterates over the list of tokens in the structure ms and checks for '$'.
+	If the token matches, the content of token is splitted into subtokens.
+	Each subtoken is expanded if conditions are met, then are merged back
+	into a single token.
+*/
 void	ms_expand_variable(t_ms *ms)
 {
 	t_token	*aux;
