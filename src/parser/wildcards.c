@@ -6,12 +6,14 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/13 17:48:26 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:46:19 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
+// TODO
+//! (((echo "Test 1" | tee out1.txt | grep "1" > found1.txt) && (cat found1.txt | wc -c > char_count.txt)) || ((echo "Fallback Test" > out2.txt && cat out2.txt | grep "Fallback"))) && rm out*.txt
+//! out*.txt should not match char_count.txt or found1.txt
 /*
 	Does a comparison of the pattern against the current entry using two indexes.
 	Hidden files are ignored ('.', '..', '.xyz' etc.)

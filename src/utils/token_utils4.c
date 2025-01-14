@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:09:10 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/14 09:58:18 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:07:43 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	*ms_merge_subtoken(t_ms *ms, t_token *subtok)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
 	while (aux)
 	{
-		res = ft_strjoin_free(res, (char *)aux->content);
+		res = ft_strjoin_free(res, aux->content);
 		if (!res)
 			ms_error_handler(ms, "Malloc failed expanding a variable", 1);
 		aux = aux->next;
