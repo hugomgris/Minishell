@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 08:39:12 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 10:08:20 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,11 +255,6 @@ int		ms_exec_command(t_ms *ms, char **env);
 void	ms_extract_chunks(t_ms *ms, t_token **tokens);
 char	*ms_process_chunk(t_ms *ms, t_token **current);
 int		ms_count_chunks(t_ms *ms, t_token *tokens);
-<<<<<<< HEAD
-
-int		ms_is_pipe(t_ms *ms, char *token);
-=======
->>>>>>> 4f91eb404f111bf33256ffd0a51513dd2b50dd58
 char	**ms_env_to_array(t_ms *ms, char **arr);
 char	**ms_rebuild_env(t_ms *ms);
 int		ms_handle_parent_process(t_ms *ms);
