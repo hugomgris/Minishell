@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 17:46:38 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/15 14:51:53 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,26 +64,26 @@ TODO: this could use a more granular error handling.
 */
 int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
 {
-	char	*redir;
-	int		flags;
-
-	redir = args[i];
 	if (!args[i + 1])
 		return (ms_error_handler(ms, "syntax error near redir token", 0), -1);
-	flags = O_RDWR | O_CREAT;
-	if (!ft_strcmp(redir, "<"))
+	if (!ft_strcmp(args[i], "<"))
 	{
 		if (ms_open(args[i + 1], O_RDONLY, &fds[0]) == -1)
 			return (ms_error_handler(ms, "no such file or directory", 0), -1);
 	}
-	else if (!ft_strcmp(redir, ">"))
+	else if (!ft_strcmp(args[i], ">"))
 	{
-		if (ms_open(args[i + 1], flags | O_TRUNC, &fds[1]) == -1)
+		if (ms_open(args[i + 1], O_RDWR | O_CREAT | O_TRUNC, &fds[1]) == -1)
 			return (ms_error_handler(ms, "Failed to open output file", 0), -1);
 	}
-	else if (!ft_strcmp(redir, ">>"))
+	else if (!ft_strcmp(args[i], ">>"))
 	{
-		if (ms_open(args[i + 1], flags | O_APPEND, &fds[1]) == -1)
+		if (ms_open(args[i + 1], O_RDWR | O_CREAT | O_APPEND, &fds[1]) == -1)
+			return (ms_error_handler(ms, "Failed to open output file", 0), -1);
+	}
+	else if (!ft_strcmp(args[i], "2>"))
+	{
+		if (ms_open(args[i + 1], O_WRONLY | O_CREAT | O_TRUNC, &fds[2]))
 			return (ms_error_handler(ms, "Failed to open output file", 0), -1);
 	}
 	return (0);
