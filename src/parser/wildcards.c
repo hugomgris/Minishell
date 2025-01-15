@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/13 17:48:26 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:55:58 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int	ms_match_pattern(char *pattern, char *entry, int p, int s)
 	t_match_data	data;
 	int				start;
 
+	start = -1;
 	ms_init_match_data(&data);
 	if (ms_is_hidden_entry(entry))
 		return (FALSE);

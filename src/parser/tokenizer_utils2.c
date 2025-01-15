@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_utils2.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:10:37 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/14 10:15:03 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:07:23 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,32 +110,4 @@ t_token	*ms_toksub(t_token *lst, int start, int count)
 		current = current->next;
 	}
 	return (sub_list);
-}
-
-/*
-	Checks for potential redirectin with parenthesis, which is not handled
-	by minishell.
-*/
-int	ms_check_redirparenthesis(t_ms *ms)
-{
-	t_token	*aux;
-
-	aux = ms->tok;
-	while (aux && aux->next)
-	{
-		if ((*(aux->content) == '<' || *(aux->content) == '>') \
-			&& (aux->next->type == T_LPARENTH || aux->next->type == T_RPARENTH))
-		{
-			ms_error_handler(ms, "unsupported redirection with parenthesis", 0);
-			return (FALSE);
-		}
-		else if ((*(aux->next->content) == '<' || *(aux->next->content) == '>') \
-			&& (aux->type == T_LPARENTH || aux->type == T_RPARENTH))
-		{
-			ms_error_handler(ms, "unsupported redirection with parenthesis", 0);
-			return (FALSE);
-		}
-		aux = aux->next;
-	}
-	return (TRUE);
 }
