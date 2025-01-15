@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 10:55:04 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/15 14:12:45 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ int	ms_exec_relative_path(t_ms *ms, char **cmd_args, char **env)
 	char		*path;
 
 	path = ms_normalize_path(ms, cmd_args[0]);
-	ft_printf("path:%s\n", path);
 	if (stat(path, &stat_buf) == 0)
 		execve(path, cmd_args, env);
 	file = ms_create_error_message(ms, cmd_args[0]);
