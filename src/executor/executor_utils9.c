@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_utils8.c                                  :+:      :+:    :+:   */
+/*   executor_utils9.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 10:52:40 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 16:46:28 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,22 @@ int	ms_heredoc_interruption(t_ms *ms, char **env)
 	ms_cleanup_heredoc(ms);
 	ms->exit_status = 130;
 	return (130);
+}
+
+char	*ms_get_separator(t_ms *ms)
+{
+	t_token	*curr;
+	char	*sep;
+
+	curr = ms->chain_tokens;
+	while (curr)
+	{
+		if (ft_strcmp(curr->content, "<<"))
+		{
+			sep = ft_strdup(curr->content);
+			gc_add(sep, &ms->gc);
+		}
+		curr = curr->next;
+	}
+	return (sep);
 }

@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 10:55:33 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 16:52:51 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,9 +99,13 @@ int	ms_execute_chunk(t_ms *ms, char **env, int i)
 	int		arg_count;
 	int		code;
 	char	*warning;
+	char	*sep;
 
-	warning = "Redirection: Warning: Chained heredoc redirections detected, "
-		"will only consider last one.";
+	warning = "\033[1;91mRedirection: Warning: Chained heredoc redirections "
+		"detected, will only consider last with separator:\033[1;38;5;214m ";
+	sep = ms_get_separator(ms);
+	warning = ft_strjoin3(warning, sep, "\033[1;91m.\033[0m");
+	gc_add(warning, &ms->gc);
 	ms->cmd_args = ms_parse_args(ms, ms->exec_chunks[i], &arg_count);
 	ms_filter_args(ms);
 	if (ft_array_count(ms->filt_args) == 0)
@@ -113,7 +117,7 @@ int	ms_execute_chunk(t_ms *ms, char **env, int i)
 		return (0);
 	}
 	if (ms_has_heredoc(ms) > 1)
-		ft_putendl_fd(warning, 0);
+		printf("%s\n", warning);
 	code = ms_process_command(ms, env, i);
 	ms_cleanup_args(ms);
 	return (code);
