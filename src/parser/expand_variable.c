@@ -12,6 +12,30 @@
 
 #include "../../includes/minishell.h"
 
+char	*ms_trim_spaces(t_ms *ms, char *str)
+{
+	int		i;
+	char	*new;
+	char	*final;
+	char	**tmp;
+
+	i = -1;
+	new = ft_strdup("");
+	tmp = ft_split(str, ' ');
+	if (!tmp)
+		ms_error_handler(ms, "Malloc failed trimming spaces", 1);
+	while (tmp[++i])
+	{
+		new = ft_strjoin_free(new, tmp[i]);
+		new = ft_strjoin_free(new, " ");
+	}
+	ft_free(tmp);
+	free(str);
+	final = ft_strtrim(new, "\" ");
+	free(new);
+	return (final);
+}
+
 /*
 	Replaces a variable with its value from the env list if a match for the key
 	is found in the env list.
