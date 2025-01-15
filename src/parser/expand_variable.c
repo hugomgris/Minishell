@@ -22,13 +22,12 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 	char	*var;
 	int		i;
 	int		j;
-	int		k;
 
 	i = -1;
 	j = -1;
 	var = ms_get_env_variable(ms, key);
 	new = (char *)malloc(sizeof(char) \
-		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 2);
+		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 3);
 	if (!new)
 		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
 	new[++i] = '"';
@@ -36,10 +35,11 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 		new[i] = str[i];
 	while (var[++j])
 		new[i + j] = var[j];
-	k = ft_strlen(key) + i;
+	str += ft_strlen(key) + i;
 	i += j;
-	while (str[++k])
-		new[i++] = str[k];
+	j = 0;
+	while (str[j])
+		new[i++] = str[++j];
 	new[i++] = '"';
 	new[i] = '\0';
 	return (new);
