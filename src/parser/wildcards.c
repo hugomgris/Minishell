@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:40:33 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/14 15:55:58 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/15 14:07:36 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ void	ms_expand_wildcards(t_ms *ms)
 {
 	t_token	*aux;
 	char	*tmp;
+	char	*final;
 
 	aux = ms->chain_tokens;
 	while (aux)
@@ -133,8 +134,10 @@ void	ms_expand_wildcards(t_ms *ms)
 		if (aux->type == 0 && ft_strchr(aux->content, '*'))
 		{
 			tmp = ft_strdup(aux->content);
-			ms_get_wildcards(ms, tmp, aux);
+			final = ft_strtrim(tmp, "\'\"");
+			gc_add(final, &ms->gc);
 			free(tmp);
+			ms_get_wildcards(ms, final, aux);
 		}
 		aux = aux->next;
 	}

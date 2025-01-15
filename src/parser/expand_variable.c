@@ -22,7 +22,6 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 	char	*var;
 	int		i;
 	int		j;
-	int		k;
 
 	i = -1;
 	j = -1;
@@ -36,8 +35,11 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 		new[i] = str[i];
 	while (var[++j])
 		new[i + j] = var[j];
-	k = ft_strlen(key) + i - 1;
+	str += ft_strlen(key) + i;
 	i += j;
+	j = 0;
+	while (str[j])
+		new[i++] = str[++j];
 	new[i++] = '"';
 	new[i] = '\0';
 	return (new);

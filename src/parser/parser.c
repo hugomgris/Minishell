@@ -6,11 +6,35 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 16:07:47 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/15 11:52:11 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+char	*ms_trim_spaces(t_ms *ms, char *str)
+{
+	int		i;
+	char	*new;
+	char	*final;
+	char	**tmp;
+
+	i = -1;
+	new = ft_strdup("");
+	tmp = ft_split(str, ' ');
+	if (!tmp)
+		ms_error_handler(ms, "Malloc failed trimming spaces", 1);
+	while (tmp[++i])
+	{
+		new = ft_strjoin_free(new, tmp[i]);
+		new = ft_strjoin_free(new, " ");
+	}
+	ft_free(tmp);
+	free(str);
+	final = ft_strtrim(new, "\" ");
+	free(new);
+	return (final);
+}
 
 /*
 	Counts the number of quotes to remove for reallocation of the shorter string.
