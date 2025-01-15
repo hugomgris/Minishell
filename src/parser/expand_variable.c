@@ -12,30 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-char	*ms_trim_spaces(t_ms *ms, char *str)
-{
-	int		i;
-	char	*new;
-	char	*final;
-	char	**tmp;
-
-	i = -1;
-	new = ft_strdup("");
-	tmp = ft_split(str, ' ');
-	if (!tmp)
-		ms_error_handler(ms, "Malloc failed trimming spaces", 1);
-	while (tmp[++i])
-	{
-		new = ft_strjoin_free(new, tmp[i]);
-		new = ft_strjoin_free(new, " ");
-	}
-	ft_free(tmp);
-	free(str);
-	final = ft_strtrim(new, "\" ");
-	free(new);
-	return (final);
-}
-
 /*
 	Replaces a variable with its value from the env list if a match for the key
 	is found in the env list.
@@ -52,7 +28,7 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 	j = -1;
 	var = ms_get_env_variable(ms, key);
 	new = (char *)malloc(sizeof(char) \
-		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 3);
+		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 2);
 	if (!new)
 		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
 	new[++i] = '"';
@@ -60,8 +36,10 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 		new[i] = str[i];
 	while (var[++j])
 		new[i + j] = var[j];
-	k = ft_strlen(key) + i - 1;
+	k = ft_strlen(key) + i;
 	i += j;
+	while (str[++k])
+		new[i++] = str[k];
 	new[i++] = '"';
 	new[i] = '\0';
 	return (new);
