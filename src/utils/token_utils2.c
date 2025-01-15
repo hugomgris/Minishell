@@ -6,7 +6,7 @@
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 16:25:37 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/13 18:46:08 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/15 11:47:30 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	ms_process_quotes(t_ms *ms, char **tmp, t_token **subtok, char quote)
 	str = ft_substr(*tmp, 0, i);
 	if (!str)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
-	new = ms_new_token(str, T_EXPANDED);
+	new = ms_new_token(str, T_ATOM);
 	if (!new)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
 	ms_tokadd_back(subtok, new);
@@ -49,7 +49,7 @@ void	ms_process_unquoted(t_ms *ms, char **tmp, t_token **subtok)
 	str = ft_substr(*tmp, 0, i);
 	if (!str)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
-	new = ms_new_token(str, T_EXPANDED);
+	new = ms_new_token(str, T_ATOM);
 	if (!new)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
 	ms_tokadd_back(subtok, new);
@@ -70,7 +70,7 @@ void	ms_process_escape(t_ms *ms, char **tmp, t_token **subtok, char quote)
 	str = ft_substr(*tmp, 0, i);
 	if (!str)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
-	new = ms_new_token(str, T_EXPANDED);
+	new = ms_new_token(str, T_ATOM);
 	if (!new)
 		ms_error_handler(ms, "Malloc failed expanding a variable", 1);
 	ms_tokadd_back(subtok, new);
