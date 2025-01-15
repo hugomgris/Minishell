@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/09 18:01:55 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 16:07:47 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,10 @@ void	ms_remove_quotes(t_ms *ms)
 	aux = ms->chain_tokens;
 	while (aux)
 	{
-		tmp = ft_strdup((char *)aux->content);
+		tmp = ft_strdup(aux->content);
 		gc_add(tmp, &ms->gc);
-		if (ft_strchr(tmp, S_QUOTE) || ft_strchr(tmp, D_QUOTE))
+		if ((ft_strchr(tmp, S_QUOTE) || ft_strchr(tmp, D_QUOTE)) \
+			&& aux->type == T_ATOM)
 		{
 			count = ms_count_quotes(tmp);
 			len = ft_strlen(tmp) - count;
@@ -103,10 +104,10 @@ void	ms_remove_quotes(t_ms *ms)
 
 /*
 	The control tower for the parsing process.
-	Does a preliminary check of the user input and yields error
-	in case of incorrect input. Input get then tokenised, and the tokens
+	Does a serie of preliminary checks of user input and yields error
+	in case of incorrect syntax. Input get then tokenised, and the tokens
 	containing variable are expanded to their correct values. 
-	Empty tokens are then removed and the unnecessary quotes are trimmed.
+	Unnecessary quotes are trimmed and resulting empty tokens are deleted.
 */
 int	ms_parser(t_ms *ms)
 {
@@ -115,5 +116,7 @@ int	ms_parser(t_ms *ms)
 	ms_remove_quotes(ms);
 	ms_remove_empty_tokens(&ms->chain_tokens, free);
 	ms_tokclear(&ms->wc, free);
+	if (!ms->chain_tokens)
+		return (FALSE);
 	return (TRUE);
 }

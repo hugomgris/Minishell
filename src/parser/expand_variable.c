@@ -28,17 +28,17 @@ char	*ms_replace_expanded(t_ms *ms, char *str, char *key, int mark)
 	j = -1;
 	var = ms_get_env_variable(ms, key);
 	new = (char *)malloc(sizeof(char) \
-		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 1);
+		* (ft_strlen(str) + ft_strlen(var) - ft_strlen(key)) + 3);
 	if (!new)
 		ms_error_handler(ms, "Error: Malloc failed expanding a variable", 1);
+	new[++i] = '"';
 	while (++i < mark)
 		new[i] = str[i];
 	while (var[++j])
 		new[i + j] = var[j];
-	k = ft_strlen(key) + i;
+	k = ft_strlen(key) + i - 1;
 	i += j;
-	while (str[++k])
-		new[i++] = str[k];
+	new[i++] = '"';
 	new[i] = '\0';
 	return (new);
 }
@@ -131,6 +131,12 @@ char	*ms_search_env(t_ms *ms, char *str, int start)
 	return (ms_replace_null_value(ms, str, key));
 }
 
+/*
+	Iterates over the list of tokens in the structure ms and checks for '$'.
+	If the token matches, the content of token is splitted into subtokens.
+	Each subtoken is expanded if conditions are met, then are merged back
+	into a single token.
+*/
 void	ms_expand_variable(t_ms *ms)
 {
 	t_token	*aux;
@@ -141,9 +147,9 @@ void	ms_expand_variable(t_ms *ms)
 	subtok = NULL;
 	while (aux)
 	{
-		if (aux->type == 0 && ft_strchr((char *)aux->content, '$'))
+		if (aux->type == 0 && ft_strchr(aux->content, '$'))
 		{
-			tmp = ft_strdup((char *)aux->content);
+			tmp = ft_strdup(aux->content);
 			ms_process_token_content(ms, tmp, &subtok);
 			free(tmp);
 			ms_expand_subtoken(ms, subtok);

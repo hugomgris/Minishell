@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_checker.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 11:49:04 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:36:54 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 /*	
 	Checks for special characters that are not handled by the minishell
-	('\', '\n', ';' etc.).
+	('\', ';').
 */
 int	ms_checkspecialchar(t_ms *ms, char *str)
 {
@@ -23,9 +23,9 @@ int	ms_checkspecialchar(t_ms *ms, char *str)
 	i = -1;
 	while (str[++i])
 	{
-		if (str[i] == 59 || str[i] == 92)
+		if (str[i] == 59 || str[i] == 92 || str[i] == 10)
 		{
-			ms_error_handler(ms, "Invalid character: ';' '\\'\n", 0);
+			ms_error_handler(ms, "unsupported character: ';' '\\' '\\n'\n", 0);
 			return (FALSE);
 		}
 	}
@@ -56,7 +56,7 @@ int	ms_check_empty_pipe(t_ms *ms, char *str)
 }
 
 /*
-	Checks for incorrect pipe syntax.
+	Checks for incorrect pipe syntax, such as " | command1" or "command1 | ".
 */
 int	ms_checkpipes(t_ms *ms, char *str)
 {
@@ -126,9 +126,11 @@ int	ms_syntax_checker(t_ms *ms, char *str)
 {
 	if (!ms_checkspecialchar(ms, str))
 		return (FALSE);
-	if (!ms_checkpipes(ms, str))
+	if (!ms_check_and(ms, str))
 		return (FALSE);
-	if (!ms_checkredirections(ms, str))
+	if (!ms_check_or(ms, str))
+		return (FALSE);
+	if (!ms_checkpipes(ms, str))
 		return (FALSE);
 	if (!ms_check_parenthesis(ms, str))
 		return (FALSE);

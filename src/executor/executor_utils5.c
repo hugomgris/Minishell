@@ -1,108 +1,69 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor_utils5.c                                  :+:      :+:    :+:   */
+/*   executor_utils4.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 11:20:06 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2024/12/31 12:14:05 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 /*
-Parses the execution chunk into an array of arguments.
+Converts the Minishell's internal environment linked list to an array of strings.
 Steps:
-  1. Allocates memory for the array of strings to store arguments.
-  2. Splits the exec_chunk into tokens using whitespace as a delimiter.
-  3. Counts the number of arguments and stores them in arg_count.
+  1. Iterates through the ms_env linked list, which stores environment variables.
+  2. For each node containing an '=' character, dups content into the array.
+  3. Handles memory allocation failures (ft_free and NULL return).
   4. Null-terminates the array.
+  5. Returns pointer to array on success.
 */
-char	**ms_parse_args(char *exec_chunk, int *arg_count)
+char	**ms_env_to_array(t_ms *ms, char **arr)
 {
-	char	**cmd_args;
-	char	*token;
-	int		count;
+	t_list	*current;
+	int		i;
 
-	*arg_count = 0;
-	count = ft_count_words(exec_chunk) + ms_detect_space_arg(exec_chunk);
-	cmd_args = malloc(sizeof(char *) * (count + 1));
-	exec_chunk = ms_process_space_args_in(exec_chunk);
-	if (!cmd_args)
-		return (NULL);
-	token = ft_strtok(exec_chunk, " ");
-	while (token)
+	(void)ms;
+	current = ms->ms_env;
+	i = 0;
+	while (current)
 	{
-		cmd_args[(*arg_count)++] = token;
-		token = ft_strtok(NULL, " ");
-	}
-	cmd_args[*arg_count] = NULL;
-	cmd_args = ms_process_space_args_out(cmd_args);
-	return (cmd_args);
-}
-
-/*
-Processes directory tokens for command path search.
-Steps:
-  1. Checks if the directory pointer is NULL, indicating end of processing.
-  2. Frees the path_copy and returns NULL in case of no valid directories.
-  3. Proceeds to tokenize the next directory path for subsequent searches.
-  4. Returns pointer to the next directory token on success.
-*/
-char	*ms_process_directory(char **path_copy, char **dir)
-{
-	if (!*dir)
-	{
-		free(*path_copy);
-		return (NULL);
-	}
-	return (ft_strtok(NULL, ":"));
-}
-
-/*
-Attempts to execute a command at a given path.
-Steps:
-  1. Tries to execute the command located at cmd_path.
-  2. If execution succeeds, frees allocated memory and returns 0.
-  3. On failure, frees the command path and returns 1.
-*/
-int	ms_try_and_execute(char *cmd_path, char **cmd_args, char **env, char *path)
-{
-	(void)path;
-	return (ms_try_path_execution(cmd_path, cmd_args, env));
-}
-
-/*
-Searches for a cmd in the directories listed in the PATH environment variable.
-Steps:
-  1. Duplicates the PATH variable for safe tokenization.
-  2. Iterates through directories in the PATH, building potential command paths.
-  3. Attempts to execute the command in each directory.
-  4. Frees resources and returns based on success (0) or failure(1).
-*/
-int	ms_search_in_path(t_ms *ms, char **cmd_args, char **env)
-{
-	char	*path_copy;
-	char	*dir;
-	char	*cmd_path;
-
-	path_copy = ms_duplicate_path(ms);
-	if (!path_copy)
-		return (1);
-	dir = ft_strtok(path_copy, ":");
-	while (dir)
-	{
-		cmd_path = ms_build_cmd_path(ms, dir, cmd_args[0]);
-		if (!cmd_path)
+		if (ft_strchr(current->content, '='))
 		{
-			free(path_copy);
-			return (1);
+			arr[i] = ft_strdup((char *)current->content);
+			if (!arr[i])
+			{
+				ft_free(arr);
+				return (NULL);
+			}
+			i++;
 		}
-		if (!ms_try_and_execute(cmd_path, cmd_args, env, path_copy))
-			return (0);
-		dir = ms_process_directory(&path_copy, &dir);
+		current = current->next;
 	}
-	return (1);
+	arr[i] = NULL;
+	return (arr);
+}
+
+/*
+Rebuilds the env array from the Minishell's internal linked list representation.
+Steps:
+  1. Allocates memory, accounting for one extra slot for null termination.
+  2. Converts the ms_env linked list into the array using ms_env_to_array.
+  3. Handles memory allocation or conversion failures.
+  4. Returns pointer to the rebuilt env array on success.
+*/
+char	**ms_rebuild_env(t_ms *ms)
+{
+	char	**arr;
+
+	arr = (char **)malloc(sizeof(char *) * (ft_lstsize(ms->ms_env) + 1));
+	if (!arr)
+		return (ms_error_handler(ms, "Error: Mem alloc failed", 1), NULL);
+	arr = ms_env_to_array(ms, arr);
+	if (!arr)
+		return (ms_error_handler(ms, "Failed to prepare environment", 0), NULL);
+	return (arr);
 }

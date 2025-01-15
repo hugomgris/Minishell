@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 10:23:42 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/13 18:22:34 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ int	ms_handle_operator(t_ms *ms, char **str)
 /*
 	Iterates over the user input as a string, and gets tokens
 	depending on their types (operator or atom) to form a list.
+	Does a syntax check of the tokens.
 */
 int	ms_tokenizer(t_ms *ms, char *str)
 {
@@ -150,6 +151,11 @@ int	ms_tokenizer(t_ms *ms, char *str)
 			error = ms_handle_operator(ms, &str);
 		else
 			error = ms_extract_atom(ms, &str);
+	}
+	if (!ms_check_tokens(ms))
+	{
+		ms_tokclear(&ms->tok, free);
+		return (FALSE);
 	}
 	return (TRUE);
 }

@@ -1,17 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   wildcards_utils1.c                                 :+:      :+:    :+:   */
+/*   wildcards_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 13:06:53 by nponchon          #+#    #+#             */
-/*   Updated: 2025/01/08 11:54:04 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:54:45 by nponchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+	Checks for a hidden file: returns TRUE if filename begins with '.',
+	FALSE otherwise.
+*/
 int	ms_is_hidden_entry(char *entry)
 {
 	if (entry[0] == '.')
@@ -19,6 +23,9 @@ int	ms_is_hidden_entry(char *entry)
 	return (FALSE);
 }
 
+/*
+	Keeps track of the emplacement of the last * sign in a pattern.
+*/
 void	ms_handle_star(t_match_data *data, int *start)
 {
 	*start = data->j;
@@ -28,6 +35,9 @@ void	ms_handle_star(t_match_data *data, int *start)
 	return ;
 }
 
+/*
+	Backtracks the index for entry in case of a non-match in entry.
+*/
 int	ms_retry_star(t_match_data *data, int *start)
 {
 	if (*start == -1)
@@ -38,6 +48,10 @@ int	ms_retry_star(t_match_data *data, int *start)
 	return (TRUE);
 }
 
+/*
+	Initialises the structure used to check for matches during
+	wildcard expansion.
+*/
 void	ms_init_match_data(t_match_data *data)
 {
 	data->i = 0;
@@ -47,6 +61,10 @@ void	ms_init_match_data(t_match_data *data)
 	return ;
 }
 
+/*
+	After the ms->wc list is effectively created, this function sorts
+	all elements in alphabetical order based on C Locale.
+*/
 t_token	*ms_tokensort(t_token *tok)
 {
 	char	*aux;

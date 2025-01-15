@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/08 10:54:30 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:05:23 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	ms_sigint_handler(void)
 	state = ms_get_set(GET, 0);
 	if (state == SHELL_CHILD_PROCESS)
 	{
-		ms_get_set(SET, SHELL_CHILD_INTERRUPTED);
+		ms_get_set(SET, SHELL_HEREDOC_INTERRUPTED);
 		ft_putstr_fd("\n", STDERR_FILENO);
 		return ;
 	}
@@ -64,6 +64,29 @@ void	ms_sigint_handler(void)
 	rl_redisplay();
 }
 
+void	ms_sigquit_handler(void)
+{
+	int	state;
+
+	state = ms_get_set(GET, 0);
+	if (state == SHELL_CHILD_PROCESS)
+	{
+		ft_putstr_fd("Quit (core dumped)\n", STDERR_FILENO);
+		return ;
+	}
+}
+
+void	ms_reset_signal_handlers(t_ms *ms)
+{
+	struct sigaction	action_quit;
+
+	action_quit.sa_flags = SA_RESTART;
+	action_quit.sa_handler = ms_signal_handler;
+	sigemptyset(&action_quit.sa_mask);
+	if (sigaction(SIGQUIT, &action_quit, NULL) == -1)
+		ms_error_handler(ms, "SIGQUIT sigaction error", 0);
+}
+
 /*
 Signal hub.
 Catches signals and redirects them to their respective handler functions.
@@ -72,4 +95,6 @@ void	ms_signal_handler(int signal)
 {
 	if (signal == SIGINT)
 		ms_sigint_handler();
+	else if (signal == SIGQUIT)
+		ms_sigquit_handler();
 }

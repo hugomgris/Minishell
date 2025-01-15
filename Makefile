@@ -38,6 +38,7 @@ SRC 		:= 	main/minishell.c 				\
 				builtins/exit.c 				\
 				builtins/export_utils1.c 		\
 				builtins/export_utils2.c 		\
+				builtins/export_utils3.c 		\
 				builtins/export.c 				\
 				builtins/unset.c				\
 				executor/executor.c				\
@@ -49,6 +50,7 @@ SRC 		:= 	main/minishell.c 				\
 				executor/executor_utils6.c		\
 				executor/executor_utils7.c		\
 				executor/executor_utils8.c		\
+				executor/executor_utils9.c		\
 				executor/piping.c 				\
 				executor/piping_utils1.c		\
 				executor/redirection.c 			\
@@ -56,18 +58,18 @@ SRC 		:= 	main/minishell.c 				\
 				executor/redirection_utils2.c 	\
 				executor/redirection_utils3.c 	\
 				executor/rerouter.c				\
-				executor/chainer.c				\
-				executor/chain_utils1.c			\
-				executor/pre_executor.c			\
-				executor/pre_executor_utils1.c	\
+				executor/expr_utils1.c			\
+				executor/expr_utils2.c			\
+				executor/expr_utils3.c			\
 				parser/parser.c 				\
 				parser/parser_utils.c			\
 				parser/tokenizer.c 				\
 				parser/tokenizer_utils1.c		\
 				parser/tokenizer_utils2.c		\
+				parser/tokenizer_utils3.c		\
 				parser/syntax_checker.c 		\
+				parser/syntax_checker_utils.c	\
 				parser/expand_variable.c		\
-				parser/redirection_checker.c	\
 				parser/wildcards.c				\
 				parser/wildcards_utils.c		\
 				signals/signals.c 				\
@@ -79,7 +81,8 @@ SRC 		:= 	main/minishell.c 				\
 				utils/garbage_collector.c		\
 				utils/token_utils1.c			\
 				utils/token_utils2.c			\
-				utils/token_utils3.c			
+				utils/token_utils3.c			\
+				utils/token_utils4.c
 
 SRCDIR		= src
 SRCS		= $(addprefix $(SRCDIR)/, $(SRC))

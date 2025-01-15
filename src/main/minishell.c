@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/10 09:08:12 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:05:22 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,8 @@ void	ms_init(t_ms *ms, char **env)
 	ms->ms_env = ms_copy_env(ms, env);
 	ms->home = ms_make_home_ref(ms, env);
 	ms->user = ms_get_prompt_user(ms);
-	ms->chains = NULL;
+	ms->export_only = NULL;
+	ms->expr_tree = NULL;
 	ms_set_shlvl(ms);
 	ms_set_custom_colors(ms);
 	read_history(0);
@@ -76,15 +77,20 @@ Flow control function to set up the signal handlers for the whole shell.
 */
 void	ms_setup_signal_handlers(t_ms *ms)
 {
-	struct sigaction	action;
+	struct sigaction	action_int;
+	struct sigaction	action_quit;
 
-	action.sa_flags = SA_RESTART;
-	action.sa_handler = ms_signal_handler;
-	sigemptyset(&action.sa_mask);
-	if (sigaction(SIGINT, &action, NULL) == -1)
+	action_int.sa_flags = SA_RESTART;
+	action_int.sa_handler = ms_signal_handler;
+	sigemptyset(&action_int.sa_mask);
+	action_quit.sa_flags = SA_RESTART;
+	action_quit.sa_handler = SIG_IGN;
+	sigemptyset(&action_quit.sa_mask);
+	if (sigaction(SIGINT, &action_int, NULL) == -1)
 		ms_error_handler(ms, "SIGINT sigaction error", 0);
+	if (sigaction(SIGQUIT, &action_quit, NULL) == -1)
+		ms_error_handler(ms, "SIGQUIT sigaction error", 0);
 	signal(SIGTSTP, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
 }
 
 /*
