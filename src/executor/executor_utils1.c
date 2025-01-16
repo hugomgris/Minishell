@@ -3,15 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils1.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/15 14:56:51 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/16 09:34:31 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Creates an error message for file-related errors
+	(e.g., permission denied or file not found).
+- Trims leading './' from the command name for cleaner error messages.
+- Constructs an appropriate error message based on the value of `errno`:
+  - If `errno` is `EACCES`, the error message indicates "Permission denied".
+  - Otherwise, the error message indicates "No such file or directory".
+- Adds the error message to the garbage collector for automatic cleanup.
+Returns the constructed error message.
+*/
 char	*ms_create_error_message(t_ms *ms, char *cmd)
 {
 	char	*file;
@@ -29,6 +39,14 @@ char	*ms_create_error_message(t_ms *ms, char *cmd)
 	return (error_msg);
 }
 
+/*
+Executes a command specified by a relative path.
+- Normalizes the path to resolve any relative components (e.g., './' or '../').
+- Attempts to execute the command using `execve`.
+- If execution fails, creates an error message using `ms_create_error_message`
+	and handles the error.
+Returns 1 on failure, or does not return on success (replaced by `execve`).
+*/
 int	ms_exec_relative_path(t_ms *ms, char **cmd_args, char **env)
 {
 	struct stat	stat_buf;
@@ -43,6 +61,13 @@ int	ms_exec_relative_path(t_ms *ms, char **cmd_args, char **env)
 	return (1);
 }
 
+/*
+Handles the search for a command in the system's PATH.
+- Attempts to locate the command using `ms_search_in_path`.
+- If the command is not found, frees resources and returns an error.
+- If `execve` fails, frees resources and returns an error.
+Returns 1 if the command is not found, or -1 if `execve` fails.
+*/
 int	ms_handle_path_search(t_ms *ms, char **env)
 {
 	if (ms_search_in_path(ms, ms->filt_args, env))
@@ -57,6 +82,14 @@ int	ms_handle_path_search(t_ms *ms, char **env)
 	return (-1);
 }
 
+/*
+Handles the execution of a command specified by a relative path.
+- Prepends './' to the command name if it is not already
+	an absolute or relative path.
+- Attempts to execute the command using `ms_exec_relative_path`.
+- If execution fails, frees resources and returns an error.
+Returns 1 on failure, or -1 if `execve` fails.
+*/
 int	ms_handle_relative_path(t_ms *ms, char **env)
 {
 	char	*path;
@@ -77,6 +110,12 @@ int	ms_handle_relative_path(t_ms *ms, char **env)
 	return (-1);
 }
 
+/*
+Handles the execution of a command specified by an absolute path.
+- Attempts to execute the command using `ms_exec_direct_path`.
+- If execution fails, frees resources and returns an error.
+Returns 1 on failure, or -1 if `execve` fails.
+*/
 int	ms_handle_absolute_path(t_ms *ms, char **env)
 {
 	if (ms_exec_direct_path(ms, ms->filt_args, env))

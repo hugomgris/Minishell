@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nponchon <nponchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:07:08 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/15 11:52:24 by nponchon         ###   ########.fr       */
+/*   Updated: 2025/01/16 09:25:46 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,7 +285,6 @@ void	ms_close_parent_pipes(int **pipe_fds, int pipe_count);
 void	ms_close_child_pipes(int **pipe_fds, int pipe_count);
 void	ms_setup_child_pipes(t_ms *ms, int cmd_index, int pipe_count);
 char	**ms_parse_args(t_ms *ms, t_token *exec_chunk, int *arg_count);
-int		ms_detect_space_arg(const char *chunk);
 char	*ms_process_space_args_in(char *chunk);
 char	**ms_process_space_args_out(char **args);
 int		ms_exec_direct_path(t_ms *ms, char **cmd_args, char **env);

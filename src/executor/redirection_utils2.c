@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/15 14:51:53 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/16 09:31:26 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ int	ms_detect_redirector(char *arg)
 /*
 Checks if there are any redirection operators in the given command arguments.
 Returns 1 if a redirection operator is found, otherwise 0.
-TODO: Again, check return values for consistency (might need to swap 1-0)
 */
 int	ms_has_redirection(t_ms *ms)
 {
@@ -60,7 +59,6 @@ Checks for valid syntax and handles the redirection by opening
 	the appropriate files.
 If the redirection syntax is invalid or there is an error opening a file,
 	it returns an error message.
-TODO: this could use a more granular error handling.
 */
 int	ms_setup_redirects(char **args, int i, int *fds, t_ms *ms)
 {

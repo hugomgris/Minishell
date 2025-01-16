@@ -6,17 +6,11 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:19:44 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 15:05:22 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/16 09:35:47 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-/*
-	TODO
-	Check for possible limitation of FDs: what happens if minishell is limited
-	to using only 2 fds? 1? 0?
-*/
 
 /*
 Helper function to set custom colors for colored cmd calls.

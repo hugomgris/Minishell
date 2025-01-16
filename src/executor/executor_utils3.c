@@ -6,7 +6,7 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/15 14:44:20 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/16 09:24:26 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,12 @@ int	ms_exec_command(t_ms *ms, char **env)
 	return (0);
 }
 
+/*
+Checks if the command arguments contain an input redirection operator (`<`).
+- Iterates through the command arguments (`ms->cmd_args`).
+- Returns 1 if the input redirection operator (`<`) is found.
+- Returns 0 if no input redirection operator is found.
+*/
 int	ms_has_input_redirection(t_ms *ms)
 {
 	int	i;
