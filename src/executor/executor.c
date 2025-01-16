@@ -6,12 +6,26 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/15 14:39:16 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/16 09:21:43 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+/*
+Handles the execution of system commands by determining
+	the type of command path provided.
+- If the command is an absolute path (starts with '/'),
+	it delegates to ms_handle_absolute_path.
+- If the command is a relative path (starts with '.' or contains '/'),
+	it delegates to ms_handle_relative_path.
+- For commands without a path, it searches for the command in the
+	system's PATH environment variable:
+  - If found, it delegates to ms_handle_relative_path.
+  - If not found, it cleans up resources and returns an error
+  	indicating the command was not found.
+Returns the exit status of the command execution or 1 on error.
+*/
 int	ms_handle_system_cmd(t_ms *ms, char **env)
 {
 	if (ms->filt_args[0][0] == '/')

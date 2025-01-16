@@ -6,28 +6,11 @@
 /*   By: hmunoz-g <hmunoz-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 11:42:26 by hmunoz-g          #+#    #+#             */
-/*   Updated: 2025/01/14 16:46:28 by hmunoz-g         ###   ########.fr       */
+/*   Updated: 2025/01/16 09:26:25 by hmunoz-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-int	ms_detect_space_arg(const char *chunk)
-{
-	unsigned long	i;
-	int				count;
-
-	i = 0;
-	count = 0;
-	while (chunk[i] && i < ft_strlen(chunk) - 2)
-	{
-		if (ft_isspace(chunk[i]) && ft_isspace(chunk[i + 1])
-			&& ft_isspace(chunk[i + 2]))
-			count++;
-		i ++;
-	}
-	return (count);
-}
 
 /*
 Helper function to handle space arguments (e.g.: tr " " "x").
@@ -67,6 +50,16 @@ char	**ms_process_space_args_out(char **args)
 	return (args);
 }
 
+/*
+Handles the interruption of a heredoc operation
+	(e.g., when the user presses Ctrl+C).
+- Resets the shell state to normal using `ms_get_set`.
+- Cleans up execution resources with `ms_executor_cleanup`.
+- Frees pipe resources with `ms_free_pipes`.
+- Cleans up heredoc-related resources with `ms_cleanup_heredoc`.
+- Sets the exit status to 130 (indicating interruption by signal).
+Returns 130 to propagate the interruption status.
+*/
 int	ms_heredoc_interruption(t_ms *ms, char **env)
 {
 	ms_get_set(SET, SHELL_NORMAL);
@@ -77,6 +70,13 @@ int	ms_heredoc_interruption(t_ms *ms, char **env)
 	return (130);
 }
 
+/*
+Retrieves the separator used in a heredoc operation from the token chain.
+- Iterates through the token chain (`ms->chain_tokens`).
+- Identifies the heredoc separator (the token following `<<`).
+- Duplicates the separator and adds it to the garbage collector for cleanup.
+Returns the separator string.
+*/
 char	*ms_get_separator(t_ms *ms)
 {
 	t_token	*curr;
